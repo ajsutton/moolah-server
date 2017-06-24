@@ -7,10 +7,10 @@ module.exports = [
         handler: (request, reply) => {
             db.query('SELECT id, name, type, balance FROM account')
                 .then(results => {
-                    reply(results);
+                    reply({accounts: results});
                 })
                 .catch(err => {
-                    console.error("Caught error", err);
+                    console.error("Error while accessing accounts", err);
                     reply(err, 500);
                 });
         },
