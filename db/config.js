@@ -1,5 +1,3 @@
-// You can override this configuration by creating a config.js.mine file in this directory.
-
 // Path to the migrations directory (relative to migrate)
 exports.migration_path = './patches/';
 
@@ -9,6 +7,6 @@ exports.dbms = 'mysql';
 // Configuration for MySQL (username, password, etc.)
 exports.mysql = {
     user: 'root',
-    password: 'foo',
+    password: '',
     database: 'moolah'
 };
