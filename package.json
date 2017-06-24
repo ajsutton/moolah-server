@@ -1,0 +1,24 @@
+{
+  "name": "moolah-server",
+  "version": "1.0.0",
+  "description": "Back-end server for Moolah money tracker.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js --exec node",
+    "start": "node index.js",
+    "test": "NODE_ENV=test mocha --watch 'test/*.spec.js'",
+    "test-watch": "NODE_ENV=test mocha --watch 'test/*.spec.js'"
+  },
+  "author": "Adrian Sutton <adrian@symphonious.net>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "mocha": "^3.4.2"
+  },
+  "dependencies": {
+    "good": "^7.2.0",
+    "good-console": "^6.4.0",
+    "good-squeeze": "^5.0.2",
+    "hapi": "^16.4.3",
+    "nodemon": "^1.11.0"
+  }
+}
