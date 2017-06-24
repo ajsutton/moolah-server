@@ -6,7 +6,7 @@ exports.dbms = 'mysql';
 
 let userConfig = {};
 try {
-    userConfig = require('./config.js.mine');
+    userConfig = require('./config.mine.js');
 } catch (err) {
     console.debug("No config.js.mine file, continuing.", err);
 }
