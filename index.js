@@ -1,5 +1,6 @@
 const Hapi = require('hapi');
 const Good = require('good');
+const Hoek = require('hoek');
 
 const server = new Hapi.Server();
 server.connection({port: 3000, host: 'localhost'});
@@ -33,13 +34,9 @@ server.register({
         },
     },
 }, err => {
-    if (err) {
-        throw err;
-    }
+    Hoek.assert(!err, err);
     server.start(err => {
-        if (err) {
-            throw err;
-        }
+        Hoek.assert(!err, err);
 
         server.log(`Server running at: ${server.info.uri}`);
     });
