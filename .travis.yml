@@ -7,7 +7,6 @@ services:
 
 before_install:
   - mysql -e 'CREATE DATABASE moolah;'
-  - npm run migrate-db
 
 cache:
   directories:

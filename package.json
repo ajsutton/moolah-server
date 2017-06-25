@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon index.js --exec node",
     "start": "node index.js",
-    "test": "NODE_ENV=test mocha 'test/**/*.spec.js'",
+    "test": "npm run migrate-db && NODE_ENV=test mocha 'test/**/*.spec.js'",
     "test-watch": "NODE_ENV=test mocha --watch 'test/**/*.spec.js'",
     "unit-test": "NODE_ENV=test mocha 'test/unit/**/*.spec.js'",
     "unit-test-watch": "NODE_ENV=test mocha --watch 'test/unit/**/*.spec.js'",
