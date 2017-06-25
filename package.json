@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Back-end server for Moolah money tracker.",
   "main": "index.js",
+  "repository": "git@github.com:ajsutton/moolah-server.git",
   "scripts": {
     "dev": "nodemon index.js --exec node",
     "start": "node index.js",
