@@ -5,6 +5,11 @@ module.exports = [
         config: require('../handlers/getAccounts'),
     },
     {
+        method: 'POST',
+        path: '/accounts/',
+        config: require('../handlers/createAccount'),
+    },
+    {
         method: 'PUT',
         path: '/accounts/{id}/',
         config: require('../handlers/putAccount'),

@@ -6,22 +6,23 @@ const Boom = require('boom');
 module.exports = {
     handler: {
         async: async function(request, reply) {
-            const account = await accountsDao.account(request.params.id);
-            if (account === undefined) {
-                reply(Boom.notFound('Account not found'));
-            } else {
-                const modifiedAccount = Object.assign(account, request.payload);
-                accountsDao.store(modifiedAccount);
-                reply(modifiedAccount);
+            try {
+                const account = request.payload;
+                await accountsDao.create(account);
+                reply(account).code(201).header('Location', `/accounts/${encodeURIComponent(account.id)}/`);
+            } catch (error) {
+                console.error(JSON.stringify(error));
+                if (error.code === 'ER_DUP_ENTRY') {
+                    reply(Boom.conflict('`id` is already in use'));
+                } else {
+                    throw error;
+                }
             }
         },
     },
     validate: {
-        params: {
-            id: types.id.required(),
-        },
         payload: Joi.object({
-            id: types.id,
+            id: types.id.required(),
             name: types.name.required(),
             type: types.accountType.required(),
             balance: types.money.required(),
