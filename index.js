@@ -5,6 +5,7 @@ const server = new Hapi.Server();
 server.connection({port: 3000, host: 'localhost'});
 
 server.register([
+    require('hapi-async-handler'),
     require('./src/plugins/good'),
     require('./src/plugins/router'),
 ], err => {
