@@ -10,10 +10,16 @@ module.exports = {
         return results[0];
     },
 
+    create(account) {
+        return db.query(
+            'INSERT INTO account (id, name, type, balance) VALUES (?, ?, ?, ?)',
+            account.id, account.name, account.type, account.balance,
+        );
+    },
+
     store(account) {
         return db.query(
-            'INSERT INTO account (id, name, type, balance) VALUES (?, ?, ?, ?) ' +
-            'ON DUPLICATE KEY UPDATE name = VALUES(name), type = VALUES(type), balance = VALUES(balance)',
-            account.id, account.name, account.type, account.balance);
+            'UPDATE account SET name = ?, type = ?, balance = ? WHERE id = ?',
+            account.name, account.type, account.balance, account.id);
     },
 };
