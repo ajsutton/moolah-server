@@ -8,6 +8,10 @@
     "start": "node index.js",
     "test": "NODE_ENV=test mocha 'test/**/*.spec.js'",
     "test-watch": "NODE_ENV=test mocha --watch 'test/**/*.spec.js'",
+    "unit-test": "NODE_ENV=test mocha 'test/unit/**/*.spec.js'",
+    "unit-test-watch": "NODE_ENV=test mocha --watch 'test/unit/**/*.spec.js'",
+    "dao-test": "NODE_ENV=test mocha 'test/db/**/*.spec.js'",
+    "db-test-watch": "NODE_ENV=test mocha --watch 'test/db/**/*.spec.js'",
     "migrate-db": "cd db && node migrate.js migrate",
     "rollback-db": "cd db && node migrate.js rollback",
     "create-migration": "cd db && node migrate.js create"

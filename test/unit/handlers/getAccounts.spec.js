@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 let accounts = [];
 
-const getAccounts = proxyquire('../../src/handlers/getAccounts', {
+const getAccounts = proxyquire('../../../src/handlers/getAccounts', {
     '../db/accountsDao': {
         async accounts() {
             return accounts;

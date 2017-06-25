@@ -2,6 +2,12 @@ language: node_js
 node_js:
   - "node"
 
+services:
+  - mysql
+
+before_install:
+  - mysql -e 'CREATE DATABASE moolah;'
+
 cache:
   directories:
     - "node_modules"
