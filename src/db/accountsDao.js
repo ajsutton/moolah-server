@@ -5,6 +5,11 @@ module.exports = {
         return db.query('SELECT id, name, type, balance FROM account');
     },
 
+    async account(id) {
+        const results = await db.query('SELECT id, name, type, balance FROM account WHERE id = ?', id);
+        return results[0];
+    },
+
     store(account) {
         return db.query(
             'INSERT INTO account (id, name, type, balance) VALUES (?, ?, ?, ?) ' +

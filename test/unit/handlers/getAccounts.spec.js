@@ -9,7 +9,7 @@ const getAccounts = proxyquire('../../../src/handlers/getAccounts', {
             return accounts;
         }
     }
-});
+}).handler.async;
 
 describe('Get Accounts Handler', function() {
     let request;

@@ -2,8 +2,11 @@ module.exports = [
     {
         method: 'GET',
         path: '/accounts/',
-        handler: {
-            async: require('../handlers/getAccounts'),
-        }
+        config: require('../handlers/getAccounts'),
+    },
+    {
+        method: 'PUT',
+        path: '/accounts/{id}/',
+        config: require('../handlers/putAccount'),
     },
 ];
