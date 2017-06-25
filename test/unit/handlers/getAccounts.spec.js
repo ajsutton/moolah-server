@@ -21,7 +21,7 @@ describe('Get Accounts Handler', function() {
     });
 
     it('should reply with accounts', async function() {
-        accounts = [{id: 1, name: 'Account 1'}, {id: 2, name: 'Account 2'}];
+        accounts = [{id: "1", name: 'Account 1'}, {id: 2, name: 'Account 2'}];
         await getAccounts(request, reply);
 
         sinon.assert.calledOnce(reply);
