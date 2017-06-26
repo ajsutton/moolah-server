@@ -26,6 +26,16 @@ describe('Create Account Handler', function() {
         assert.equal(response.statusCode, 201);
     });
 
+    it('should generate a new id when database reports a conflict', async function() {
+        accountsDao.create.onCall(0).rejects({code: 'ER_DUP_ENTRY'});
+        accountsDao.create.onCall(1).resolves(null);
+        const response = await makeRequest({name: 'Account 1', type: 'cc', balance: 40000});
+        assert.equal(response.statusCode, 201);
+
+        sinon.assert.calledTwice(accountsDao.create);
+        assert.notEqual(accountsDao.create.firstCall.args[0].id, accountsDao.create.secondCall.args[0].id)
+    });
+
     function makeRequest(payload) {
         return new Promise((resolve, reject) => {
             server.inject(Object.assign({}, options, {payload: payload}), function(response) {

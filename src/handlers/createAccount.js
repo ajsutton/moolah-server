@@ -8,8 +8,7 @@ module.exports = {
         async: async function(request, reply) {
             while (true) {
                 try {
-                    const account = request.payload;
-                    account.id = idGenerator();
+                    const account = Object.assign({id: idGenerator()}, request.payload);
                     await accountsDao.create(account);
                     reply(account).code(201).header('Location', `/accounts/${encodeURIComponent(account.id)}/`);
                     return;
