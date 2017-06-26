@@ -1,7 +1,6 @@
 const Joi = require('joi');
 const types = require('./types');
 const accountsDao = require('../db/accountsDao');
-const Boom = require('boom');
 const idGenerator = require('../utils/idGenerator');
 
 module.exports = {
