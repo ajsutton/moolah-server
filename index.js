@@ -1,18 +1,15 @@
 const Hapi = require('hapi');
-const Hoek = require('hoek');
 
-const server = new Hapi.Server();
-server.connection({port: 3000, host: 'localhost'});
+const server = require('./src/server');
 
-server.register([
-    require('hapi-async-handler'),
-    require('./src/plugins/good'),
-    require('./src/plugins/router'),
-], err => {
-    Hoek.assert(!err, err);
-    server.start(err => {
-        Hoek.assert(!err, err);
+server.create()
+    .then(server => {
+        server.start(err => {
+            if (err) throw err;
 
-        server.log(`Server running at: ${server.info.uri}`);
+            server.log(`Server running at: ${server.info.uri}`);
+        });
+    })
+    .catch(err => {
+        console.error('Failed to start server', err);
     });
-});
