@@ -34,6 +34,7 @@
     "hapi-async-handler": "^1.0.3",
     "hapi-router": "^3.5.0",
     "joi": "^10.6.0",
-    "node-mysql": "^0.4.2"
+    "node-mysql": "^0.4.2",
+    "boom": "^5.1.0"
   }
 }
