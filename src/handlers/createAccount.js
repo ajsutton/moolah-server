@@ -2,27 +2,28 @@ const Joi = require('joi');
 const types = require('./types');
 const accountsDao = require('../db/accountsDao');
 const Boom = require('boom');
+const idGenerator = require('../utils/idGenerator');
 
 module.exports = {
     handler: {
         async: async function(request, reply) {
-            try {
-                const account = request.payload;
-                await accountsDao.create(account);
-                reply(account).code(201).header('Location', `/accounts/${encodeURIComponent(account.id)}/`);
-            } catch (error) {
-                console.error(JSON.stringify(error));
-                if (error.code === 'ER_DUP_ENTRY') {
-                    reply(Boom.conflict('`id` is already in use'));
-                } else {
-                    throw error;
+            while (true) {
+                try {
+                    const account = request.payload;
+                    account.id = idGenerator();
+                    await accountsDao.create(account);
+                    reply(account).code(201).header('Location', `/accounts/${encodeURIComponent(account.id)}/`);
+                    return;
+                } catch (error) {
+                    if (error.code !== 'ER_DUP_ENTRY') {
+                        throw error;
+                    }
                 }
             }
         },
     },
     validate: {
         payload: Joi.object({
-            id: types.id.required(),
             name: types.name.required(),
             type: types.accountType.required(),
             balance: types.money.required(),
