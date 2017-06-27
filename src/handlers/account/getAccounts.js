@@ -1,4 +1,4 @@
-const accountsDao = require('../db/accountsDao');
+const accountsDao = require('../../db/accountsDao');
 
 module.exports = {
     handler: {

@@ -8,8 +8,8 @@ const mockDao = {
     account: sinon.stub(),
     store: sinon.spy(),
 };
-const putAccount = proxyquire('../../../src/handlers/putAccount', {
-    '../db/accountsDao': mockDao,
+const putAccount = proxyquire('../../../src/handlers/account/putAccount', {
+    '../../db/accountsDao': mockDao,
 }).handler.async;
 
 describe('Put Account Handler', function() {

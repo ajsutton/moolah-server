@@ -7,3 +7,5 @@ yarn-error.log*
 test/unit/coverage
 .idea
 db/config.mine.js
+/auth-config.sh
+/config/

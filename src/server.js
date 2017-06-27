@@ -1,6 +1,5 @@
 const Hapi = require('hapi');
 
-
 exports.create = function() {
     return new Promise((resolve, reject) => {
         const server = new Hapi.Server();
@@ -9,6 +8,7 @@ exports.create = function() {
             require('hapi-async-handler'),
             require('./plugins/good'),
             require('./plugins/router'),
+            require('./auth/googleAuthPlugin')
         ], err => {
             if (err) {
                 reject(err);
