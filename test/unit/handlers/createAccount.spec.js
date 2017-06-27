@@ -6,12 +6,12 @@ const accountsDao = require('../../../src/db/accountsDao');
 describe('Create Account Handler', function() {
     const options = {
         url: '/accounts/',
-        method: 'POST'
+        method: 'POST',
     };
     let server;
 
     beforeEach(async function() {
-        sinon.stub(accountsDao, "create")
+        sinon.stub(accountsDao, 'create');
         server = await serverFactory.create();
     });
 
@@ -33,7 +33,7 @@ describe('Create Account Handler', function() {
         assert.equal(response.statusCode, 201);
 
         sinon.assert.calledTwice(accountsDao.create);
-        assert.notEqual(accountsDao.create.firstCall.args[0].id, accountsDao.create.secondCall.args[0].id)
+        assert.notEqual(accountsDao.create.firstCall.args[0].id, accountsDao.create.secondCall.args[0].id);
     });
 
     function makeRequest(payload) {
@@ -41,6 +41,6 @@ describe('Create Account Handler', function() {
             server.inject(Object.assign({}, options, {payload: payload}), function(response) {
                 resolve(response);
             });
-        })
+        });
     }
 });

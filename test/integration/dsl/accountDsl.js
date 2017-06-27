@@ -31,4 +31,4 @@ module.exports = class AccountsDsl {
             throw new Error('Unknown account: ' + alias);
         }
     }
-}
+};

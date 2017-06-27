@@ -8,7 +8,7 @@ class Server {
 
     post(url, payload) {
         return new Promise((resolve, reject) => {
-                this.hapiServer.inject({url: url, method: 'POST', payload: payload}, function(response) {
+            this.hapiServer.inject({url: url, method: 'POST', payload: payload}, function(response) {
                 resolve(response);
             });
         });
@@ -18,7 +18,7 @@ class Server {
         return new Promise((resolve, reject) => {
             this.hapiServer.inject({url: url, method: 'GET'}, function(response) {
                 resolve(response);
-            })
+            });
         });
     }
 
