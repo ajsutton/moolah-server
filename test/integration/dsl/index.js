@@ -1,22 +1,34 @@
 const serverFactory = require('../../../src/server');
 const AccountsDsl = require('./accountDsl');
+const idGenerator = require('../../../src/utils/idGenerator');
 
 class Server {
     constructor(hapiServer) {
         this.hapiServer = hapiServer;
+        this.profile = null;
     }
 
     post(url, payload) {
         return new Promise((resolve, reject) => {
-            this.hapiServer.inject({url: url, method: 'POST', payload: payload}, function(response) {
-                resolve(response);
-            });
+            this.hapiServer.inject({
+                    url: url,
+                    method: 'POST',
+                    payload: payload,
+                    credentials: this.profile,
+                },
+                function(response) {
+                    resolve(response);
+                });
         });
     }
 
     get(url) {
         return new Promise((resolve, reject) => {
-            this.hapiServer.inject({url: url, method: 'GET'}, function(response) {
+            this.hapiServer.inject({
+                url: url,
+                method: 'GET',
+                credentials: this.profile,
+            }, function(response) {
                 resolve(response);
             });
         });
@@ -31,6 +43,14 @@ class Dsl {
     constructor(server) {
         this.server = server;
         this.accounts = new AccountsDsl(server);
+    }
+
+    login(args = {}) {
+        this.server.profile = Object.assign({
+            userId: idGenerator(),
+            givenName: 'Jane',
+            familyName: 'Doe',
+        }, args);
     }
 
     tearDown() {

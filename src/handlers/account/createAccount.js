@@ -5,12 +5,14 @@ const idGenerator = require('../../utils/idGenerator');
 const session = require('../../auth/session');
 
 module.exports = {
+    auth: 'session',
     handler: {
         async: async function(request, reply) {
             while (true) {
                 try {
                     const account = Object.assign({id: idGenerator()}, request.payload);
-                    await accountsDao.create(session.getUserId(request), account);
+                    const userId = session.getUserId(request);
+                    await accountsDao.create(userId, account);
                     reply(account).code(201).header('Location', `/accounts/${encodeURIComponent(account.id)}/`);
                     return;
                 } catch (error) {

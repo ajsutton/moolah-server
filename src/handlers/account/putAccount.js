@@ -2,16 +2,19 @@ const Joi = require('joi');
 const types = require('../types');
 const accountsDao = require('../../db/accountsDao');
 const Boom = require('boom');
+const session = require('../../auth/session');
 
 module.exports = {
+    auth: 'session',
     handler: {
         async: async function(request, reply) {
-            const account = await accountsDao.account(request.params.id);
+            const userId = session.getUserId(request);
+            const account = await accountsDao.account(userId, request.params.id);
             if (account === undefined) {
                 reply(Boom.notFound('Account not found'));
             } else {
                 const modifiedAccount = Object.assign(account, request.payload);
-                accountsDao.store(modifiedAccount);
+                accountsDao.store(userId, modifiedAccount);
                 reply(modifiedAccount);
             }
         },

@@ -2,7 +2,6 @@ const serverFactory = require('../../../src/server');
 const assert = require('chai').assert;
 const sinon = require('sinon');
 const accountsDao = require('../../../src/db/accountsDao');
-const session = require('../../../src/auth/session');
 const idGenerator = require('../../../src/utils/idGenerator');
 
 describe('Create Account Handler', function() {
@@ -16,19 +15,11 @@ describe('Create Account Handler', function() {
     beforeEach(async function() {
         userId = idGenerator();
         sinon.stub(accountsDao, 'create');
-        sinon.stub(session, 'getUser');
         server = await serverFactory.create();
-        session.getUser.returns({
-            userId,
-            givenName: 'Jane',
-            familyName: 'Doe',
-            exp: 15000,
-        });
     });
 
     afterEach(function() {
         accountsDao.create.restore();
-        session.getUser.restore();
         return server.stop();
     });
 
@@ -58,7 +49,12 @@ describe('Create Account Handler', function() {
 
     function makeRequest(payload) {
         return new Promise((resolve, reject) => {
-            server.inject(Object.assign({}, options, {payload: payload}), function(response) {
+            server.inject(Object.assign({}, options, {
+                payload: payload,
+                credentials: {
+                    userId
+                },
+            }), function(response) {
                 resolve(response);
             });
         });

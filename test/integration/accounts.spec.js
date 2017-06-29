@@ -11,7 +11,8 @@ describe('Account Management', function() {
         return dsl.tearDown();
     });
 
-    it('should list accounts', false, async function() {
+    it('should list accounts', async function() {
+        dsl.login();
         await dsl.accounts.createAccount('account1', {name: 'Account 1', type: 'cc', balance: 0});
         await dsl.accounts.createAccount('account2', {name: 'Account 2', type: 'bank', balance: 5000});
 

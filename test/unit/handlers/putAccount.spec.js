@@ -1,44 +1,57 @@
-const proxyquire = require('proxyquire');
 const sinon = require('sinon');
-const Boom = require('boom');
-
-let accounts = [];
-
-const mockDao = {
-    account: sinon.stub(),
-    store: sinon.spy(),
-};
-const putAccount = proxyquire('../../../src/handlers/account/putAccount', {
-    '../../db/accountsDao': mockDao,
-}).handler.async;
+const assert = require('chai').assert;
+const serverFactory = require('../../../src/server');
+const accountsDao = require('../../../src/db/accountsDao');
+const idGenerator = require('../../../src/utils/idGenerator');
 
 describe('Put Account Handler', function() {
-    let reply;
+    let server;
+    let userId;
 
-    beforeEach(function() {
-        reply = sinon.spy();
+    beforeEach(async function() {
+        userId = idGenerator();
+        sinon.stub(accountsDao, 'account');
+        sinon.spy(accountsDao, 'store');
+        sinon.stub(accountsDao, 'create');
+        server = await serverFactory.create();
+    });
+
+    afterEach(function() {
+        accountsDao.account.restore();
+        accountsDao.store.restore();
+        accountsDao.create.restore();
+        return server.stop();
     });
 
     it('should return 404 when account does not exist', async function() {
-        const request = {
-            params: {id: 123},
-        };
-        await putAccount(request, reply);
-        sinon.assert.calledOnce(reply);
-        sinon.assert.calledWithMatch(reply, {isBoom: true, output: Boom.notFound('Account not found').output});
+        accountsDao.account.returns(undefined);
+        const response = await makeRequest(123, {name: 'Updated account', type: 'cc', balance: 20000});
+        assert.equal(response.statusCode, 404);
     });
 
     it('should update existing account', async function() {
-        const request = {
-            params: {id: 123},
-            payload: {name: 'Updated account', type: 'cc', balance: 20000},
-        };
         const modifiedAccount = {id: 123, name: 'Updated account', type: 'cc', balance: 20000};
-        mockDao.account = mockDao.account.withArgs(123).returns({id: 123, name: 'Original account', type: 'bank', balance: 45000});
-        await putAccount(request, reply);
-        sinon.assert.calledOnce(mockDao.store);
-        sinon.assert.calledWith(mockDao.store, modifiedAccount);
-        sinon.assert.calledOnce(reply);
-        sinon.assert.calledWithMatch(reply, modifiedAccount);
+        accountsDao.account.withArgs(userId, '123').returns({id: 123, name: 'Original account', type: 'bank', balance: 45000});
+        const response = await makeRequest(123, {name: 'Updated account', type: 'cc', balance: 20000});
+        assert.equal(response.statusCode, 200);
+        sinon.assert.calledOnce(accountsDao.store);
+        sinon.assert.calledWith(accountsDao.store, userId, modifiedAccount);
     });
+
+
+    function makeRequest(accountId, payload) {
+        return new Promise((resolve, reject) => {
+            server.inject({
+                    url: `/accounts/${encodeURIComponent(accountId)}/`,
+                    method: 'PUT',
+                    payload: payload,
+                    credentials: {
+                        userId,
+                    },
+                },
+                function(response) {
+                    resolve(response);
+                });
+        });
+    }
 });

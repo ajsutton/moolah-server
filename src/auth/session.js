@@ -1,6 +1,6 @@
 module.exports = {
     getUser(req) {
-        if (!req.auth.isAuthenticated) {
+        if (!req.auth || !req.auth.isAuthenticated) {
             return null;
         } else {
             return req.auth.credentials;

@@ -53,8 +53,8 @@ exports.create = function() {
                 server.register([
                     require('./plugins/router')
                 ], err2 => {
-                    if (err) {
-                        reject(err);
+                    if (err2) {
+                        reject(err2);
                     } else {
                         resolve(server);
                     }
