@@ -46,7 +46,7 @@ exports.create = function() {
                                 userId: profile.id,
                             };
                             request.cookieAuth.set(session);
-                            reply.redirect('/auth/');
+                            reply.redirect('/');
                         },
                     },
                 });
