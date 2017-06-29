@@ -1,25 +1,25 @@
 const db = require('./database');
 
 module.exports = {
-    accounts() {
-        return db.query('SELECT id, name, type, balance FROM account');
+    accounts(userId) {
+        return db.query('SELECT id, name, type, balance FROM account WHERE user_id = ?', userId);
     },
 
-    async account(id) {
-        const results = await db.query('SELECT id, name, type, balance FROM account WHERE id = ?', id);
+    async account(userId, id) {
+        const results = await db.query('SELECT id, name, type, balance FROM account WHERE user_id = ? AND id = ?', userId, id);
         return results[0];
     },
 
-    create(account) {
+    create(userId, account) {
         return db.query(
-            'INSERT INTO account (id, name, type, balance) VALUES (?, ?, ?, ?)',
-            account.id, account.name, account.type, account.balance,
+            'INSERT INTO account (user_id, id, name, type, balance) VALUES (?, ?, ?, ?, ?)',
+            userId, account.id, account.name, account.type, account.balance,
         );
     },
 
-    store(account) {
+    store(userId, account) {
         return db.query(
-            'UPDATE account SET name = ?, type = ?, balance = ? WHERE id = ?',
-            account.name, account.type, account.balance, account.id);
+            'UPDATE account SET name = ?, type = ?, balance = ? WHERE user_id = ? AND id = ?',
+            account.name, account.type, account.balance, userId, account.id);
     },
 };

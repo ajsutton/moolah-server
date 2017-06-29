@@ -1,5 +1,4 @@
-const JWT = require('jsonwebtoken');
-const authConfig = require('../../auth/authConfig');
+const session = require('../../auth/session');
 
 function unauthenticated(req, reply) {
     reply({state: 'UNAUTHENTICATED', loginUrl: req.server.generate_google_oauth2_url()});
@@ -7,15 +6,10 @@ function unauthenticated(req, reply) {
 
 module.exports = {
     handler: function(req, reply) {
-        try {
-            console.log(req.state.token);
-            const token = JWT.verify(req.state.token, authConfig.jwtSecret);
-            if (token.userId) {
-                reply({state: 'AUTHENTICATED', userId: token.userId, profile: {givenName: token.givenName, familyName: token.familyName}});
-            } else {
-                unauthenticated(req, reply);
-            }
-        } catch (error) {
+        const user = session.getUser();
+        if (user !== null) {
+            reply({state: 'AUTHENTICATED', userId: token.userId, profile: {givenName: token.givenName, familyName: token.familyName}});
+        } else {
             unauthenticated(req, reply);
         }
     },

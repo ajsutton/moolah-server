@@ -5,6 +5,8 @@ const pool = mysql.createPool(Object.assign({
     connectionLimit: 50,
 }, config));
 
+
+
 module.exports = {
     query(sql, ...args) {
         return new Promise((resolve, reject) => {
@@ -12,13 +14,20 @@ module.exports = {
                 if (err) {
                     reject(err);
                 } else {
-                    connection.query(sql, args, (error, results) => {
-                        connection.release();
+                    const query = (sql, args, nextAction) => connection.query(sql, args, (error, results) => {
                         if (error) {
+                            connection.release();
                             reject(error);
                         } else {
-                            resolve(results);
+                            nextAction(results);
                         }
+                    });
+
+                    query('SET sql_mode = "STRICT_ALL_TABLES";', [], () => {
+                        query(sql, args, (results) => {
+                            connection.release();
+                            resolve(results);
+                        });
                     });
                 }
             });

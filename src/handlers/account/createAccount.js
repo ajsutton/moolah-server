@@ -2,6 +2,7 @@ const Joi = require('joi');
 const types = require('../types');
 const accountsDao = require('../../db/accountsDao');
 const idGenerator = require('../../utils/idGenerator');
+const session = require('../../auth/session');
 
 module.exports = {
     handler: {
@@ -9,7 +10,7 @@ module.exports = {
             while (true) {
                 try {
                     const account = Object.assign({id: idGenerator()}, request.payload);
-                    await accountsDao.create(account);
+                    await accountsDao.create(session.getUserId(request), account);
                     reply(account).code(201).header('Location', `/accounts/${encodeURIComponent(account.id)}/`);
                     return;
                 } catch (error) {

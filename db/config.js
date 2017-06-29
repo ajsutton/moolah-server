@@ -8,11 +8,13 @@ let userConfig = {};
 try {
     userConfig = require('./config.mine.js');
 } catch (err) {
-    console.debug("No config.js.mine file, continuing.", err);
+    console.debug('No config.js.mine file, continuing.', err);
 }
 // Configuration for MySQL (username, password, etc.)
 exports.mysql = Object.assign({
     user: 'root',
     password: '',
-    database: 'moolah'
+    database: 'moolah',
+    charset: 'utf8',
+    timezone: 'Z',
 }, userConfig);

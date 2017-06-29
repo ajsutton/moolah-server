@@ -2,6 +2,8 @@ const serverFactory = require('../../../src/server');
 const assert = require('chai').assert;
 const sinon = require('sinon');
 const accountsDao = require('../../../src/db/accountsDao');
+const session = require('../../../src/auth/session');
+const idGenerator = require('../../../src/utils/idGenerator');
 
 describe('Create Account Handler', function() {
     const options = {
@@ -9,14 +11,24 @@ describe('Create Account Handler', function() {
         method: 'POST',
     };
     let server;
+    let userId;
 
     beforeEach(async function() {
+        userId = idGenerator();
         sinon.stub(accountsDao, 'create');
+        sinon.stub(session, 'getUser');
         server = await serverFactory.create();
+        session.getUser.returns({
+            userId,
+            givenName: 'Jane',
+            familyName: 'Doe',
+            exp: 15000,
+        });
     });
 
     afterEach(function() {
         accountsDao.create.restore();
+        session.getUser.restore();
         return server.stop();
     });
 
@@ -33,7 +45,15 @@ describe('Create Account Handler', function() {
         assert.equal(response.statusCode, 201);
 
         sinon.assert.calledTwice(accountsDao.create);
-        assert.notEqual(accountsDao.create.firstCall.args[0].id, accountsDao.create.secondCall.args[0].id);
+        assert.notEqual(accountsDao.create.firstCall.args[1].id, accountsDao.create.secondCall.args[1].id);
+    });
+
+    it('should specify user id when creating account', async function() {
+        accountsDao.create.resolves(null);
+        const response = await makeRequest({name: 'Account 1', type: 'cc', balance: 40000});
+        assert.equal(response.statusCode, 201);
+
+        assert.equal(accountsDao.create.firstCall.args[0], userId);
     });
 
     function makeRequest(payload) {
