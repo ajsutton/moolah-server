@@ -1,17 +1,9 @@
-const JWT = require('jsonwebtoken');
-const authConfig = require('./authConfig');
-
 module.exports = {
     getUser(req) {
-        try {
-            const token = JWT.verify(req.state.token, authConfig.jwtSecret);
-            if (token.userId) {
-                return token;
-            }
+        if (!req.auth.isAuthenticated) {
             return null;
-        } catch (error) {
-            console.debug("JWT error: " + error.message);
-            return null;
+        } else {
+            return req.auth.credentials;
         }
     },
 

@@ -1,16 +1,19 @@
-const session = require('../../auth/session');
 
 function unauthenticated(req, reply) {
     reply({state: 'UNAUTHENTICATED', loginUrl: req.server.generate_google_oauth2_url()});
 }
 
 module.exports = {
+    auth: {
+        strategy: 'session',
+        mode: 'try',
+    },
     handler: function(req, reply) {
-        const user = session.getUser();
-        if (user !== null) {
-            reply({state: 'AUTHENTICATED', userId: token.userId, profile: {givenName: token.givenName, familyName: token.familyName}});
+        if (!req.auth.isAuthenticated) {
+            reply({state: 'UNAUTHENTICATED', loginUrl: '/googleauth'});
         } else {
-            unauthenticated(req, reply);
+            const token = req.auth.credentials;
+            reply({state: 'AUTHENTICATED', userId: token.userId, profile: {givenName: token.givenName, familyName: token.familyName}});
         }
     },
 };
