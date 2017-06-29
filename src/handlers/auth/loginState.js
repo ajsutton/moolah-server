@@ -5,7 +5,7 @@ module.exports = {
     },
     handler: function(req, reply) {
         if (!req.auth.isAuthenticated) {
-            reply({loggedIn: false, loginUrl: '/googleauth'});
+            reply({loggedIn: false});
         } else {
             const token = req.auth.credentials;
             reply({loggedIn: true, userId: token.userId, profile: {givenName: token.givenName, familyName: token.familyName}});
