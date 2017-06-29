@@ -34,6 +34,19 @@ class Server {
         });
     }
 
+    put(url, payload) {
+        return new Promise((resolve, reject) => {
+            this.hapiServer.inject({
+                url,
+                method: 'PUT',
+                payload,
+                credentials: this.profile,
+            }, function(response) {
+                resolve(response);
+            })
+        });
+    }
+
     stop() {
         this.hapiServer.stop();
     }
@@ -51,6 +64,10 @@ class Dsl {
             givenName: 'Jane',
             familyName: 'Doe',
         }, args);
+    }
+
+    logout() {
+        this.server.profile = undefined;
     }
 
     tearDown() {
