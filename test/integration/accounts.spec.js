@@ -26,6 +26,19 @@ describe('Account Management', function() {
         await dsl.accounts.verifyAccounts({accounts: ['account1']});
     });
 
+    it('should get a specific account', async function() {
+        dsl.login();
+        await dsl.accounts.createAccount({alias: 'account1', name: 'Account 1', type: 'cc', balance: 0});
+        await dsl.accounts.verifyAccount({alias: 'account1'});
+    });
+
+    it('should require a login to get an account', async function() {
+        dsl.login();
+        await dsl.accounts.createAccount({alias: 'account1', name: 'Account 1', type: 'cc', balance: 0});
+        dsl.logout();
+        await dsl.accounts.verifyAccount({alias: 'account1', statusCode: 401});
+    });
+
     it('should require login to list accounts', async function() {
         await dsl.accounts.verifyAccounts({statusCode: 401});
     });

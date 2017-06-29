@@ -26,6 +26,19 @@ module.exports = class AccountsDsl {
         }
     }
 
+    async verifyAccount(args) {
+        const options = Object.assign({
+            alias: null,
+            statusCode: 200,
+        }, args);
+        const account = this.accountsByAlias.get(options.alias);
+        const response = await this.server.get(`/accounts/${encodeURIComponent(account.id)}/`);
+        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        if (response.statusCode == 200) {
+            assert.deepEqual(JSON.parse(response.payload), account, 'Did not match account');
+        }
+    }
+
     async verifyAccounts(args) {
         const options = Object.assign({
             statusCode: 200,

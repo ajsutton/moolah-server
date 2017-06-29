@@ -14,4 +14,9 @@ module.exports = [
         path: '/accounts/{id}/',
         config: require('../handlers/account/putAccount'),
     },
+    {
+        method: 'GET',
+        path: '/accounts/{id}/',
+        config: require('../handlers/account/getAccount'),
+    },
 ];
