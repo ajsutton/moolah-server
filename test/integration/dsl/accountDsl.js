@@ -57,7 +57,7 @@ module.exports = class AccountsDsl {
         const response = await this.server.put('/accounts/' + encodeURIComponent(currentAccount.id) + '/', modifiedAccount);
         assert.equal(response.statusCode, options.statusCode);
         if (options.statusCode == 200) {
-            this.accountsByAlias.put(options.alias, modifiedAccount);
+            this.accountsByAlias.set(options.alias, modifiedAccount);
         }
     }
 
