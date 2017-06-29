@@ -1,30 +1,46 @@
-// const proxyquire = require('proxyquire').noPreserveCache();
-// const sinon = require('sinon');
-//
-// let accounts = [];
-//
-// const getAccounts = proxyquire('../../../src/handlers/account/getAccounts', {
-//     '../../db/accountsDao': {
-//         async accounts() {
-//             return accounts;
-//         }
-//     }
-// }).handler.async;
-//
-// describe('Get Accounts Handler', function() {
-//     let request;
-//     let reply;
-//
-//     beforeEach(function() {
-//         request = sinon.spy();
-//         reply = sinon.spy();
-//     });
-//
-//     it('should reply with accounts', async function() {
-//         accounts = [{id: "1", name: 'Account 1'}, {id: 2, name: 'Account 2'}];
-//         await getAccounts(request, reply);
-//
-//         sinon.assert.calledOnce(reply);
-//         sinon.assert.calledWith(reply, {accounts: accounts});
-//     });
-// });
+const sinon = require('sinon');
+const assert = require('chai').assert;
+const serverFactory = require('../../../src/server');
+const accountsDao = require('../../../src/db/accountsDao');
+const idGenerator = require('../../../src/utils/idGenerator');
+
+const getAccounts = require('../../../src/handlers/account/getAccounts').handler.async;
+
+describe('Get Accounts Handler', function() {
+    let server;
+    let userId;
+
+    beforeEach(async function() {
+        userId = idGenerator();
+        sinon.stub(accountsDao, 'accounts');
+        server = await serverFactory.create();
+    });
+
+    afterEach(function() {
+        accountsDao.accounts.restore();
+        return server.stop();
+    });
+
+    it('should reply with accounts', async function() {
+        const accounts = [{id: "1", name: 'Account 1'}, {id: 2, name: 'Account 2'}];
+        accountsDao.accounts.withArgs(userId).returns(accounts);
+        const response = await makeRequest();
+        assert.deepEqual(response.payload, JSON.stringify({accounts: accounts}));
+    });
+
+
+    function makeRequest() {
+        return new Promise((resolve, reject) => {
+            server.inject({
+                    url: `/accounts/`,
+                    method: 'GET',
+                    credentials: {
+                        userId,
+                    },
+                },
+                function(response) {
+                    resolve(response);
+                });
+        });
+    }
+});
