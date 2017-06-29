@@ -9,9 +9,11 @@ module.exports = {
         }
         const profile = request.auth.credentials.profile;
         const session = {
+            userId: `google-${profile.id}`,
+            name: profile.displayName,
             givenName: profile.name.given_name,
             familyName: profile.name.family_name,
-            userId: profile.id,
+            picture: profile.raw.picture,
         };
         request.cookieAuth.set(session);
         reply.redirect('/');

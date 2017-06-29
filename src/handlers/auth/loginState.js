@@ -7,8 +7,8 @@ module.exports = {
         if (!req.auth.isAuthenticated) {
             reply({loggedIn: false});
         } else {
-            const token = req.auth.credentials;
-            reply({loggedIn: true, userId: token.userId, profile: {givenName: token.givenName, familyName: token.familyName}});
+            const profile = req.auth.credentials;
+            reply({loggedIn: true, profile});
         }
     },
 };
