@@ -1,22 +1,22 @@
 module.exports = [
     {
         method: 'GET',
-        path: '/accounts/',
+        path: '/api/accounts/',
         config: require('../handlers/account/getAccounts'),
     },
     {
         method: 'POST',
-        path: '/accounts/',
+        path: '/api/accounts/',
         config: require('../handlers/account/createAccount'),
     },
     {
         method: 'PUT',
-        path: '/accounts/{id}/',
+        path: '/api/accounts/{id}/',
         config: require('../handlers/account/putAccount'),
     },
     {
         method: 'GET',
-        path: '/accounts/{id}/',
+        path: '/api/accounts/{id}/',
         config: require('../handlers/account/getAccount'),
     },
 ];

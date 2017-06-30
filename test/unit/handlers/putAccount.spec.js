@@ -42,7 +42,7 @@ describe('Put Account Handler', function() {
     function makeRequest(accountId, payload) {
         return new Promise((resolve, reject) => {
             server.inject({
-                    url: `/accounts/${encodeURIComponent(accountId)}/`,
+                    url: `/api/accounts/${encodeURIComponent(accountId)}/`,
                     method: 'PUT',
                     payload: payload,
                     credentials: {

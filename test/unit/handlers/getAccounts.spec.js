@@ -32,7 +32,7 @@ describe('Get Accounts Handler', function() {
     function makeRequest() {
         return new Promise((resolve, reject) => {
             server.inject({
-                    url: `/accounts/`,
+                    url: `/api/accounts/`,
                     method: 'GET',
                     credentials: {
                         userId,

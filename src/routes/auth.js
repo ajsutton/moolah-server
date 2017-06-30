@@ -1,17 +1,17 @@
 module.exports = [
     {
         method: 'GET',
-        path: '/auth/',
+        path: '/api/auth/',
         config: require('../handlers/auth/loginState'),
     },
     {
         method: 'DELETE',
-        path: '/auth/',
+        path: '/api/auth/',
         config: require('../handlers/auth/logout'),
     },
     {
         method: '*',
-        path: '/googleauth',
+        path: '/api/googleauth',
         config: require('../handlers/auth/googleLogin'),
     },
 ];

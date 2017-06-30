@@ -15,7 +15,7 @@ module.exports = class AccountsDsl {
             statusCode: 201,
         }, args);
 
-        const response = await this.server.post('/accounts/', {
+        const response = await this.server.post('/api/accounts/', {
             name: options.name,
             type: options.type,
             balance: options.balance
@@ -32,7 +32,7 @@ module.exports = class AccountsDsl {
             statusCode: 200,
         }, args);
         const account = this.accountsByAlias.get(options.alias);
-        const response = await this.server.get(`/accounts/${encodeURIComponent(account.id)}/`);
+        const response = await this.server.get(`/api/accounts/${encodeURIComponent(account.id)}/`);
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
         if (response.statusCode == 200) {
             assert.deepEqual(JSON.parse(response.payload), account, 'Did not match account');
@@ -44,7 +44,7 @@ module.exports = class AccountsDsl {
             statusCode: 200,
             accounts: undefined,
         }, args);
-        const response = await this.server.get('/accounts/');
+        const response = await this.server.get('/api/accounts/');
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
         if (options.accounts !== undefined) {
             const actualAccounts = JSON.parse(response.payload).accounts;
@@ -67,7 +67,7 @@ module.exports = class AccountsDsl {
             type: options.type,
             balance: options.balance
         });
-        const response = await this.server.put('/accounts/' + encodeURIComponent(currentAccount.id) + '/', modifiedAccount);
+        const response = await this.server.put('/api/accounts/' + encodeURIComponent(currentAccount.id) + '/', modifiedAccount);
         assert.equal(response.statusCode, options.statusCode);
         if (options.statusCode == 200) {
             this.accountsByAlias.set(options.alias, modifiedAccount);

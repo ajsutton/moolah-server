@@ -6,7 +6,7 @@ const idGenerator = require('../../../src/utils/idGenerator');
 
 describe('Create Account Handler', function() {
     const options = {
-        url: '/accounts/',
+        url: '/api/accounts/',
         method: 'POST',
     };
     let server;
