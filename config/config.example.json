@@ -1,0 +1,13 @@
+{
+  "authentication": {
+    "baseUrl": "http://localhost:8080/api",
+    "googleClientId": "clientId",
+    "clientSecret": "clientSecret",
+    "secureToken": "very-long-random-token"
+  },
+  "database": {
+    "user": "root",
+    "password": "",
+    "database": "moolah"
+  }
+}
