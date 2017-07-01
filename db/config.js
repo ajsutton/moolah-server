@@ -17,6 +17,4 @@ exports.mysql = Object.assign({
     database: 'moolah',
     charset: 'utf8',
     timezone: 'Z',
-    supportBigNumbers: true,
-    bigNumberStrings: true,
 }, userConfig);
