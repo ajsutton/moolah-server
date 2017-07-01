@@ -31,18 +31,17 @@ module.exports = {
             }
         },
     },
-    // validate: {
-    //     params: {
-    //         id: types.id.required(),
-    //     },
-    //     payload: Joi.object({
-    //         id: types.id,
-    //         name: types.name.required(),
-    //         type: types.accountType.required(),
-    //         balance: types.money.required(),
-    //     }),
-    //     headers: Joi.object({
-    //         'Content-Type': types.jsonContentType,
-    //     }).unknown(true),
-    // },
+    validate: {
+        payload: Joi.object({
+            type: types.transactionType.required(),
+            date: types.date.required(),
+            accountId: types.id.required(),
+            amount: types.money.required(),
+            payee: types.payee,
+            notes: types.notes,
+        }),
+        headers: Joi.object({
+            'Content-Type': types.jsonContentType,
+        }).unknown(true),
+    },
 };

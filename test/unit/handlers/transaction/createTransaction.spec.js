@@ -27,9 +27,9 @@ describe('Create Transaction Handler', function() {
 
     it('should return bad request when account does not exist', async function() {
         accountDao.account.resolves(undefined);
-        const response = await makeRequest(123, {
+        const response = await makeRequest({
             type: 'expense',
-            date: new Date(Date.UTC(2017, 6, 4)),
+            date: '2017-06-04',
             accountId: 'any-account',
             amount: 5000,
         });
@@ -46,13 +46,42 @@ describe('Create Transaction Handler', function() {
             amount: 5000,
         };
         const account = {id: 123, name: 'Updated account', type: 'cc', balance: 20000};
-        accountDao.account.withArgs(userId, 'any-account').returns(account);
+        accountDao.account.withArgs(userId, 'any-account').resolves(account);
         const response = await makeRequest(transaction);
         assert.equal(response.statusCode, 201);
         const newTransactionId = transactionDao.create.firstCall.args[1].id;
         assert.equal(response.headers.location, `/transactions/${encodeURIComponent(newTransactionId)}/`);
         sinon.assert.calledOnce(transactionDao.create);
-        sinon.assert.calledWithMatch(transactionDao.create, userId, transaction);
+        sinon.assert.calledWithMatch(transactionDao.create, userId, {
+            type: 'expense',
+            date: new Date(Date.UTC(2017, 5, 4)),
+            accountId: 'any-account',
+            amount: 5000,
+        });
+    });
+
+    it('should create transaction with all fields', async function() {
+        const transaction = {
+            type: 'expense',
+            date: '2017-06-04',
+            accountId: 'any-account',
+            amount: 5000,
+            payee: 'Ralph',
+            notes: 'Some notes',
+        };
+        const account = {id: 123, name: 'Updated account', type: 'cc', balance: 20000};
+        accountDao.account.withArgs(userId, 'any-account').resolves(account);
+        const response = await makeRequest(transaction);
+        assert.equal(response.statusCode, 201);
+        const newTransactionId = transactionDao.create.firstCall.args[1].id;
+        assert.equal(response.headers.location, `/transactions/${encodeURIComponent(newTransactionId)}/`);
+        sinon.assert.calledOnce(transactionDao.create);
+        sinon.assert.calledWithMatch(transactionDao.create, userId, {
+            type: 'expense',
+            date: new Date(Date.UTC(2017, 5, 4)),
+            accountId: 'any-account',
+            amount: 5000,
+        });
     });
 
     it('should generate a new id when database reports a conflict', async function() {
@@ -63,7 +92,7 @@ describe('Create Transaction Handler', function() {
             amount: 5000,
         };
         const account = {id: 123, name: 'Updated account', type: 'cc', balance: 20000};
-        accountDao.account.withArgs(userId, 'any-account').returns(account);
+        accountDao.account.withArgs(userId, 'any-account').resolves(account);
         transactionDao.create.onCall(0).rejects({code: 'ER_DUP_ENTRY'});
         transactionDao.create.onCall(1).resolves(null);
         const response = await makeRequest(transaction);
@@ -72,6 +101,29 @@ describe('Create Transaction Handler', function() {
 
         sinon.assert.calledTwice(transactionDao.create);
         assert.notEqual(transactionDao.create.firstCall.args[1].id, transactionDao.create.secondCall.args[1].id);
+    });
+
+    ['type', 'date', 'accountId', 'amount'].forEach(requiredField => {
+        const validTransaction = {
+            type: 'expense',
+            date: '2017-06-04',
+            accountId: 'any-account',
+            amount: 5000,
+        };
+        it(`should require ${requiredField}`, async function() {
+            const account = {id: 123, name: 'Updated account', type: 'cc', balance: 20000};
+            accountDao.account.withArgs(userId, 'any-account').resolves(account);
+            const transaction = Object.assign({}, validTransaction);
+            transaction[requiredField] = undefined;
+            const response = await makeRequest(transaction);
+            assert.equal(response.statusCode, 400);
+            assert.deepEqual(JSON.parse(response.payload), {
+                statusCode: 400,
+                error: 'Bad Request',
+                message: `child "${requiredField}" fails because ["${requiredField}" is required]`,
+                validation: {source: 'payload', keys: [requiredField]},
+            });
+        });
     });
 
     function makeRequest(payload) {

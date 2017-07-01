@@ -6,7 +6,6 @@ const idGenerator = require('../../src/utils/idGenerator');
 
 describe('Transaction DAO', function() {
     let userId;
-    const account1 = {id: 'account1', name: 'Account1', type: 'bank', balance: 0};
 
     beforeEach(async function() {
         userId = idGenerator();
@@ -21,7 +20,7 @@ describe('Transaction DAO', function() {
             id: 'transaction1',
             type: 'expense',
             date: new Date(Date.UTC(2017, 6, 4)),
-            accountId: account1.id,
+            accountId: 'account-id',
             payee: 'Con the Fruiterer',
             amount: 5000,
             notes: 'Bought some apple. No worries!',
@@ -36,7 +35,7 @@ describe('Transaction DAO', function() {
             id: 'transaction1',
             type: 'expense',
             date: new Date(Date.UTC(2017, 6, 4)),
-            accountId: account1.id,
+            accountId: 'account-id',
             payee: null,
             amount: 5000,
             notes: null,
