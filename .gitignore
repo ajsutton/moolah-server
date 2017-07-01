@@ -9,3 +9,4 @@ test/unit/coverage
 db/config.mine.js
 /config/config.json
 /config/googleAuthConfig.json
+/tmp.*
