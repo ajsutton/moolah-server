@@ -1,7 +1,7 @@
 const Boom = require('boom');
 
-module.exports = {
-    badRequest(message) {
-        return JSON.stringify(Boom.badRequest(message).output.payload);
-    },
-};
+function makeBoomOutput(boomMethod) {
+    return message => JSON.stringify(Boom[boomMethod](message).output.payload);
+}
+
+Object.keys(Boom).forEach(key => exports[key] = makeBoomOutput(key));
