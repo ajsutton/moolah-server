@@ -54,4 +54,22 @@ describe('Transaction DAO', function() {
         const transaction = await transactionDao.get('someone else', minimalTransaction.id);
         assert.isUndefined(transaction);
     });
+
+    it('should calculate account balance', async function() {
+        await transactionDao.create(userId, transaction({amount: 5000}));
+        await transactionDao.create(userId, transaction({amount: -2000}));
+        await transactionDao.create(userId, transaction({amount: 300}));
+
+        const balance = await transactionDao.balance(userId, minimalTransaction.accountId);
+        assert.equal(balance, 3300);
+    });
+
+    it('should return 0 balance when there are no transactions', async function() {
+        const balance = await transactionDao.balance(userId, minimalTransaction.accountId);
+        assert.equal(balance, 0);
+    });
+
+    function transaction(args) {
+        return Object.assign({}, minimalTransaction, {id: idGenerator()}, args);
+    }
 });

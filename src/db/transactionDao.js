@@ -28,4 +28,12 @@ module.exports = {
             userId, transactionId);
         return asTransaction(results[0]);
     },
+
+    async balance(userId, accountId) {
+        const results = await db.query(
+            'SELECT SUM(amount) as balance FROM transaction WHERE user_id = ? AND account_id = ?',
+            userId, accountId
+        );
+        return results[0].balance || 0;
+    }
 };
