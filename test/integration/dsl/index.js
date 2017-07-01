@@ -1,5 +1,6 @@
 const serverFactory = require('../../../src/server');
 const AccountsDsl = require('./accountDsl');
+const TransactionsDsl = require('./transactionDsl');
 const idGenerator = require('../../../src/utils/idGenerator');
 const dbTestUtils = require('../../utils/dbTestUtils');
 
@@ -56,7 +57,9 @@ class Server {
 class Dsl {
     constructor(server) {
         this.server = server;
-        this.accounts = new AccountsDsl(server);
+        const accountsByAlias = new Map();
+        this.accounts = new AccountsDsl(server, accountsByAlias);
+        this.transactions = new TransactionsDsl(server, accountsByAlias);
         this.userIds = [];
     }
 

@@ -1,9 +1,9 @@
 const assert = require('chai').assert;
 
 module.exports = class AccountsDsl {
-    constructor(server) {
+    constructor(server, accountsByAlias) {
         this.server = server;
-        this.accountsByAlias = new Map();
+        this.accountsByAlias = accountsByAlias;
     }
 
     async createAccount(args) {
@@ -34,7 +34,7 @@ module.exports = class AccountsDsl {
         const account = this.accountsByAlias.get(options.alias);
         const response = await this.server.get(`/api/accounts/${encodeURIComponent(account.id)}/`);
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
-        if (response.statusCode == 200) {
+        if (response.statusCode === 200) {
             assert.deepEqual(JSON.parse(response.payload), account, 'Did not match account');
         }
     }

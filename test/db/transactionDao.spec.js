@@ -11,9 +11,7 @@ describe('Transaction DAO', function() {
         type: 'expense',
         date: new Date(Date.UTC(2017, 6, 4)),
         accountId: 'account-id',
-        payee: null,
         amount: 5000,
-        notes: null,
     };
 
     beforeEach(async function() {
