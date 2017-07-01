@@ -1,8 +1,8 @@
-const serverFactory = require('../../../src/server');
+const serverFactory = require('../../../../src/server');
 const assert = require('chai').assert;
 const sinon = require('sinon');
-const accountDao = require('../../../src/db/accountDao');
-const idGenerator = require('../../../src/utils/idGenerator');
+const accountDao = require('../../../../src/db/accountDao');
+const idGenerator = require('../../../../src/utils/idGenerator');
 
 describe('Create Account Handler', function() {
     const options = {

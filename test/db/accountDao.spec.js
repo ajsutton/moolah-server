@@ -1,4 +1,5 @@
 const db = require('../../src/db/database');
+const dbTestUtils = require('../utils/dbTestUtils');
 const accountDao = require('../../src/db/accountDao');
 const assert = require('chai').assert;
 const idGenerator = require('../../src/utils/idGenerator');
@@ -8,6 +9,10 @@ describe('Account DAO', function() {
 
     beforeEach(async function() {
         userId = idGenerator();
+    });
+
+    afterEach(async function() {
+        await dbTestUtils.deleteData(userId);
     });
 
     it('should round trip accounts', async function() {

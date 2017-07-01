@@ -1,10 +1,10 @@
 const sinon = require('sinon');
 const assert = require('chai').assert;
-const serverFactory = require('../../../src/server');
-const accountDao = require('../../../src/db/accountDao');
-const idGenerator = require('../../../src/utils/idGenerator');
+const serverFactory = require('../../../../src/server');
+const accountDao = require('../../../../src/db/accountDao');
+const idGenerator = require('../../../../src/utils/idGenerator');
 
-const getAccounts = require('../../../src/handlers/account/getAccounts').handler.async;
+const getAccounts = require('../../../../src/handlers/account/getAccounts').handler.async;
 
 describe('Get Accounts Handler', function() {
     let server;

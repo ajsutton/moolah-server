@@ -1,6 +1,7 @@
 const serverFactory = require('../../../src/server');
 const AccountsDsl = require('./accountDsl');
 const idGenerator = require('../../../src/utils/idGenerator');
+const dbTestUtils = require('../../utils/dbTestUtils');
 
 class Server {
     constructor(hapiServer) {
@@ -56,11 +57,14 @@ class Dsl {
     constructor(server) {
         this.server = server;
         this.accounts = new AccountsDsl(server);
+        this.userIds = [];
     }
 
     login(args = {}) {
+        const userId = idGenerator();
+        this.userIds.push(userId);
         this.server.profile = Object.assign({
-            userId: idGenerator(),
+            userId: userId,
             givenName: 'Jane',
             familyName: 'Doe',
         }, args);
@@ -70,8 +74,9 @@ class Dsl {
         this.server.profile = undefined;
     }
 
-    tearDown() {
+    async tearDown() {
         this.server.stop();
+        await Promise.all(this.userIds.map(userId => dbTestUtils.deleteData(userId)));
     }
 
     static async create() {

@@ -1,8 +1,8 @@
 const sinon = require('sinon');
 const assert = require('chai').assert;
-const serverFactory = require('../../../src/server');
-const accountDao = require('../../../src/db/accountDao');
-const idGenerator = require('../../../src/utils/idGenerator');
+const serverFactory = require('../../../../src/server');
+const accountDao = require('../../../../src/db/accountDao');
+const idGenerator = require('../../../../src/utils/idGenerator');
 
 describe('Put Account Handler', function() {
     let server;
@@ -24,7 +24,7 @@ describe('Put Account Handler', function() {
     });
 
     it('should return 404 when account does not exist', async function() {
-        accountDao.account.returns(undefined);
+        accountDao.account.resolves(undefined);
         const response = await makeRequest(123, {name: 'Updated account', type: 'cc', balance: 20000});
         assert.equal(response.statusCode, 404);
     });
