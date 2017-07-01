@@ -10,6 +10,7 @@ module.exports = {
                     args: [{
                         response: '*',
                         log: '*',
+                        error: '*',
                     }],
                 },
                 {
