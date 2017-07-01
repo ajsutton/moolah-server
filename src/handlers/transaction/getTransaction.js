@@ -1,4 +1,3 @@
-const Joi = require('joi');
 const types = require('../types');
 const transactionDao = require('../../db/transactionDao');
 const Boom = require('boom');
