@@ -40,6 +40,7 @@ module.exports = {
             name: types.name.required(),
             type: types.accountType.required(),
             balance: types.money.required(),
+            position: types.position,
         }),
         headers: Joi.object({
             'Content-Type': types.jsonContentType,

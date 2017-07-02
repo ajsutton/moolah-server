@@ -13,13 +13,15 @@ module.exports = class AccountsDsl {
             name: 'Unnamed Account',
             type: 'bank',
             balance: 0,
+            position: 0,
             statusCode: 201,
         }, args);
 
         const response = await this.server.post('/api/accounts/', {
             name: options.name,
             type: options.type,
-            balance: options.balance
+            balance: options.balance,
+            position: options.position,
         });
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
         if (options.alias) {
@@ -31,9 +33,10 @@ module.exports = class AccountsDsl {
         const options = Object.assign({
             alias: null,
             balance: undefined,
+            position: undefined,
             statusCode: 200,
         }, args);
-        const account = dslUtils.override(this.accountsByAlias.get(options.alias), {balance: options.balance});
+        const account = dslUtils.override(this.accountsByAlias.get(options.alias), {balance: options.balance, position: options.position});
         const response = await this.server.get(`/api/accounts/${encodeURIComponent(account.id)}/`);
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
         if (response.statusCode === 200) {
