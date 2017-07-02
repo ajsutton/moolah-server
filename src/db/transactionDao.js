@@ -22,8 +22,7 @@ module.exports = {
     store(userId, transaction) {
         const toStore = { type: transaction.type, date: transaction.date, account_id: transaction.accountId, payee: transaction.payee, amount: transaction.amount, notes: transaction.notes};
         return db.query('UPDATE transaction SET ? WHERE user_id = ? and id = ?', 
-        toStore,
-        userId, transaction.id);
+        toStore, userId, transaction.id);
     },
 
     async get(userId, transactionId) {

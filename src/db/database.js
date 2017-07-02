@@ -3,6 +3,7 @@ const config = require('../../db/config').mysql;
 
 const pool = mysql.createPool(Object.assign({
     connectionLimit: 50,
+    dateStrings: true,
 }, config));
 
 

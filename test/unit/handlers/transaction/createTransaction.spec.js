@@ -53,8 +53,9 @@ describe('Create Transaction Handler', function() {
         assert.equal(response.headers.location, `/transactions/${encodeURIComponent(newTransactionId)}/`);
         sinon.assert.calledOnce(transactionDao.create);
         sinon.assert.calledWithMatch(transactionDao.create, userId, {
+            id: newTransactionId,
             type: 'expense',
-            date: new Date(Date.UTC(2017, 5, 4)),
+            date: '2017-06-04',
             accountId: 'any-account',
             amount: 5000,
         });
@@ -78,7 +79,7 @@ describe('Create Transaction Handler', function() {
         sinon.assert.calledOnce(transactionDao.create);
         sinon.assert.calledWithMatch(transactionDao.create, userId, {
             type: 'expense',
-            date: new Date(Date.UTC(2017, 5, 4)),
+            date: '2017-06-04',
             accountId: 'any-account',
             amount: 5000,
         });

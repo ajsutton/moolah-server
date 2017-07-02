@@ -29,7 +29,8 @@ module.exports = class TransactionsDsl {
         });
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code: ' + response.payload);
         if (options.alias) {
-            this.transactionsByAlias.set(options.alias, JSON.parse(response.payload));
+            const transaction = JSON.parse(response.payload);
+            this.transactionsByAlias.set(options.alias, transaction);
         }
     }
 

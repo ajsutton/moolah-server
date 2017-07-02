@@ -9,7 +9,7 @@ describe('Transaction DAO', function() {
     const minimalTransaction = {
         id: 'transaction1',
         type: 'expense',
-        date: new Date(Date.UTC(2017, 6, 4)),
+        date: '2017-06-04',
         accountId: 'account-id',
         amount: 5000,
     };
@@ -26,7 +26,7 @@ describe('Transaction DAO', function() {
         const transaction = {
             id: 'transaction1',
             type: 'expense',
-            date: new Date(Date.UTC(2017, 6, 4)),
+            date: '2017-06-04',
             accountId: 'account-id',
             payee: 'Con the Fruiterer',
             amount: 5000,
@@ -55,10 +55,18 @@ describe('Transaction DAO', function() {
         assert.isUndefined(transaction);
     });
 
+    it('should update transaction', async function() {
+        const originalTransaction = makeTransaction({payee: 'Jenny', notes: 'Some notes'});
+        await transactionDao.create(userId, originalTransaction);
+        const modifiedTransaction = makeTransaction({id: originalTransaction.id, date: '2011-02-03', accountId: 'foo', payee: 'Lucy', notes: 'New notes', amount: 12345, type: 'income'});
+        await transactionDao.store(userId, modifiedTransaction);
+        assert.deepEqual(await transactionDao.get(userId, originalTransaction.id), modifiedTransaction);
+    });
+
     it('should calculate account balance', async function() {
-        await transactionDao.create(userId, transaction({amount: 5000}));
-        await transactionDao.create(userId, transaction({amount: -2000}));
-        await transactionDao.create(userId, transaction({amount: 300}));
+        await transactionDao.create(userId, makeTransaction({amount: 5000}));
+        await transactionDao.create(userId, makeTransaction({amount: -2000}));
+        await transactionDao.create(userId, makeTransaction({amount: 300}));
 
         const balance = await transactionDao.balance(userId, minimalTransaction.accountId);
         assert.equal(balance, 3300);
@@ -69,7 +77,7 @@ describe('Transaction DAO', function() {
         assert.equal(balance, 0);
     });
 
-    function transaction(args) {
-        return Object.assign({}, minimalTransaction, {id: idGenerator()}, args);
+    function makeTransaction(args, template = minimalTransaction) {
+        return Object.assign({}, template, {id: idGenerator()}, args);
     }
 });
