@@ -33,25 +33,25 @@ describe('Transaction DAO', function() {
             notes: 'Bought some apple. No worries!',
         };
         await transactionDao.create(userId, transaction);
-        const result = await transactionDao.get(userId, transaction.id);
+        const result = await transactionDao.transaction(userId, transaction.id);
         assert.deepEqual(result, transaction);
     });
 
     it('should create transaction with minimal required values', async function() {
 
         await transactionDao.create(userId, minimalTransaction);
-        const result = await transactionDao.get(userId, minimalTransaction.id);
+        const result = await transactionDao.transaction(userId, minimalTransaction.id);
         assert.deepEqual(result, minimalTransaction);
     });
 
     it('should return undefined when transaction does not exist', async function() {
-        const transaction = await transactionDao.get(userId, 'nope');
+        const transaction = await transactionDao.transaction(userId, 'nope');
         assert.isUndefined(transaction);
     });
 
     it('should return undefined when transaction belongs to a different user', async function() {
         await transactionDao.create(userId, minimalTransaction);
-        const transaction = await transactionDao.get('someone else', minimalTransaction.id);
+        const transaction = await transactionDao.transaction('someone else', minimalTransaction.id);
         assert.isUndefined(transaction);
     });
 
@@ -60,7 +60,7 @@ describe('Transaction DAO', function() {
         await transactionDao.create(userId, originalTransaction);
         const modifiedTransaction = makeTransaction({id: originalTransaction.id, date: '2011-02-03', accountId: 'foo', payee: 'Lucy', notes: 'New notes', amount: 12345, type: 'income'});
         await transactionDao.store(userId, modifiedTransaction);
-        assert.deepEqual(await transactionDao.get(userId, originalTransaction.id), modifiedTransaction);
+        assert.deepEqual(await transactionDao.transaction(userId, originalTransaction.id), modifiedTransaction);
     });
 
     it('should calculate account balance', async function() {

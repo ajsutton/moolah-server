@@ -14,14 +14,14 @@ describe('Create Transaction Handler', function() {
         userId = idGenerator();
         sinon.stub(accountDao, 'account');
         sinon.stub(transactionDao, 'create');
-        sinon.stub(transactionDao, 'get');
+        sinon.stub(transactionDao, 'transaction');
         server = await serverFactory.create();
     });
 
     afterEach(function() {
         accountDao.account.restore();
         transactionDao.create.restore();
-        transactionDao.get.restore();
+        transactionDao.transaction.restore();
         return server.stop();
     });
 

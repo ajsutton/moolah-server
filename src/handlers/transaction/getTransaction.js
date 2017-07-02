@@ -9,7 +9,7 @@ module.exports = {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
             const transactionId = request.params.id;
-            const transaction = await transactionDao.get(userId, transactionId);
+            const transaction = await transactionDao.transaction(userId, transactionId);
             if (transaction === undefined) {
                 reply(Boom.notFound('Transaction not found'));
             } else {

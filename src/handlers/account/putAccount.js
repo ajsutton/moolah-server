@@ -16,7 +16,7 @@ module.exports = {
             } else {
                 const modifiedAccount = Object.assign(account, request.payload);
                 await accountDao.store(userId, modifiedAccount);
-                const openingBalance = await transactionDao.get(userId, account.id);
+                const openingBalance = await transactionDao.transaction(userId, account.id);
                 openingBalance.amount = modifiedAccount.balance;
                 await transactionDao.store(userId, openingBalance);
                 reply(modifiedAccount);

@@ -14,7 +14,7 @@ describe('Put Account Handler', function() {
         sinon.stub(accountDao, 'account');
         sinon.spy(accountDao, 'store');
         sinon.stub(accountDao, 'create');
-        sinon.stub(transactionDao, 'get');
+        sinon.stub(transactionDao, 'transaction');
         sinon.stub(transactionDao, 'store');
         server = await serverFactory.create();
     });
@@ -23,7 +23,7 @@ describe('Put Account Handler', function() {
         accountDao.account.restore();
         accountDao.store.restore();
         accountDao.create.restore();
-        transactionDao.get.restore();
+        transactionDao.transaction.restore();
         transactionDao.store.restore();
         return server.stop();
     });
@@ -38,7 +38,7 @@ describe('Put Account Handler', function() {
         const modifiedAccount = {id: 123, name: 'Updated account', type: 'cc', balance: 20000};
         accountDao.account.withArgs(userId, '123').resolves({id: 123, name: 'Original account', type: 'bank', balance: 45000});
         const openingBalanceTransaction = {id: 123, amount: 45000};
-        transactionDao.get.withArgs(userId, 123).resolves(openingBalanceTransaction);
+        transactionDao.transaction.withArgs(userId, 123).resolves(openingBalanceTransaction);
         const response = await makeRequest(123, {name: 'Updated account', type: 'cc', balance: 20000});
         assert.equal(response.statusCode, 200);
         sinon.assert.calledOnce(accountDao.store);
