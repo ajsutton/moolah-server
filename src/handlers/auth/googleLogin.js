@@ -1,3 +1,4 @@
+const Boom = require('boom');
 module.exports = {
     auth: {
         strategy: 'google',
