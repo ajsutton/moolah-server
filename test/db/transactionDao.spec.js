@@ -63,6 +63,23 @@ describe('Transaction DAO', function() {
         assert.deepEqual(await transactionDao.transaction(userId, originalTransaction.id), modifiedTransaction);
     });
 
+    it('should get list of transactions in account ordered by date descending', async function() {
+        const transaction1 = makeTransaction({amount: 5000, date: '2017-06-01'});
+        const transaction2 = makeTransaction({amount: -2000, date: '2017-05-30'});
+        const transaction3 = makeTransaction({amount: 300, date: '2017-06-03'});
+        await transactionDao.create(userId, transaction1);
+        await transactionDao.create(userId, transaction2);
+        await transactionDao.create(userId, transaction3);
+
+        const transactions = await transactionDao.transactions(userId, minimalTransaction.accountId);
+        assert.deepEqual(transactions, [transaction3, transaction1, transaction2]);
+    });
+
+    it('should return empty list when no transactions in account', async function() {
+        const transactions = await transactionDao.transactions(userId, minimalTransaction.accountId);
+        assert.deepEqual(transactions, []);
+    });
+
     it('should calculate account balance', async function() {
         await transactionDao.create(userId, makeTransaction({amount: 5000}));
         await transactionDao.create(userId, makeTransaction({amount: -2000}));
