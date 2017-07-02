@@ -1,17 +1,14 @@
 # Moolah Server
 > Back-end server for Moolah money tracker
 
-## Database Setup
-Configure the database by creating a db/config.mine.js file.
+This project provides a st of APIs that clients can use. A [web based UI](https://github.com/bretthenderson/moolah) is under development as a separate project.
 
-``` javascript
-module.exports = {
-    user: 'root',
-    password: '',
-    database: 'moolah'
-}
-```
-The database will need to exist, then run <code>npm run migrate-db</code> to install or update the required tables.
+## Configuration
+Moolah requires a MySQL database for storage and a Google OAuth 2.0 client ID for authentication. These are configured in config/config.json  An example config file showing the syntax is provided in config/config.example.json.
+
+The database schema will need to exist, then run <code>npm run migrate-db</code> to install or update the required tables.
+
+See the [Google documentation](https://developers.google.com/identity/protocols/OpenIDConnect) to create an OAuth 2.0 client ID.
 
 ## Build Setup
 
@@ -31,6 +28,6 @@ npm start
 # run unit tests
 npm run test
 
-# continuously run unit tests
+# continuously run tests
 npm run test-watch
 ```

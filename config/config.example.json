@@ -1,6 +1,6 @@
 {
   "authentication": {
-    "baseUrl": "http://localhost:8080/api",
+    "baseUrl": "http://localhost:8080",
     "googleClientId": "clientId",
     "clientSecret": "clientSecret",
     "secureToken": "very-long-random-token"
