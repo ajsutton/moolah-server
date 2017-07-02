@@ -46,4 +46,17 @@ module.exports = class TransactionsDsl {
             assert.deepEqual(JSON.parse(response.payload), transaction, 'Did not match transaction');
         }
     }
+
+    async verifyTransactions(args) {
+        const options = Object.assign({
+            account: undefined,
+            expectTransactions: [],
+            statusCode: 200,
+        }, args);
+        const account = this.accountsByAlias.get(options.account);
+        const expectedTransactions = options.expectTransactions.map(alias => this.transactionsByAlias.get(alias));
+        const response = await this.server.get(`/api/transactions/?account=${encodeURIComponent(account.id)}`);
+        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        assert.deepEqual(JSON.parse(response.payload), expectedTransactions);
+    }
 };
