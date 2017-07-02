@@ -58,8 +58,9 @@ class Dsl {
     constructor(server) {
         this.server = server;
         const accountsByAlias = new Map();
-        this.accounts = new AccountsDsl(server, accountsByAlias);
-        this.transactions = new TransactionsDsl(server, accountsByAlias);
+        const transactionsByAlias = new Map();
+        this.accounts = new AccountsDsl(server, accountsByAlias, transactionsByAlias);
+        this.transactions = new TransactionsDsl(server, accountsByAlias, transactionsByAlias);
         this.userIds = [];
     }
 

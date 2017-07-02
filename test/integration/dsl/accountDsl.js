@@ -2,14 +2,15 @@ const assert = require('chai').assert;
 const dslUtils = require('./dslUtils');
 
 module.exports = class AccountsDsl {
-    constructor(server, accountsByAlias) {
+    constructor(server, accountsByAlias, transactionsByAlias) {
         this.server = server;
         this.accountsByAlias = accountsByAlias;
+        this.transactionsByAlias = transactionsByAlias;
     }
 
     async createAccount(args) {
         const options = Object.assign({
-            alias: 'account',
+            alias: undefined,
             name: 'Unnamed Account',
             type: 'bank',
             balance: 0,
@@ -24,8 +25,14 @@ module.exports = class AccountsDsl {
             position: options.position,
         });
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        const account = JSON.parse(response.payload);
+
         if (options.alias) {
-            this.accountsByAlias.set(options.alias, JSON.parse(response.payload));
+            this.accountsByAlias.set(options.alias, account);
+
+            const transactionResponse = await this.server.get(`/api/transactions/${encodeURIComponent(account.id)}/`);
+            assert.equal(transactionResponse.statusCode, 200, 'Incorrect transaction status code');
+            this.transactionsByAlias.set(options.alias, JSON.parse(transactionResponse.payload));
         }
     }
 

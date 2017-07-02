@@ -1,10 +1,10 @@
 const assert = require('chai').assert;
 
 module.exports = class TransactionsDsl {
-    constructor(server, accountsByAlias) {
+    constructor(server, accountsByAlias, transactionsByAlias) {
         this.server = server;
         this.accountsByAlias = accountsByAlias;
-        this.transactionsByAlias = new Map();
+        this.transactionsByAlias = transactionsByAlias;
     }
 
     async createTransaction(args) {
@@ -56,6 +56,7 @@ module.exports = class TransactionsDsl {
         const account = this.accountsByAlias.get(options.account);
         const expectedTransactions = options.expectTransactions.map(alias => this.transactionsByAlias.get(alias));
         const response = await this.server.get(`/api/transactions/?account=${encodeURIComponent(account.id)}`);
+        console.log(response.payload);
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
         assert.deepEqual(JSON.parse(response.payload), expectedTransactions);
     }

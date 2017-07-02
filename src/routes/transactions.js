@@ -6,6 +6,11 @@ module.exports = [
     },
     {
         method: 'GET',
+        path: '/api/transactions/',
+        config: require('../handlers/transaction/getTransactions'),
+    },
+    {
+        method: 'GET',
         path: '/api/transactions/{id}/',
         config: require('../handlers/transaction/getTransaction'),
     },
