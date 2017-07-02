@@ -1,4 +1,5 @@
 const assert = require('chai').assert;
+const dslUtils = require('./dslUtils');
 
 module.exports = class AccountsDsl {
     constructor(server, accountsByAlias) {
@@ -29,9 +30,10 @@ module.exports = class AccountsDsl {
     async verifyAccount(args) {
         const options = Object.assign({
             alias: null,
+            balance: undefined,
             statusCode: 200,
         }, args);
-        const account = this.accountsByAlias.get(options.alias);
+        const account = dslUtils.override(this.accountsByAlias.get(options.alias), {balance: options.balance});
         const response = await this.server.get(`/api/accounts/${encodeURIComponent(account.id)}/`);
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
         if (response.statusCode === 200) {
