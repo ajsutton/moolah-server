@@ -10,7 +10,7 @@
     "test": "npm run migrate-db && npm run unit-test && npm run dao-test && npm run integration-test",
     "test-watch": "NODE_ENV=dev mocha --watch 'test/**/*.spec.js'",
     "unit-test": "NODE_ENV=dev mocha 'test/unit/**/*.spec.js'",
-    "unit-test-watch": "NODE_ENV=test mocha --watch 'test/unit/**/*.spec.js'",
+    "unit-test-watch": "NODE_ENV=dev mocha --watch 'test/unit/**/*.spec.js'",
     "dao-test": "NODE_ENV=dev mocha 'test/db/**/*.spec.js'",
     "db-test-watch": "NODE_ENV=dev mocha --watch 'test/db/**/*.spec.js'",
     "integration-test": "NODE_ENV=dev mocha 'test/integration/**/*.spec.js'",

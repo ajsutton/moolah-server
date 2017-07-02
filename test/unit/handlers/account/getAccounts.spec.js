@@ -2,6 +2,7 @@ const sinon = require('sinon');
 const assert = require('chai').assert;
 const serverFactory = require('../../../../src/server');
 const accountDao = require('../../../../src/db/accountDao');
+const transactionDao = require('../../../../src/db/transactionDao');
 const idGenerator = require('../../../../src/utils/idGenerator');
 
 const getAccounts = require('../../../../src/handlers/account/getAccounts').handler.async;

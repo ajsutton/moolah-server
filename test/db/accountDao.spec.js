@@ -16,15 +16,15 @@ describe('Account DAO', function() {
     });
 
     it('should round trip accounts', async function() {
-        const account = {id: '1', name: 'Account 1', type: 'bank', balance: 40000};
+        const account = {id: '1', name: 'Account 1', type: 'bank'};
         await accountDao.create(userId, account);
         const accounts = await accountDao.accounts(userId);
         assert.deepEqual(accounts, [account]);
     });
 
     it('should update existing accounts', async function() {
-        const account = {id: '1', name: 'Account 1', type: 'bank', balance: 40000};
-        const modifiedAccount = {id: '1', name: 'New Account Name', type: 'cc', balance: 50000};
+        const account = {id: '1', name: 'Account 1', type: 'bank'};
+        const modifiedAccount = {id: '1', name: 'New Account Name', type: 'cc'};
         await accountDao.create(userId, account);
         await accountDao.store(userId, modifiedAccount);
         const accounts = await accountDao.accounts(userId);
@@ -32,7 +32,7 @@ describe('Account DAO', function() {
     });
 
     it('should get an account by id', async function() {
-        const account = {id: '1', name: 'Account 1', type: 'bank', balance: 40000};
+        const account = {id: '1', name: 'Account 1', type: 'bank'};
         await accountDao.create(userId, account);
         const result = await accountDao.account(userId, account.id);
         assert.deepEqual(result, account);
@@ -44,7 +44,7 @@ describe('Account DAO', function() {
     });
 
     it('should not return accounts that belong to a different user', async function() {
-        const account = {id: '1', name: 'Account 1', type: 'bank', balance: 40000};
+        const account = {id: '1', name: 'Account 1', type: 'bank'};
         await accountDao.create(userId, account);
         assert.deepEqual(await accountDao.accounts('someOtherUser'), []);
         assert.isUndefined(await accountDao.account('someOtherUser', account.id));

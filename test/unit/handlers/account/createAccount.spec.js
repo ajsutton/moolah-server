@@ -2,6 +2,7 @@ const serverFactory = require('../../../../src/server');
 const assert = require('chai').assert;
 const sinon = require('sinon');
 const accountDao = require('../../../../src/db/accountDao');
+const transactionDao = require('../../../../src/db/transactionDao');
 const idGenerator = require('../../../../src/utils/idGenerator');
 
 describe('Create Account Handler', function() {
@@ -15,11 +16,13 @@ describe('Create Account Handler', function() {
     beforeEach(async function() {
         userId = idGenerator();
         sinon.stub(accountDao, 'create');
+        sinon.stub(transactionDao, 'create');
         server = await serverFactory.create();
     });
 
     afterEach(function() {
         accountDao.create.restore();
+        transactionDao.create.restore();
         return server.stop();
     });
 
@@ -27,6 +30,16 @@ describe('Create Account Handler', function() {
         accountDao.create.resolves(null);
         const response = await makeRequest({name: 'Account 1', type: 'cc', balance: 40000});
         assert.equal(response.statusCode, 201);
+        const accountId = JSON.parse(response.payload).id;
+
+        sinon.assert.calledWithMatch(accountDao.create, userId, {id: accountId, name: 'Account 1', type: 'cc'});
+        assert.isUndefined(accountDao.create.firstCall.args[1].balance);
+        sinon.assert.calledWithMatch(transactionDao.create, userId, {
+            id: accountId, 
+            accountId: accountId, 
+            amount: 40000, 
+            type: 'openingBalance',
+        });
     });
 
     it('should generate a new id when database reports a conflict', async function() {
@@ -36,6 +49,7 @@ describe('Create Account Handler', function() {
         assert.equal(response.statusCode, 201);
 
         sinon.assert.calledTwice(accountDao.create);
+        sinon.assert.calledOnce(transactionDao.create);
         assert.notEqual(accountDao.create.firstCall.args[1].id, accountDao.create.secondCall.args[1].id);
     });
 

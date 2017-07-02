@@ -1,6 +1,7 @@
 const Joi = require('joi');
 const types = require('../types');
 const accountDao = require('../../db/accountDao');
+const transactionDao = require('../../db/transactionDao');
 const idGenerator = require('../../utils/idGenerator');
 const session = require('../../auth/session');
 
@@ -12,7 +13,18 @@ module.exports = {
                 try {
                     const account = Object.assign({id: idGenerator()}, request.payload);
                     const userId = session.getUserId(request);
-                    await accountDao.create(userId, account);
+                    await accountDao.create(userId, {
+                        id: account.id,
+                        name: account.name,
+                        type: account.type,
+                    });
+                    await transactionDao.create(userId, {
+                        id: account.id,
+                        accountId: account.id,
+                        type: 'openingBalance',
+                        date: new Date(),
+                        amount: account.balance
+                    });
                     reply(account).code(201).header('Location', `/accounts/${encodeURIComponent(account.id)}/`);
                     return;
                 } catch (error) {
