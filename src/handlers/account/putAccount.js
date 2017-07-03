@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const types = require('../types');
+const db = require('../../db/database');
 const accountDao = require('../../db/accountDao');
 const transactionDao = require('../../db/transactionDao');
 const Boom = require('boom');
@@ -15,10 +16,12 @@ module.exports = {
                 reply(Boom.notFound('Account not found'));
             } else {
                 const modifiedAccount = Object.assign(account, request.payload);
-                await accountDao.store(userId, modifiedAccount);
-                const openingBalance = await transactionDao.transaction(userId, account.id);
-                openingBalance.amount = modifiedAccount.balance;
-                await transactionDao.store(userId, openingBalance);
+                await db.withTransaction(async tx => {
+                    await accountDao.store(userId, modifiedAccount, tx);
+                    const openingBalance = await transactionDao.transaction(userId, account.id);
+                    openingBalance.amount = modifiedAccount.balance;
+                    await transactionDao.store(userId, openingBalance, tx);
+                });
                 reply(modifiedAccount);
             }
         },

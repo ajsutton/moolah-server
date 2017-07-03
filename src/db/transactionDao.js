@@ -14,14 +14,14 @@ function asTransaction(object) {
 }
 
 module.exports = {
-    create(userId, transaction) {
-        return db.query('INSERT INTO transaction (user_id, id, type, date, account_id, payee, amount, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    create(userId, transaction, database = db) {
+        return database.query('INSERT INTO transaction (user_id, id, type, date, account_id, payee, amount, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             userId, transaction.id, transaction.type, transaction.date, transaction.accountId, transaction.payee, transaction.amount, transaction.notes);
     },
 
-    store(userId, transaction) {
+    store(userId, transaction, database = db) {
         const toStore = {type: transaction.type, date: transaction.date, account_id: transaction.accountId, payee: transaction.payee, amount: transaction.amount, notes: transaction.notes};
-        return db.query('UPDATE transaction SET ? WHERE user_id = ? and id = ?',
+        return database.query('UPDATE transaction SET ? WHERE user_id = ? and id = ?',
             toStore, userId, transaction.id);
     },
 

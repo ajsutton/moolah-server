@@ -10,15 +10,14 @@ module.exports = {
         return results[0];
     },
 
-    create(userId, account) {
-        return db.query(
+    create(userId, account, database = db) {
+        return database.query(
             'INSERT INTO account (user_id, id, name, type, position) VALUES (?, ?, ?, ?, ?)',
-            userId, account.id, account.name, account.type, account.position || DEFAULT_POSITION,
-        );
+            userId, account.id, account.name, account.type, account.position || DEFAULT_POSITION);
     },
 
-    store(userId, account) {
-        return db.query(
+    store(userId, account, database = db) {
+        return database.query(
             'UPDATE account SET name = ?, type = ?, position = ? WHERE user_id = ? AND id = ?',
             account.name, account.type, account.position || DEFAULT_POSITION, userId, account.id);
     },
