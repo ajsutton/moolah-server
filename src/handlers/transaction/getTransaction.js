@@ -1,5 +1,5 @@
 const types = require('../types');
-const transactionDao = require('../../db/transactionDao');
+const db = require('../../db/database');
 const Boom = require('boom');
 const session = require('../../auth/session');
 
@@ -8,8 +8,9 @@ module.exports = {
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
+            const daos = db.daos(request);
             const transactionId = request.params.id;
-            const transaction = await transactionDao.transaction(userId, transactionId);
+            const transaction = await daos.transactions.transaction(userId, transactionId);
             if (transaction === undefined) {
                 reply(Boom.notFound('Transaction not found'));
             } else {

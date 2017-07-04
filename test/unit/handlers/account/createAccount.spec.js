@@ -1,9 +1,8 @@
 const serverFactory = require('../../../../src/server');
 const assert = require('chai').assert;
 const sinon = require('sinon');
-const accountDao = require('../../../../src/db/accountDao');
-const transactionDao = require('../../../../src/db/transactionDao');
 const idGenerator = require('../../../../src/utils/idGenerator');
+const dbTestUtils = require('../../../utils/dbTestUtils');
 
 describe('Create Account Handler', function() {
     const options = {
@@ -12,17 +11,20 @@ describe('Create Account Handler', function() {
     };
     let server;
     let userId;
+    let daos;
+    let accountDao;
+    let transactionDao;
 
     beforeEach(async function() {
         userId = idGenerator();
-        sinon.stub(accountDao, 'create');
-        sinon.stub(transactionDao, 'create');
+        daos = dbTestUtils.stubDaos();
+        accountDao = daos.accounts;
+        transactionDao = daos.transactions;
         server = await serverFactory.create();
     });
 
     afterEach(function() {
-        accountDao.create.restore();
-        transactionDao.create.restore();
+        dbTestUtils.restoreDaos();
         return server.stop();
     });
 
@@ -35,9 +37,9 @@ describe('Create Account Handler', function() {
         sinon.assert.calledWithMatch(accountDao.create, userId, {id: accountId, name: 'Account 1', type: 'cc'});
         assert.isUndefined(accountDao.create.firstCall.args[1].balance);
         sinon.assert.calledWithMatch(transactionDao.create, userId, {
-            id: accountId, 
-            accountId: accountId, 
-            amount: 40000, 
+            id: accountId,
+            accountId: accountId,
+            amount: 40000,
             type: 'openingBalance',
         });
     });
@@ -66,7 +68,7 @@ describe('Create Account Handler', function() {
             server.inject(Object.assign({}, options, {
                 payload: payload,
                 credentials: {
-                    userId
+                    userId,
                 },
             }), function(response) {
                 resolve(response);

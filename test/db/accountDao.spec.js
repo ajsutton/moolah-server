@@ -1,18 +1,24 @@
 const db = require('../../src/db/database');
 const dbTestUtils = require('../utils/dbTestUtils');
-const accountDao = require('../../src/db/accountDao');
+const AccountDao = require('../../src/db/accountDao');
 const assert = require('chai').assert;
 const idGenerator = require('../../src/utils/idGenerator');
 
 describe('Account DAO', function() {
+    let connection;
     let userId;
+    let accountDao;
+
 
     beforeEach(async function() {
         userId = idGenerator();
+        connection = dbTestUtils.createConnection();
+        accountDao = new AccountDao(dbTestUtils.queryFunction(connection));
     });
 
     afterEach(async function() {
         await dbTestUtils.deleteData(userId);
+        connection.destroy();
     });
 
     it('should round trip accounts', async function() {

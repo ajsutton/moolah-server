@@ -2,12 +2,13 @@ const sinon = require('sinon');
 const assert = require('chai').assert;
 const BoomOutput = require('../../../utils/boomOutput');
 const serverFactory = require('../../../../src/server');
-const transactionDao = require('../../../../src/db/transactionDao');
+const dbTestUtils = require('../../../utils/dbTestUtils');
 const idGenerator = require('../../../../src/utils/idGenerator');
 
-describe('Create Transaction Handler', function() {
+describe('Get Transaction Handler', function() {
     let server;
     let userId;
+    let daos;
     const transaction = {
         id: 'abc-id',
         type: 'expense',
@@ -18,24 +19,24 @@ describe('Create Transaction Handler', function() {
 
     beforeEach(async function() {
         userId = idGenerator();
-        sinon.stub(transactionDao, 'transaction');
+        daos = dbTestUtils.stubDaos();
         server = await serverFactory.create();
     });
 
     afterEach(function() {
-        transactionDao.transaction.restore();
+        dbTestUtils.restoreDaos();
         return server.stop();
     });
 
     it('should return not found when transaction does not exist', async function() {
-        transactionDao.transaction.withArgs(userId, transaction.id).resolves(undefined);
+        daos.transactions.transaction.withArgs(userId, transaction.id).resolves(undefined);
         const response = await makeRequest(transaction.id);
         assert.equal(response.statusCode, 404);
         assert.deepEqual(response.payload, BoomOutput.notFound('Transaction not found'));
     });
 
     it('should return the transaction when it exists', async function() {
-        transactionDao.transaction.withArgs(userId, transaction.id).resolves(transaction);
+        daos.transactions.transaction.withArgs(userId, transaction.id).resolves(transaction);
         const response = await makeRequest(transaction.id);
         assert.equal(response.statusCode, 200);
         assert.deepEqual(response.payload, JSON.stringify(transaction));

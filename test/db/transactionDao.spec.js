@@ -1,10 +1,12 @@
 const db = require('../../src/db/database');
 const dbTestUtils = require('../utils/dbTestUtils');
-const transactionDao = require('../../src/db/transactionDao');
+const TransactionDao = require('../../src/db/transactionDao');
 const assert = require('chai').assert;
 const idGenerator = require('../../src/utils/idGenerator');
 
 describe('Transaction DAO', function() {
+    let connection;
+    let transactionDao;
     let userId;
     const minimalTransaction = {
         id: 'transaction1',
@@ -16,10 +18,13 @@ describe('Transaction DAO', function() {
 
     beforeEach(async function() {
         userId = idGenerator();
+        connection = dbTestUtils.createConnection();
+        transactionDao = new TransactionDao(dbTestUtils.queryFunction(connection));
     });
 
     afterEach(async function() {
         await dbTestUtils.deleteData(userId);
+        connection.destroy();
     });
 
     it('should round trip a transaction', async function() {

@@ -17,4 +17,6 @@ exports.mysql = Object.assign({
     database: 'moolah',
     charset: 'utf8',
     timezone: 'Z',
+    host: 'localhost',
+    dateStrings: true,
 }, userConfig);

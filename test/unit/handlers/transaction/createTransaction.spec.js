@@ -2,31 +2,27 @@ const sinon = require('sinon');
 const assert = require('chai').assert;
 const BoomOutput = require('../../../utils/boomOutput');
 const serverFactory = require('../../../../src/server');
-const accountDao = require('../../../../src/db/accountDao');
-const transactionDao = require('../../../../src/db/transactionDao');
+const dbTestUtils = require('../../../utils/dbTestUtils');
 const idGenerator = require('../../../../src/utils/idGenerator');
 
 describe('Create Transaction Handler', function() {
     let server;
     let userId;
+    let daos;
 
     beforeEach(async function() {
         userId = idGenerator();
-        sinon.stub(accountDao, 'account');
-        sinon.stub(transactionDao, 'create');
-        sinon.stub(transactionDao, 'transaction');
+        daos = dbTestUtils.stubDaos();
         server = await serverFactory.create();
     });
 
     afterEach(function() {
-        accountDao.account.restore();
-        transactionDao.create.restore();
-        transactionDao.transaction.restore();
+        dbTestUtils.restoreDaos();
         return server.stop();
     });
 
     it('should return bad request when account does not exist', async function() {
-        accountDao.account.resolves(undefined);
+        daos.accounts.account.resolves(undefined);
         const response = await makeRequest({
             type: 'expense',
             date: '2017-06-04',
@@ -35,7 +31,7 @@ describe('Create Transaction Handler', function() {
         });
         assert.equal(response.statusCode, 400);
         assert.deepEqual(response.payload, BoomOutput.badRequest('Invalid account'));
-        sinon.assert.calledOnce(accountDao.account); // Double check we got that far.
+        sinon.assert.calledOnce(daos.accounts.account); // Double check we got that far.
     });
 
     it('should create transaction', async function() {
@@ -46,13 +42,13 @@ describe('Create Transaction Handler', function() {
             amount: 5000,
         };
         const account = {id: 123, name: 'Updated account', type: 'cc', balance: 20000};
-        accountDao.account.withArgs(userId, 'any-account').resolves(account);
+        daos.accounts.account.withArgs(userId, 'any-account').resolves(account);
         const response = await makeRequest(transaction);
         assert.equal(response.statusCode, 201);
-        const newTransactionId = transactionDao.create.firstCall.args[1].id;
+        const newTransactionId = daos.transactions.create.firstCall.args[1].id;
         assert.equal(response.headers.location, `/transactions/${encodeURIComponent(newTransactionId)}/`);
-        sinon.assert.calledOnce(transactionDao.create);
-        sinon.assert.calledWithMatch(transactionDao.create, userId, {
+        sinon.assert.calledOnce(daos.transactions.create);
+        sinon.assert.calledWithMatch(daos.transactions.create, userId, {
             id: newTransactionId,
             type: 'expense',
             date: '2017-06-04',
@@ -71,13 +67,13 @@ describe('Create Transaction Handler', function() {
             notes: 'Some notes',
         };
         const account = {id: 123, name: 'Updated account', type: 'cc', balance: 20000};
-        accountDao.account.withArgs(userId, 'any-account').resolves(account);
+        daos.accounts.account.withArgs(userId, 'any-account').resolves(account);
         const response = await makeRequest(transaction);
         assert.equal(response.statusCode, 201);
-        const newTransactionId = transactionDao.create.firstCall.args[1].id;
+        const newTransactionId = daos.transactions.create.firstCall.args[1].id;
         assert.equal(response.headers.location, `/transactions/${encodeURIComponent(newTransactionId)}/`);
-        sinon.assert.calledOnce(transactionDao.create);
-        sinon.assert.calledWithMatch(transactionDao.create, userId, {
+        sinon.assert.calledOnce(daos.transactions.create);
+        sinon.assert.calledWithMatch(daos.transactions.create, userId, {
             type: 'expense',
             date: '2017-06-04',
             accountId: 'any-account',
@@ -93,15 +89,15 @@ describe('Create Transaction Handler', function() {
             amount: 5000,
         };
         const account = {id: 123, name: 'Updated account', type: 'cc', balance: 20000};
-        accountDao.account.withArgs(userId, 'any-account').resolves(account);
-        transactionDao.create.onCall(0).rejects({code: 'ER_DUP_ENTRY'});
-        transactionDao.create.onCall(1).resolves(null);
+        daos.accounts.account.withArgs(userId, 'any-account').resolves(account);
+        daos.transactions.create.onCall(0).rejects({code: 'ER_DUP_ENTRY'});
+        daos.transactions.create.onCall(1).resolves(null);
         const response = await makeRequest(transaction);
         assert.equal(response.statusCode, 201);
 
 
-        sinon.assert.calledTwice(transactionDao.create);
-        assert.notEqual(transactionDao.create.firstCall.args[1].id, transactionDao.create.secondCall.args[1].id);
+        sinon.assert.calledTwice(daos.transactions.create);
+        assert.notEqual(daos.transactions.create.firstCall.args[1].id, daos.transactions.create.secondCall.args[1].id);
     });
 
     ['type', 'date', 'accountId', 'amount'].forEach(requiredField => {
@@ -113,7 +109,7 @@ describe('Create Transaction Handler', function() {
         };
         it(`should require ${requiredField}`, async function() {
             const account = {id: 123, name: 'Updated account', type: 'cc', balance: 20000};
-            accountDao.account.withArgs(userId, 'any-account').resolves(account);
+            daos.accounts.account.withArgs(userId, 'any-account').resolves(account);
             const transaction = Object.assign({}, validTransaction);
             transaction[requiredField] = undefined;
             const response = await makeRequest(transaction);

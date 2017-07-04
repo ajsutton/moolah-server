@@ -1,7 +1,6 @@
 const Joi = require('joi');
 const types = require('../types');
-const accountDao = require('../../db/accountDao');
-const transactionDao = require('../../db/transactionDao');
+const db = require('../../db/database');
 const idGenerator = require('../../utils/idGenerator');
 const Boom = require('boom');
 const session = require('../../auth/session');
@@ -11,15 +10,16 @@ module.exports = {
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
+            const daos = db.daos(request);
             const transactionData = request.payload;
-            const account = await accountDao.account(userId, transactionData.accountId);
+            const account = await daos.accounts.account(userId, transactionData.accountId);
             if (account === undefined) {
                 reply(Boom.badRequest('Invalid account'));
             } else {
                 while (true) {
                     try {
                         const transaction = Object.assign({id: idGenerator()}, request.payload);
-                        await transactionDao.create(userId, transaction);
+                        await daos.transactions.create(userId, transaction);
                         reply(transaction).code(201).header('Location', `/transactions/${encodeURIComponent(transaction.id)}/`);
                         return;
                     } catch (error) {

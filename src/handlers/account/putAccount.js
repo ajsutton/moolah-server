@@ -1,8 +1,6 @@
 const Joi = require('joi');
 const types = require('../types');
 const db = require('../../db/database');
-const accountDao = require('../../db/accountDao');
-const transactionDao = require('../../db/transactionDao');
 const Boom = require('boom');
 const session = require('../../auth/session');
 
@@ -11,19 +9,19 @@ module.exports = {
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
-            const account = await accountDao.account(userId, request.params.id);
-            if (account === undefined) {
-                reply(Boom.notFound('Account not found'));
-            } else {
-                const modifiedAccount = Object.assign(account, request.payload);
-                await db.withTransaction(async tx => {
-                    await accountDao.store(userId, modifiedAccount, tx);
-                    const openingBalance = await transactionDao.transaction(userId, account.id);
+            await db.withTransaction(request, async daos => {
+                const account = await daos.accounts.account(userId, request.params.id);
+                if (account === undefined) {
+                    reply(Boom.notFound('Account not found'));
+                } else {
+                    const modifiedAccount = Object.assign(account, request.payload);
+                    await daos.accounts.store(userId, modifiedAccount);
+                    const openingBalance = await daos.transactions.transaction(userId, account.id);
                     openingBalance.amount = modifiedAccount.balance;
-                    await transactionDao.store(userId, openingBalance, tx);
-                });
-                reply(modifiedAccount);
-            }
+                    await daos.transactions.store(userId, openingBalance);
+                    reply(modifiedAccount);
+                }
+            });
         },
     },
     validate: {

@@ -1,6 +1,5 @@
-const accountDao = require('../../db/accountDao');
-const transactionDao = require('../../db/transactionDao');
 const session = require('../../auth/session');
+const db = require('../../db/database');
 
 module.exports = {
     auth: 'session',
@@ -8,9 +7,10 @@ module.exports = {
         async: async function(request, reply) {
             try {
                 const userId = session.getUserId(request);
-                const accounts = await accountDao.accounts(userId);
+                const daos = db.daos(request);
+                const accounts = await daos.accounts.accounts(userId);
                 await Promise.all(accounts.map(async account => {
-                    account.balance = await transactionDao.balance(userId, account.id);
+                    account.balance = await daos.transactions.balance(userId, account.id);
                 }));
                 reply({accounts: accounts});
             } catch (err) {

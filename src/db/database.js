@@ -1,10 +1,5 @@
-const mysql = require('mysql');
-const config = require('../../db/config').mysql;
-
-const pool = mysql.createPool(Object.assign({
-    connectionLimit: 50,
-    dateStrings: true,
-}, config));
+const AccountDao = require('./accountDao');
+const TransactionDao = require('./transactionDao');
 
 const resolveOrReject = (resolve, reject) => (err, value) => {
     if (err) {
@@ -14,13 +9,7 @@ const resolveOrReject = (resolve, reject) => (err, value) => {
     }
 };
 
-function getConnection() {
-    return new Promise((resolve, reject) => {
-        pool.getConnection(resolveOrReject(resolve, reject));
-    });
-}
-
-function doQuery(connection, sql, args) {
+function doQuery(connection, sql, ...args) {
     return new Promise((resolve, reject) => {
         connection.query(sql, args, resolveOrReject(resolve, reject));
     });
@@ -45,32 +34,24 @@ function rollback(connection) {
 }
 
 module.exports = {
-    async query(sql, ...args) {
-        const connection = await getConnection();
-        try {
-            await doQuery(connection, 'SET sql_mode = "STRICT_ALL_TABLES";', []);
-            return await doQuery(connection, sql, args);
-        } finally {
-            connection.release();
+    daos(request) {
+        const connection = request.app.db;
+        const query = doQuery.bind(undefined, connection);
+        return {
+            accounts: new AccountDao(query),
+            transactions: new TransactionDao(query)
         }
     },
 
-    async withTransaction(action) {
-        const connection = await getConnection();
+    async withTransaction(request, action) {
+        const daos = this.daos(request);
         try {
-            await beginTransaction(connection);
-            await action({
-                async query(sql, ...args) {
-                    return doQuery(connection, sql, args);
-                },
-            });
-            await commit(connection);
+            await beginTransaction(request.app.db);
+            await action(daos);
+            await commit(request.app.db);
         } catch (err) {
-            rollback(connection);
+            rollback(request.app.db);
             throw err;
-        }
-        finally {
-            connection.release();
         }
     },
 };

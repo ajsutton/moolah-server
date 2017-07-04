@@ -1,6 +1,5 @@
 const env = require('get-env')();
 const Hapi = require('hapi');
-const Boom = require('boom');
 const authConfig = require('./auth/authConfig');
 exports.create = function() {
     return new Promise((resolve, reject) => {
@@ -9,6 +8,7 @@ exports.create = function() {
         server.register([
             require('hapi-async-handler'),
             require('./plugins/good'),
+            require('./plugins/database'),
             require('hapi-auth-cookie'),
             require('bell'),
         ], err => {
