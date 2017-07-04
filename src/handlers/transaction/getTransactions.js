@@ -10,16 +10,24 @@ module.exports = {
             const userId = session.getUserId(request);
             const daos = db.daos(request);
             const accountId = request.query.account;
+            const pageSize = request.query.pageSize;
             if (await daos.accounts.account(userId, accountId) === undefined) {
                 reply(Boom.notFound('Account not found'));
             }
-            const transactions = await daos.transactions.transactions(userId, accountId);
-            reply(transactions);
+            const transactions = await daos.transactions.transactions(userId, accountId, pageSize !== undefined ? pageSize + 1 : undefined);
+            const hasMore = transactions.length > pageSize;
+            const priorBalance = hasMore ? await daos.transactions.balance(userId, accountId, transactions[transactions.length - 1]) : 0;
+            reply({
+                transactions: transactions.slice(0, pageSize),
+                hasMore,
+                priorBalance,
+            });
         },
     },
     validate: {
         query: {
             account: types.id.required(),
+            pageSize: types.pageSize,
         },
     },
 };

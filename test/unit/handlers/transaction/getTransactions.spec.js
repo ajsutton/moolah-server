@@ -41,7 +41,11 @@ describe('Get Transactions Handler', function() {
         daos.transactions.transactions.withArgs(userId, accountId).resolves([transaction]);
         const response = await makeRequest(accountId);
         assert.equal(response.statusCode, 200);
-        assert.deepEqual(response.payload, JSON.stringify([transaction]));
+        assert.deepEqual(response.payload, JSON.stringify({
+            transactions: [transaction],
+            hasMore: false,
+            priorBalance: 0,
+        }));
     });
 
     function makeRequest(accountId) {

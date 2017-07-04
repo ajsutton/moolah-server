@@ -37,22 +37,33 @@ module.exports = class TransactionDao {
         return asTransaction(results[0]);
     }
 
-    async transactions(userId, accountId) {
+    async transactions(userId, accountId, pageSize) {
+        const args = [userId, accountId];
+        let query = ` SELECT id, type, date, account_id as accountId, payee, amount, notes 
+            FROM transaction 
+           WHERE user_id = ? 
+             AND account_id = ? 
+        ORDER BY date DESC, id `;
+        if (pageSize !== undefined) {
+            query += 'LIMIT ? ';
+            args.push(pageSize);
+        }
         const results = await this.query(
-            ` SELECT id, type, date, account_id as accountId, payee, amount, notes 
-                FROM transaction 
-               WHERE user_id = ? 
-                 AND account_id = ? 
-            ORDER BY date DESC`,
-            userId, accountId);
+            query,
+            ...args);
         return results.map(asTransaction);
     }
 
-    async balance(userId, accountId) {
+    async balance(userId, accountId, priorToTransaction) {
+        const args = [userId, accountId];
+        let query = 'SELECT SUM(amount) as balance FROM transaction WHERE user_id = ? AND account_id = ? ';
+        if (priorToTransaction !== undefined) {
+            query += 'AND (date < ? OR (date = ? AND id < ?))';
+            args.push(priorToTransaction.date, priorToTransaction.date, priorToTransaction.id);
+        }
         const results = await this.query(
-            'SELECT SUM(amount) as balance FROM transaction WHERE user_id = ? AND account_id = ?',
-            userId, accountId,
-        );
+            query,
+            ...args);
         return results[0].balance || 0;
     }
 };

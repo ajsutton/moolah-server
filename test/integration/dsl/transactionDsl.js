@@ -50,14 +50,23 @@ module.exports = class TransactionsDsl {
     async verifyTransactions(args) {
         const options = Object.assign({
             account: undefined,
+            pageSize: undefined,
+            expectPriorBalance: 0,
+            expectHasMore: false,
             expectTransactions: [],
             statusCode: 200,
         }, args);
         const account = this.accountsByAlias.get(options.account);
         const expectedTransactions = options.expectTransactions.map(alias => this.transactionsByAlias.get(alias));
-        const response = await this.server.get(`/api/transactions/?account=${encodeURIComponent(account.id)}`);
-        console.log(response.payload);
+        const pageSizeArg = options.pageSize !== undefined ? `&pageSize=${encodeURIComponent(options.pageSize)}` : '';
+        const response = await this.server.get(`/api/transactions/?account=${encodeURIComponent(account.id)}${pageSizeArg}`);
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
-        assert.deepEqual(JSON.parse(response.payload), expectedTransactions);
+        const result = JSON.parse(response.payload);
+        console.log(result);
+        assert.deepEqual(result, {
+            transactions: expectedTransactions,
+            priorBalance: options.expectPriorBalance,
+            hasMore: options.expectHasMore,
+        });
     }
 };

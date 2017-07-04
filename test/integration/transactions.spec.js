@@ -42,4 +42,25 @@ describe('Transaction Management', function() {
             ],
         });
     });
+
+    it('should page transactions and include balance prior to earliest included transaction', async function() {
+        await dsl.transactions.createTransaction({alias: 'transaction1', date: '2017-06-01', account: 'account1', amount: '100'});
+        await dsl.transactions.createTransaction({alias: 'transaction2', date: '2017-06-02', account: 'account1', amount: '200'});
+        await dsl.transactions.createTransaction({alias: 'transaction3', date: '2017-06-03', account: 'account1', amount: '300'});
+        await dsl.transactions.createTransaction({alias: 'transaction4', date: '2017-06-04', account: 'account1', amount: '-400'});
+        await dsl.transactions.createTransaction({alias: 'transaction5', date: '2017-06-05', account: 'account1', amount: '500'});
+
+
+        await dsl.transactions.verifyTransactions({
+            account: 'account1',
+            pageSize: 3,
+            expectPriorBalance: 300,
+            expectHasMore: true,
+            expectTransactions: [
+                'account1',
+                'transaction5',
+                'transaction4',
+            ],
+        });
+    });
 });
