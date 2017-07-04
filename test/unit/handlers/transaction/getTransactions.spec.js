@@ -5,9 +5,10 @@ const serverFactory = require('../../../../src/server');
 const dbTestUtils = require('../../../utils/dbTestUtils');
 const idGenerator = require('../../../../src/utils/idGenerator');
 
-describe('Get Transaction Handler', function() {
+describe('Get Transactions Handler', function() {
     let server;
     let userId;
+    const accountId = 'abc-def-ghi';
     let daos;
     const transaction = {
         id: 'abc-id',
@@ -28,24 +29,25 @@ describe('Get Transaction Handler', function() {
         return server.stop();
     });
 
-    it('should return not found when transaction does not exist', async function() {
-        daos.transactions.transaction.withArgs(userId, transaction.id).resolves(undefined);
-        const response = await makeRequest(transaction.id);
+    it('should return not found when account does not exist', async function() {
+        daos.accounts.account.withArgs(userId, accountId).resolves(undefined);
+        const response = await makeRequest(accountId);
         assert.equal(response.statusCode, 404);
-        assert.deepEqual(response.payload, BoomOutput.notFound('Transaction not found'));
+        assert.deepEqual(response.payload, BoomOutput.notFound('Account not found'));
     });
 
     it('should return the transaction when it exists', async function() {
-        daos.transactions.transaction.withArgs(userId, transaction.id).resolves(transaction);
-        const response = await makeRequest(transaction.id);
+        daos.accounts.account.withArgs(userId, accountId).resolves({id: accountId});
+        daos.transactions.transactions.withArgs(userId, accountId).resolves([transaction]);
+        const response = await makeRequest(accountId);
         assert.equal(response.statusCode, 200);
-        assert.deepEqual(response.payload, JSON.stringify(transaction));
+        assert.deepEqual(response.payload, JSON.stringify([transaction]));
     });
 
-    function makeRequest(transactionId) {
+    function makeRequest(accountId) {
         return new Promise((resolve) => {
             server.inject({
-                    url: `/api/transactions/${encodeURIComponent(transactionId)}/`,
+                    url: `/api/transactions/?account=${encodeURIComponent(accountId)}`,
                     method: 'GET',
                     credentials: {
                         userId,

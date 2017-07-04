@@ -44,6 +44,7 @@ module.exports = {
             create: sinon.stub(),
             balance: sinon.stub(),
             transaction: sinon.stub(),
+            transactions: sinon.stub(),
             store: sinon.stub(),
         };
         const daos = {
