@@ -62,5 +62,17 @@ describe('Transaction Management', function() {
                 'transaction4',
             ],
         });
+        await dsl.transactions.verifyTransactions({
+            account: 'account1',
+            pageSize: 3,
+            offset: 3,
+            expectPriorBalance: 0,
+            expectHasMore: false,
+            expectTransactions: [
+                'transaction3',
+                'transaction2',
+                'transaction1',
+            ],
+        });
     });
 });

@@ -37,7 +37,7 @@ module.exports = class TransactionDao {
         return asTransaction(results[0]);
     }
 
-    async transactions(userId, accountId, pageSize) {
+    async transactions(userId, accountId, pageSize, offset = 0) {
         const args = [userId, accountId];
         let query = ` SELECT id, type, date, account_id as accountId, payee, amount, notes 
             FROM transaction 
@@ -45,8 +45,8 @@ module.exports = class TransactionDao {
              AND account_id = ? 
         ORDER BY date DESC, id `;
         if (pageSize !== undefined) {
-            query += 'LIMIT ? ';
-            args.push(pageSize);
+            query += 'LIMIT ? OFFSET ?';
+            args.push(pageSize, offset);
         }
         const results = await this.query(
             query,

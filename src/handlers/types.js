@@ -10,4 +10,5 @@ exports.transactionType = Joi.string().max(20);
 exports.payee = Joi.string().max(1024);
 exports.notes = Joi.string().max(10000);
 exports.pageSize = Joi.number().integer().positive();
+exports.offset = Joi.number().integer().positive();
 exports.jsonContentType = Joi.any().valid('application/json');
