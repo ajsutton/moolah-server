@@ -53,6 +53,7 @@ describe('Transaction Management', function() {
 
         await dsl.transactions.verifyTransactions({
             account: 'account1',
+            offset: 0,
             pageSize: 3,
             expectPriorBalance: 300,
             expectHasMore: true,
