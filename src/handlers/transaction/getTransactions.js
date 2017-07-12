@@ -14,6 +14,7 @@ module.exports = {
             const offset = request.query.offset;
             if (await daos.accounts.account(userId, accountId) === undefined) {
                 reply(Boom.notFound('Account not found'));
+                return;
             }
             const transactions = await daos.transactions.transactions(userId, accountId, pageSize !== undefined ? pageSize + 1 : undefined, offset);
             const hasMore = transactions.length > pageSize;
