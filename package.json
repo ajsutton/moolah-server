@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "NODE_ENV=dev nodemon index.js --exec node",
     "start": "NODE_ENV=production node index.js",
-    "test": "npm run migrate-db && NODE_ENV=dev mocha 'test/**/*.spec.js'",
+    "test": "yarn run migrate-db && NODE_ENV=dev mocha 'test/**/*.spec.js'",
     "test-watch": "NODE_ENV=dev mocha --watch 'test/**/*.spec.js'",
     "unit-test": "NODE_ENV=dev mocha 'test/unit/**/*.spec.js'",
     "unit-test-watch": "NODE_ENV=dev mocha --watch 'test/unit/**/*.spec.js'",
