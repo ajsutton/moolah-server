@@ -21,7 +21,7 @@ describe('Account Management', function() {
 
     it('should modify an account', async function() {
         await dsl.accounts.createAccount({alias: 'account1', name: 'Account 1', type: 'cc', balance: 0});
-        await dsl.accounts.modifyAccount({alias: 'account1', name: 'Modified Account', type: 'bank', balance: 50000});
+        await dsl.accounts.modifyAccount({alias: 'account1', name: 'Modified Account', type: 'bank'});
         await dsl.accounts.verifyAccounts({accounts: ['account1']});
     });
 

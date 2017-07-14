@@ -15,10 +15,8 @@ module.exports = {
                     reply(Boom.notFound('Account not found'));
                 } else {
                     const modifiedAccount = Object.assign(account, request.payload);
+                    modifiedAccount.balance = await daos.transactions.balance(userId, account.id);
                     await daos.accounts.store(userId, modifiedAccount);
-                    const openingBalance = await daos.transactions.transaction(userId, account.id);
-                    openingBalance.amount = modifiedAccount.balance;
-                    await daos.transactions.store(userId, openingBalance);
                     reply(modifiedAccount);
                 }
             });
@@ -32,7 +30,6 @@ module.exports = {
             id: types.id,
             name: types.name.required(),
             type: types.accountType.required(),
-            balance: types.money.required(),
             position: types.position,
         }),
         headers: Joi.object({

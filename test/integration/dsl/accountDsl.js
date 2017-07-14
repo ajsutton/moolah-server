@@ -71,7 +71,6 @@ module.exports = class AccountsDsl {
             statusCode: 200,
             name: undefined,
             type: undefined,
-            balance: undefined,
         }, args);
         const currentAccount = this.accountsByAlias.get(options.alias);
         const modifiedAccount = Object.assign(currentAccount, {
@@ -82,7 +81,8 @@ module.exports = class AccountsDsl {
         const response = await this.server.put('/api/accounts/' + encodeURIComponent(currentAccount.id) + '/', modifiedAccount);
         assert.equal(response.statusCode, options.statusCode);
         if (options.statusCode == 200) {
-            this.accountsByAlias.set(options.alias, modifiedAccount);
+            console.log(response.payload);
+            this.accountsByAlias.set(options.alias, JSON.parse(response.payload));
         }
     }
 

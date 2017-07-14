@@ -22,21 +22,18 @@ describe('Put Account Handler', function() {
 
     it('should return 404 when account does not exist', async function() {
         daos.accounts.account.resolves(undefined);
-        const response = await makeRequest(123, {name: 'Updated account', type: 'cc', balance: 20000});
+        const response = await makeRequest(123, {name: 'Updated account', type: 'cc'});
         assert.equal(response.statusCode, 404);
     });
 
     it('should update existing account', async function() {
-        const modifiedAccount = {id: 123, name: 'Updated account', type: 'cc', balance: 20000};
+        const modifiedAccount = {id: 123, name: 'Updated account', type: 'cc', balance: 50000};
         daos.accounts.account.withArgs(userId, '123').resolves({id: 123, name: 'Original account', type: 'bank', balance: 45000});
-        const openingBalanceTransaction = {id: 123, amount: 45000};
-        daos.transactions.transaction.withArgs(userId, 123).resolves(openingBalanceTransaction);
-        const response = await makeRequest(123, {name: 'Updated account', type: 'cc', balance: 20000});
+        daos.transactions.balance.withArgs(userId, 123).resolves(50000);
+        const response = await makeRequest(123, {name: 'Updated account', type: 'cc'});
         assert.equal(response.statusCode, 200);
         sinon.assert.calledOnce(daos.accounts.store);
         sinon.assert.calledWith(daos.accounts.store, userId, modifiedAccount);
-        sinon.assert.calledOnce(daos.transactions.store);
-        sinon.assert.calledWith(daos.transactions.store, userId, Object.assign(openingBalanceTransaction, {balance: 20000}));
     });
 
 
