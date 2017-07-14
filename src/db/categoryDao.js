@@ -1,4 +1,16 @@
-module.exports = class AccountsDao {
+function asCategory(object) {
+    if (object === undefined) {
+        return object;
+    }
+    const category = {};
+    Object.entries(object).forEach(([key, value]) => {
+        if (value !== null) {
+            category[key] = value;
+        }
+    });
+    return category;
+}
+module.exports = class CategoryDao {
     constructor(query) {
         this.query = query;
     }
@@ -9,10 +21,11 @@ module.exports = class AccountsDao {
 
     async category(userId, id) {
         const results = await this.query('SELECT id, name, parent_id as parentId FROM category WHERE user_id = ? AND id = ?', userId, id);
-        return results[0];
+        return asCategory(results[0]);
     }
 
-    categories(userId, id) {
-        return this.query('SELECT id, name, parent_id as parentId FROM category WHERE user_id = ? ORDER BY name, id', userId);
+    async categories(userId, id) {
+        const results = await this.query('SELECT id, name, parent_id as parentId FROM category WHERE user_id = ? ORDER BY name, id', userId);
+        return results.map(asCategory);
     }
 };

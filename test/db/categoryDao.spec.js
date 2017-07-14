@@ -24,7 +24,6 @@ describe('Category Dao', function() {
         const category = {
             id: 'category1',
             name: 'New Category',
-            parentId: null,
         };
         await categoryDao.create(userId, category);
         const result = await categoryDao.category(userId, category.id);
@@ -59,8 +58,8 @@ describe('Category Dao', function() {
     });
 
     it('should list all categories for user', async function() {
-        const category1 = {id: '1', name: 'aCat1', parentId: null};
-        const category2 = {id: '2', name: 'cCat2', parentId: null};
+        const category1 = {id: '1', name: 'aCat1'};
+        const category2 = {id: '2', name: 'cCat2'};
         const category3 = {id: '3', name: 'bCat3', parentId: '1'};
         await categoryDao.create(userId, category1);
         await categoryDao.create(userId, category2);
@@ -70,8 +69,8 @@ describe('Category Dao', function() {
     });
 
     it('should not list categories belonging to a different user', async function() {
-        const category1 = {id: '1', name: 'aCat1', parentId: null};
-        const category2 = {id: '2', name: 'cCat2', parentId: null};
+        const category1 = {id: '1', name: 'aCat1'};
+        const category2 = {id: '2', name: 'cCat2'};
         const category3 = {id: '3', name: 'bCat3', parentId: '1'};
         await categoryDao.create(userId, category1);
         await categoryDao.create(userId, category2);

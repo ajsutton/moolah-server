@@ -1,6 +1,7 @@
 const serverFactory = require('../../../src/server');
 const AccountsDsl = require('./accountDsl');
 const TransactionsDsl = require('./transactionDsl');
+const CategoriesDsl = require('./categoryDsl');
 const idGenerator = require('../../../src/utils/idGenerator');
 const dbTestUtils = require('../../utils/dbTestUtils');
 
@@ -59,8 +60,10 @@ class Dsl {
         this.server = server;
         const accountsByAlias = new Map();
         const transactionsByAlias = new Map();
+        const categoriesByAlias = new Map();
         this.accounts = new AccountsDsl(server, accountsByAlias, transactionsByAlias);
         this.transactions = new TransactionsDsl(server, accountsByAlias, transactionsByAlias);
+        this.categories = new CategoriesDsl(server, categoriesByAlias);
         this.userIds = [];
     }
 
