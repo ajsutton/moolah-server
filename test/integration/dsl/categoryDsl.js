@@ -1,4 +1,5 @@
 const assert = require('chai').assert;
+const dslUtils = require('./dslUtils');
 
 module.exports = class CategoryDsl {
     constructor(server, categoriesByAlias) {
@@ -28,7 +29,7 @@ module.exports = class CategoryDsl {
     async verifyCategories(args) {
         const options = Object.assign({
             categories: [],
-            statusCode: 200
+            statusCode: 200,
         }, args);
 
         const expectedCategories = options.categories.map(alias => this.categoriesByAlias.get(alias));
@@ -36,5 +37,26 @@ module.exports = class CategoryDsl {
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
 
         assert.deepEqual(JSON.parse(response.payload), {categories: expectedCategories});
+    }
+
+    async modifyCategory(args) {
+        const options = Object.assign({
+            alias: undefined,
+            name: undefined,
+            parent: undefined,
+            statusCode: 200,
+        }, args);
+
+        const currentCategory = this.categoriesByAlias.get(options.alias);
+        const modifiedCategory = dslUtils.override(currentCategory, {
+            name: options.name,
+            parentId: this.categoriesByAlias.get(options.parent) ? this.categoriesByAlias.get(options.parent).id : undefined,
+        });
+
+        const response = await this.server.put(`/api/categories/${encodeURIComponent(modifiedCategory.id)}/`, modifiedCategory);
+        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        if (options.statusCode === 200) {
+            this.categoriesByAlias.set(options.alias, modifiedCategory);
+        }
     }
 };

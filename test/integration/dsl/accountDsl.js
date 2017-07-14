@@ -80,8 +80,7 @@ module.exports = class AccountsDsl {
         });
         const response = await this.server.put('/api/accounts/' + encodeURIComponent(currentAccount.id) + '/', modifiedAccount);
         assert.equal(response.statusCode, options.statusCode);
-        if (options.statusCode == 200) {
-            console.log(response.payload);
+        if (options.statusCode === 200) {
             this.accountsByAlias.set(options.alias, JSON.parse(response.payload));
         }
     }

@@ -12,11 +12,21 @@ describe('Account Management', function() {
         return dsl.tearDown();
     });
 
-    it('should list categories', async function() {
+    it('should create and list categories', async function() {
         await dsl.categories.createCategory({alias: 'category1', name: 'Category 1'});
         await dsl.categories.createCategory({alias: 'category2', name: 'Category 2'});
         await dsl.categories.createCategory({alias: 'category3', name: 'Category 3', parent: 'category1'});
 
-        await dsl.categories.verifyCategories({categories: [ 'category1', 'category2', 'category3']});
+        await dsl.categories.verifyCategories({categories: ['category1', 'category2', 'category3']});
+    });
+
+    it('should update categories', false, async function() {
+        await dsl.categories.createCategory({alias: 'category1', name: 'Category 1'});
+        await dsl.categories.createCategory({alias: 'category2', name: 'Category 2'});
+
+        await dsl.categories.modifyCategory({alias: 'category1', name: 'New Name', parent: 'category1'});
+
+
+        await dsl.categories.verifyCategories({categories: ['category1', 'category2']});
     });
 });
