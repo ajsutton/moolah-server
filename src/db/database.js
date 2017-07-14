@@ -1,5 +1,6 @@
 const AccountDao = require('./accountDao');
 const TransactionDao = require('./transactionDao');
+const CategoryDao = require('./categoryDao');
 
 const resolveOrReject = (resolve, reject) => (err, value) => {
     if (err) {
@@ -39,8 +40,9 @@ module.exports = {
         const query = doQuery.bind(undefined, connection);
         return {
             accounts: new AccountDao(query),
-            transactions: new TransactionDao(query)
-        }
+            transactions: new TransactionDao(query),
+            categories: new CategoryDao(query),
+        };
     },
 
     async withTransaction(request, action) {
