@@ -37,10 +37,12 @@ describe('Transaction DAO', function() {
             amount: 5000,
             notes: 'Bought some apple. No worries!',
             categoryId: 'category-id',
+            toAccountId: 'account-2',
         };
         await transactionDao.create(userId, transaction);
         const result = await transactionDao.transaction(userId, transaction.id);
         assert.deepEqual(result, transaction);
+        assert.deepEqual(await transactionDao.transactions(userId, 'account-id'), [transaction]);
     });
 
     it('should create transaction with minimal required values', async function() {
@@ -97,6 +99,15 @@ describe('Transaction DAO', function() {
     it('should return 0 balance when there are no transactions', async function() {
         const balance = await transactionDao.balance(userId, minimalTransaction.accountId);
         assert.equal(balance, 0);
+    });
+
+    it('should add negative amount of transfers to account when calculating balance', async function() {
+        await transactionDao.create(userId, makeTransaction({amount: 5000,}));
+        await transactionDao.create(userId, makeTransaction({amount: -2000, accountId: 'otherAccount', toAccountId: minimalTransaction.accountId}));
+        await transactionDao.create(userId, makeTransaction({amount: 300}));
+
+        const balance = await transactionDao.balance(userId, minimalTransaction.accountId);
+        assert.equal(balance, 7300);
     });
 
     function makeTransaction(args, template = minimalTransaction) {

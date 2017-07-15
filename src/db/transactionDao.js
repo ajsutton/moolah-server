@@ -17,8 +17,8 @@ module.exports = class TransactionDao {
     }
 
     create(userId, transaction) {
-        return this.query('INSERT INTO transaction (user_id, id, type, date, account_id, payee, amount, notes, category_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            userId, transaction.id, transaction.type, transaction.date, transaction.accountId, transaction.payee, transaction.amount, transaction.notes, transaction.categoryId);
+        return this.query('INSERT INTO transaction (user_id, id, type, date, account_id, payee, amount, notes, category_id, to_account_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            userId, transaction.id, transaction.type, transaction.date, transaction.accountId, transaction.payee, transaction.amount, transaction.notes, transaction.categoryId, transaction.toAccountId);
     }
 
     store(userId, transaction) {
@@ -37,7 +37,7 @@ module.exports = class TransactionDao {
 
     async transaction(userId, transactionId) {
         const results = await this.query(
-            'SELECT id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId ' +
+            'SELECT id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId, to_account_id as toAccountId ' +
             '  FROM transaction ' +
             ' WHERE user_id = ? ' +
             '   AND id = ?',
@@ -45,9 +45,9 @@ module.exports = class TransactionDao {
         return asTransaction(results[0]);
     }
 
-    async transactions(userId, accountId, pageSize, offset = 0) {
+    async transactions(userId, accountId, pageSize = 1000, offset = 0) {
         const args = [userId, accountId];
-        let query = ` SELECT id, type, date, account_id as accountId, payee, amount, notes 
+        let query = ` SELECT id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId, to_account_id as toAccountId  
             FROM transaction 
            WHERE user_id = ? 
              AND account_id = ? 
@@ -63,8 +63,8 @@ module.exports = class TransactionDao {
     }
 
     async balance(userId, accountId, priorToTransaction) {
-        const args = [userId, accountId];
-        let query = 'SELECT SUM(amount) as balance FROM transaction WHERE user_id = ? AND account_id = ? ';
+        const args = [accountId, userId, accountId, accountId];
+        let query = 'SELECT SUM(IF(account_id = ?, amount, -amount)) as balance FROM transaction WHERE user_id = ? AND (account_id = ? OR to_account_id = ?) ';
         if (priorToTransaction !== undefined) {
             query += 'AND (date < ? OR (date = ? AND id < ?))';
             args.push(priorToTransaction.date, priorToTransaction.date, priorToTransaction.id);

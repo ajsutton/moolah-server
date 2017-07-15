@@ -19,6 +19,7 @@ module.exports = class TransactionsDsl {
             payee: undefined,
             notes: undefined,
             category: undefined,
+            toAccount: undefined,
             statusCode: 201,
         }, args);
 
@@ -30,6 +31,7 @@ module.exports = class TransactionsDsl {
             payee: options.payee,
             notes: options.notes,
             categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias),
+            toAccountId: dslUtils.lookupId(options.toAccount, this.accountsByAlias),
         });
         const response = await this.server.post('/api/transactions/', createTransactionRequest, options.statusCode);
         const createdTransaction = JSON.parse(response.payload);

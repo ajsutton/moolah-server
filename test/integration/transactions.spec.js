@@ -116,4 +116,20 @@ describe('Transaction Management', function() {
             await dsl.transactions.verifyTransaction({alias: 'transaction1'});
         });
     });
+
+    describe('Transfers', function() {
+        beforeEach(async function() {
+            await dsl.accounts.createAccount({alias: 'account2'});
+        });
+
+        it('should adjust balance of both accounts affected by transfer', async function() {
+            await dsl.transactions.createTransaction({alias: 'transfer', type: 'transfer', account: 'account1', toAccount: 'account2', amount: -100});
+
+            await dsl.accounts.verifyAccount({alias: 'account1', balance: -100});
+            await dsl.accounts.verifyAccount({alias: 'account2', balance: 100});
+        });
+
+        it('should make a transaction a transfer');
+        it('should make a transaction not a transfer');
+    });
 });
