@@ -5,6 +5,14 @@ const CategoriesDsl = require('./categoryDsl');
 const idGenerator = require('../../../src/utils/idGenerator');
 const dbTestUtils = require('../../utils/dbTestUtils');
 
+const checkStatusCode = (expectedStatusCode, stack, resolve, reject) => response => {
+    if (response.statusCode !== expectedStatusCode) {
+        stack.message = `Incorrect status code. Expected ${expectedStatusCode} but got ${response.statusCode}. Payload: ${response.payload}`;
+        reject(stack);
+    } else {
+        resolve(response);
+    }
+};
 class Server {
     constructor(hapiServer) {
         this.hapiServer = hapiServer;
@@ -20,51 +28,44 @@ class Server {
                     payload: payload,
                     credentials: this.profile,
                 },
-                function(response) {
-                    if (response.statusCode !== expectedStatusCode) {
-                        stack.message = `Incorrect status code. Expected ${expectedStatusCode} but got ${response.statusCode}. Payload: ${response.payload}`;
-                        reject(stack);
-                    } else {
-                        resolve(response);
-                    }
-                });
+                checkStatusCode(expectedStatusCode, stack, resolve, reject));
         });
     }
 
     get(url, expectedStatusCode) {
+        const stack = new Error();
         return new Promise((resolve, reject) => {
             this.hapiServer.inject({
-                url: url,
-                method: 'GET',
-                credentials: this.profile,
-            }, function(response) {
-                resolve(response);
-            });
+                    url: url,
+                    method: 'GET',
+                    credentials: this.profile,
+                },
+                checkStatusCode(expectedStatusCode, stack, resolve, reject));
         });
     }
 
     put(url, payload, expectedStatusCode) {
+        const stack = new Error();
         return new Promise((resolve, reject) => {
             this.hapiServer.inject({
-                url,
-                method: 'PUT',
-                payload,
-                credentials: this.profile,
-            }, function(response) {
-                resolve(response);
-            });
+                    url,
+                    method: 'PUT',
+                    payload,
+                    credentials: this.profile,
+                },
+                checkStatusCode(expectedStatusCode, stack, resolve, reject));
         });
     }
 
     delete(url, expectedStatusCode) {
+        const stack = new Error();
         return new Promise((resolve, reject) => {
             this.hapiServer.inject({
-                url: url,
-                method: 'DELETE',
-                credentials: this.profile,
-            }, function(response) {
-                resolve(response);
-            });
+                    url: url,
+                    method: 'DELETE',
+                    credentials: this.profile,
+                },
+                checkStatusCode(expectedStatusCode, stack, resolve, reject));
         });
     }
 

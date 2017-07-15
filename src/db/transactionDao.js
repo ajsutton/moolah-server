@@ -26,6 +26,7 @@ module.exports = class TransactionDao {
             type: transaction.type,
             date: transaction.date,
             account_id: transaction.accountId,
+            to_account_id: transaction.toAccountId,
             payee: transaction.payee,
             amount: transaction.amount,
             notes: transaction.notes,

@@ -65,7 +65,17 @@ describe('Transaction DAO', function() {
     it('should update transaction', async function() {
         const originalTransaction = makeTransaction({payee: 'Jenny', notes: 'Some notes'});
         await transactionDao.create(userId, originalTransaction);
-        const modifiedTransaction = makeTransaction({id: originalTransaction.id, date: '2011-02-03', accountId: 'foo', payee: 'Lucy', notes: 'New notes', amount: 12345, type: 'income', categoryId: '3'});
+        const modifiedTransaction = makeTransaction({
+            id: originalTransaction.id,
+            date: '2011-02-03',
+            accountId: 'foo',
+            payee: 'Lucy',
+            notes: 'New notes',
+            amount: 12345,
+            type: 'income',
+            categoryId: '3',
+            toAccountId: '7',
+        });
         await transactionDao.store(userId, modifiedTransaction);
         assert.deepEqual(await transactionDao.transaction(userId, originalTransaction.id), modifiedTransaction);
     });

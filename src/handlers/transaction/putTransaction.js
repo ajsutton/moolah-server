@@ -34,6 +34,7 @@ module.exports = {
             payee: types.payee.default(null),
             notes: types.notes.default(null),
             categoryId: types.id.default(null),
+            toAccountId: types.id.allow(null).default(null),
         }),
         headers: Joi.object({
             'Content-Type': types.jsonContentType,

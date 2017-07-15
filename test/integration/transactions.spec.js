@@ -125,11 +125,27 @@ describe('Transaction Management', function() {
         it('should adjust balance of both accounts affected by transfer', async function() {
             await dsl.transactions.createTransaction({alias: 'transfer', type: 'transfer', account: 'account1', toAccount: 'account2', amount: -100});
 
+            await dsl.transactions.verifyTransaction({alias: 'transfer'});
             await dsl.accounts.verifyAccount({alias: 'account1', balance: -100});
             await dsl.accounts.verifyAccount({alias: 'account2', balance: 100});
         });
 
-        it('should make a transaction a transfer');
-        it('should make a transaction not a transfer');
+        it('should make a transaction a transfer', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: -100});
+
+            await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'transfer', toAccount: 'account2'});
+            await dsl.transactions.verifyTransaction({alias: 'transaction'});
+            await dsl.accounts.verifyAccount({alias: 'account1', balance: -100});
+            await dsl.accounts.verifyAccount({alias: 'account2', balance: 100});
+        });
+
+        it('should make a transaction not a transfer', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'transfer', account: 'account1', toAccount: 'account2', amount: -100});
+
+            await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', toAccount: null});
+            await dsl.transactions.verifyTransaction({alias: 'transaction'});
+            await dsl.accounts.verifyAccount({alias: 'account1', balance: -100});
+            await dsl.accounts.verifyAccount({alias: 'account2', balance: 0});
+        });
     });
 });

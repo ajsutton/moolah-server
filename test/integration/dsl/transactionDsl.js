@@ -51,6 +51,7 @@ module.exports = class TransactionsDsl {
             payee: undefined,
             notes: undefined,
             category: undefined,
+            toAccount: undefined,
             statusCode: 200,
         }, args);
 
@@ -62,11 +63,12 @@ module.exports = class TransactionsDsl {
             date: options.date,
             payee: options.payee,
             notes: options.payee,
-            accountId: options.account !== undefined ? this.accountsByAlias.get(options.account).id : undefined,
+            accountId: dslUtils.lookupId(options.account, this.accountsByAlias),
+            toAccountId: dslUtils.lookupId(options.toAccount, this.accountsByAlias),
             categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias),
         });
 
-        const response = await this.server.put(`/api/transactions/${encodeURIComponent(currentTransaction.id)}/`, modifiedTransaction, options.statusCode);
+        await this.server.put(`/api/transactions/${encodeURIComponent(currentTransaction.id)}/`, modifiedTransaction, options.statusCode);
         if (options.statusCode === 200) {
             this.transactionsByAlias.set(options.alias, modifiedTransaction);
         }
@@ -80,6 +82,7 @@ module.exports = class TransactionsDsl {
         }, args);
         const transaction = dslUtils.override(this.transactionsByAlias.get(options.alias), { categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias) });
         const response = await this.server.get(`/api/transactions/${encodeURIComponent(transaction.id)}/`, options.statusCode);
+        console.log(response.payload);
         if (response.statusCode === 200) {
             assert.deepEqual(JSON.parse(response.payload), transaction, 'Did not match transaction');
         }

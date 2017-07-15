@@ -29,8 +29,7 @@ module.exports = class AccountsDsl {
         if (options.alias) {
             this.accountsByAlias.set(options.alias, account);
 
-            const transactionResponse = await this.server.get(`/api/transactions/${encodeURIComponent(account.id)}/`);
-            assert.equal(transactionResponse.statusCode, 200, 'Incorrect transaction status code');
+            const transactionResponse = await this.server.get(`/api/transactions/${encodeURIComponent(account.id)}/`, 200);
             this.transactionsByAlias.set(options.alias, JSON.parse(transactionResponse.payload));
         }
     }
@@ -45,7 +44,7 @@ module.exports = class AccountsDsl {
         const account = dslUtils.override(this.accountsByAlias.get(options.alias), {balance: options.balance, position: options.position});
         const response = await this.server.get(`/api/accounts/${encodeURIComponent(account.id)}/`, options.statusCode);
         if (response.statusCode === 200) {
-            assert.deepEqual(JSON.parse(response.payload), account, 'Did not match account');
+            assert.deepEqual(JSON.parse(response.payload), account, `Did not match account ${options.alias}`);
         }
     }
 
