@@ -32,4 +32,9 @@ module.exports = class CategoryDao {
     store(userId, category) {
         return this.query('UPDATE category SET name = ?, parent_id = ? WHERE user_id = ? AND id = ?', category.name, category.parentId, userId, category.id);
     }
+
+    async remove(userId, id) {
+        await this.query('UPDATE category SET parent_id = NULL WHERE user_id = ? AND parent_id = ?', userId, id);
+        await this.query('DELETE FROM category WHERE user_id = ? AND id = ?', userId, id);
+    }
 };

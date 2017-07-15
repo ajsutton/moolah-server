@@ -63,4 +63,29 @@ describe('Account Management', function() {
         await dsl.categories.modifyCategory({alias: 'category2', parent: null});
         await dsl.categories.verifyCategories({categories: ['category1', 'category2']});
     });
+
+    it('should delete categories', async function() {
+        await dsl.categories.createCategory({alias: 'category1', name: 'Category 1'});
+        await dsl.categories.createCategory({alias: 'category2', name: 'Category 2'});
+
+        await dsl.categories.deleteCategory({alias: 'category2'});
+        await dsl.categories.verifyCategories({categories: ['category1']});
+    });
+
+    it('should move child categories to top level when parent is deleted', async function() {
+        await dsl.categories.createCategory({alias: 'category1', name: 'Category 1'});
+        await dsl.categories.createCategory({alias: 'category2', name: 'Category 2', parent: 'category1'});
+
+        await dsl.categories.deleteCategory({alias: 'category1'});
+        await dsl.categories.verifyCategory({alias: 'category2', parent: null});
+    });
+
+    it('should remove deleted categories from transactions', async function() {
+        await dsl.categories.createCategory({alias: 'category1'});
+        await dsl.accounts.createAccount({alias: 'account'});
+        await dsl.transactions.createTransaction({alias: 'transaction', category: 'category1', account: 'account'});
+
+        await dsl.categories.deleteCategory({alias: 'category1'});
+        await dsl.transactions.verifyTransaction({alias: 'transaction', category: null});
+    });
 });

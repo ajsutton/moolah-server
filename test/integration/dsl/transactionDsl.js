@@ -29,7 +29,7 @@ module.exports = class TransactionsDsl {
             date: options.date,
             payee: options.payee,
             notes: options.notes,
-            categoryId: options.category !== undefined ? this.categoriesByAlias.get(options.category).id : undefined,
+            categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias),
         });
         const response = await this.server.post('/api/transactions/', createTransactionRequest);
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code: ' + response.payload);
@@ -75,9 +75,10 @@ module.exports = class TransactionsDsl {
     async verifyTransaction(args) {
         const options = Object.assign({
             alias: null,
+            category: undefined,
             statusCode: 200,
         }, args);
-        const transaction = this.transactionsByAlias.get(options.alias);
+        const transaction = dslUtils.override(this.transactionsByAlias.get(options.alias), { categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias) });
         const response = await this.server.get(`/api/transactions/${encodeURIComponent(transaction.id)}/`);
         console.log(response.payload);
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');

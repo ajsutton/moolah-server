@@ -19,4 +19,9 @@ module.exports = [
         path: '/api/categories/{id}/',
         config: require('../handlers/category/putCategory'),
     },
+    {
+        method: 'DELETE',
+        path: '/api/categories/{id}/',
+        config: require('../handlers/category/deleteCategory'),
+    }
 ];

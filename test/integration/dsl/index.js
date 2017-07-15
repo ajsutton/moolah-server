@@ -50,6 +50,18 @@ class Server {
         });
     }
 
+    delete(url) {
+        return new Promise((resolve, reject) => {
+            this.hapiServer.inject({
+                url: url,
+                method: 'DELETE',
+                credentials: this.profile,
+            }, function(response) {
+                resolve(response);
+            });
+        });
+    }
+
     stop() {
         this.hapiServer.stop();
     }

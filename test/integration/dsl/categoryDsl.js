@@ -30,10 +30,11 @@ module.exports = class CategoryDsl {
     async verifyCategory(args) {
         const options = Object.assign({
             alias: null,
+            parent: undefined,
             statusCode: 200,
         }, args);
 
-        const category = this.categoriesByAlias.get(options.alias);
+        const category = dslUtils.override(this.categoriesByAlias.get(options.alias), { parentId: dslUtils.lookupId(options.parent, this.categoriesByAlias) });
         const response = await this.server.get(`/api/categories/${encodeURIComponent(category.id)}/`);
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
 
@@ -72,5 +73,16 @@ module.exports = class CategoryDsl {
         if (options.statusCode === 200) {
             this.categoriesByAlias.set(options.alias, modifiedCategory);
         }
+    }
+
+    async deleteCategory(args) {
+        const options = Object.assign({
+            alias: null,
+            statusCode: 204,
+        }, args);
+
+        const category = this.categoriesByAlias.get(options.alias);
+        const response = await this.server.delete(`/api/categories/${encodeURIComponent(category.id)}/`);
+        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code: ' + response.payload);
     }
 };
