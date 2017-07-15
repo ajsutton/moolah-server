@@ -28,4 +28,8 @@ module.exports = class CategoryDao {
         const results = await this.query('SELECT id, name, parent_id as parentId FROM category WHERE user_id = ? ORDER BY name, id', userId);
         return results.map(asCategory);
     }
+
+    store(userId, category) {
+        return this.query('UPDATE category SET name = ?, parent_id = ? WHERE user_id = ? AND id = ?', category.name, category.parentId, userId, category.id);
+    }
 };

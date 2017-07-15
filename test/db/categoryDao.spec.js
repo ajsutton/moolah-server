@@ -77,4 +77,14 @@ describe('Category Dao', function() {
         await categoryDao.create(userId, category3);
         assert.deepEqual(await categoryDao.categories('someone else'), []);
     });
+
+    it('should update category', async function() {
+        const category1 = {id: '1', name: 'Cat1'};
+        const category2 = {id: '2', name: 'Cat2', parentId: '1'};
+        await categoryDao.create(userId, category1);
+        await categoryDao.create(userId, category2);
+
+        await categoryDao.store(userId, {id: '2', name: 'New Name'});
+        assert.deepEqual(await categoryDao.category(userId, '2'), {id: '2', name: 'New Name'})
+    });
 });

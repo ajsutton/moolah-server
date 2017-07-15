@@ -20,13 +20,13 @@ describe('Account Management', function() {
         await dsl.categories.verifyCategories({categories: ['category1', 'category2', 'category3']});
     });
 
-    it('should update categories', false, async function() {
+    it('should update categories', async function() {
         await dsl.categories.createCategory({alias: 'category1', name: 'Category 1'});
         await dsl.categories.createCategory({alias: 'category2', name: 'Category 2'});
 
         await dsl.categories.modifyCategory({alias: 'category1', name: 'New Name', parent: 'category1'});
 
 
-        await dsl.categories.verifyCategories({categories: ['category1', 'category2']});
+        await dsl.categories.verifyCategories({categories: ['category2', 'category1']});
     });
 });
