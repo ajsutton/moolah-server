@@ -49,6 +49,7 @@ module.exports = class TransactionsDsl {
             date: undefined,
             payee: undefined,
             notes: undefined,
+            category: undefined,
             statusCode: 200,
         }, args);
 
@@ -61,6 +62,7 @@ module.exports = class TransactionsDsl {
             payee: options.payee,
             notes: options.payee,
             accountId: options.account !== undefined ? this.accountsByAlias.get(options.account).id : undefined,
+            categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias),
         });
 
         const response = await this.server.put(`/api/transactions/${encodeURIComponent(currentTransaction.id)}/`, modifiedTransaction);

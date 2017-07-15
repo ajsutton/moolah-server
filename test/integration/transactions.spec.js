@@ -86,8 +86,33 @@ describe('Transaction Management', function() {
     describe('Transaction Categories', function() {
         it('should create transaction with category', async function() {
             await dsl.categories.createCategory({alias: 'category1'});
+
+            await dsl.transactions.createTransaction({alias: 'transaction1', account: 'account1', category: 'category1'});
+            await dsl.transactions.verifyTransaction({alias: 'transaction1'});
+        });
+
+        it('should add category to transaction', async function() {
+            await dsl.categories.createCategory({alias: 'category1'});
+            await dsl.transactions.createTransaction({alias: 'transaction1', account: 'account1'});
+
+            await dsl.transactions.modifyTransaction({alias: 'transaction1', category: 'category1'});
+            await dsl.transactions.verifyTransaction({alias: 'transaction1'});
+        });
+
+        it('should remove category from transaction', async function() {
+            await dsl.categories.createCategory({alias: 'category1'});
             await dsl.transactions.createTransaction({alias: 'transaction1', account: 'account1', category: 'category1'});
 
+            await dsl.transactions.modifyTransaction({alias: 'transaction1', category: null});
+            await dsl.transactions.verifyTransaction({alias: 'transaction1'});
+        });
+
+        it('should change transaction category', async function() {
+            await dsl.categories.createCategory({alias: 'category1'});
+            await dsl.categories.createCategory({alias: 'category2'});
+            await dsl.transactions.createTransaction({alias: 'transaction1', account: 'account1', category: 'category1'});
+
+            await dsl.transactions.modifyTransaction({alias: 'transaction1', category: 'category2'});
             await dsl.transactions.verifyTransaction({alias: 'transaction1'});
         });
     });
