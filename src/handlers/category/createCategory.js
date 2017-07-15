@@ -3,6 +3,7 @@ const types = require('../types');
 const db = require('../../db/database');
 const idGenerator = require('../../utils/idGenerator');
 const session = require('../../auth/session');
+const Boom = require('boom');
 
 module.exports = {
     auth: 'session',
@@ -13,6 +14,10 @@ module.exports = {
                     const category = Object.assign({id: idGenerator()}, request.payload);
                     const userId = session.getUserId(request);
                     const daos = db.daos(request);
+                    if (category.parentId !== undefined && await daos.categories.category(userId, category.parentId) === undefined) {
+                        reply(Boom.badRequest('Unknown parent category', category.parentId));
+                        return;
+                    }
                     await daos.categories.create(userId, category);
                     reply(category).code(201).header('Location', `/categories/${encodeURIComponent(category.id)}/`);
                     return;

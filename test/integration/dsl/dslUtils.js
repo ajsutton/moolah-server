@@ -22,6 +22,8 @@ function withoutValues(object, disallowedValue) {
 function lookupId(alias, aliasToObjectMap) {
     if (alias === undefined || alias === null) {
         return alias;
+    } else if (alias.startsWith('<') && alias.endsWith('>')) {
+        return alias.substring(1, alias.length - 1);
     } else {
         return aliasToObjectMap.get(alias).id;
     }

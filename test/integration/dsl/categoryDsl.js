@@ -17,6 +17,7 @@ module.exports = class CategoryDsl {
 
         const response = await this.server.post('/api/categories/', {
             name: options.name,
+            parentId: dslUtils.lookupId(options.parent, this.categoriesByAlias),
         });
         assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
         const category = JSON.parse(response.payload);

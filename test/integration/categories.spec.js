@@ -38,4 +38,15 @@ describe('Account Management', function() {
         await dsl.categories.createCategory({alias: 'category1', name: 'Category 1'});
         await dsl.categories.verifyCategory({alias: 'category1'});
     });
+
+    it('should create a category with a parent', async function() {
+        await dsl.categories.createCategory({alias: 'category1', name: 'Category 1'});
+        await dsl.categories.createCategory({alias: 'category2', name: 'Category 2', parent: 'category1'});
+
+        await dsl.categories.verifyCategories({categories: ['category1', 'category2']});
+    });
+
+    it('should reject creating a category with a parent that does not exist', async function() {
+        await dsl.categories.createCategory({alias: 'category1', name: 'Category', parent: '<foo>', statusCode: 400});
+    });
 });
