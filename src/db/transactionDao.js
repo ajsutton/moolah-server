@@ -17,19 +17,27 @@ module.exports = class TransactionDao {
     }
 
     create(userId, transaction) {
-        return this.query('INSERT INTO transaction (user_id, id, type, date, account_id, payee, amount, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            userId, transaction.id, transaction.type, transaction.date, transaction.accountId, transaction.payee, transaction.amount, transaction.notes);
+        return this.query('INSERT INTO transaction (user_id, id, type, date, account_id, payee, amount, notes, category_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            userId, transaction.id, transaction.type, transaction.date, transaction.accountId, transaction.payee, transaction.amount, transaction.notes, transaction.categoryId);
     }
 
     store(userId, transaction) {
-        const toStore = {type: transaction.type, date: transaction.date, account_id: transaction.accountId, payee: transaction.payee, amount: transaction.amount, notes: transaction.notes};
+        const toStore = {
+            type: transaction.type,
+            date: transaction.date,
+            account_id: transaction.accountId,
+            payee: transaction.payee,
+            amount: transaction.amount,
+            notes: transaction.notes,
+            category_id: transaction.categoryId,
+        };
         return this.query('UPDATE transaction SET ? WHERE user_id = ? and id = ?',
             toStore, userId, transaction.id);
     }
 
     async transaction(userId, transactionId) {
         const results = await this.query(
-            'SELECT id, type, date, account_id as accountId, payee, amount, notes ' +
+            'SELECT id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId ' +
             '  FROM transaction ' +
             ' WHERE user_id = ? ' +
             '   AND id = ?',

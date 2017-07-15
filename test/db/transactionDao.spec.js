@@ -36,6 +36,7 @@ describe('Transaction DAO', function() {
             payee: 'Con the Fruiterer',
             amount: 5000,
             notes: 'Bought some apple. No worries!',
+            categoryId: 'category-id',
         };
         await transactionDao.create(userId, transaction);
         const result = await transactionDao.transaction(userId, transaction.id);
@@ -43,7 +44,6 @@ describe('Transaction DAO', function() {
     });
 
     it('should create transaction with minimal required values', async function() {
-
         await transactionDao.create(userId, minimalTransaction);
         const result = await transactionDao.transaction(userId, minimalTransaction.id);
         assert.deepEqual(result, minimalTransaction);
@@ -63,7 +63,7 @@ describe('Transaction DAO', function() {
     it('should update transaction', async function() {
         const originalTransaction = makeTransaction({payee: 'Jenny', notes: 'Some notes'});
         await transactionDao.create(userId, originalTransaction);
-        const modifiedTransaction = makeTransaction({id: originalTransaction.id, date: '2011-02-03', accountId: 'foo', payee: 'Lucy', notes: 'New notes', amount: 12345, type: 'income'});
+        const modifiedTransaction = makeTransaction({id: originalTransaction.id, date: '2011-02-03', accountId: 'foo', payee: 'Lucy', notes: 'New notes', amount: 12345, type: 'income', categoryId: '3'});
         await transactionDao.store(userId, modifiedTransaction);
         assert.deepEqual(await transactionDao.transaction(userId, originalTransaction.id), modifiedTransaction);
     });
