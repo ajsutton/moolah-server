@@ -18,6 +18,15 @@ describe('Transaction Management', function() {
         await dsl.transactions.verifyTransaction({alias: 'transaction1'});
     });
 
+    it('should reject creating a transaction when account does not exist', async function() {
+        await dsl.transactions.createTransaction({alias: 'transaction1', account: '<noAccount>', amount: 5023, statusCode: 400});
+    });
+
+    it('should reject updating a transaction when account does not exist', async function() {
+        await dsl.transactions.createTransaction({alias: 'transaction1', account: 'account1', amount: 5023});
+        await dsl.transactions.modifyTransaction({alias: 'transaction1', account: '<noAccount>', amount: 5023, statusCode: 400});
+    });
+
     it('should calculate account balance from transactions', async function() {
         await dsl.transactions.createTransaction({alias: 'transaction1', account: 'account1', amount: 5023});
         await dsl.accounts.verifyAccount({alias: 'account1', balance: 5023});

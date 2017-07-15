@@ -16,6 +16,10 @@ module.exports = {
                 return;
             }
             const modifiedTransaction = Object.assign(transaction, request.payload);
+            if (await daos.accounts.account(userId, modifiedTransaction.accountId) === undefined) {
+                reply(Boom.badRequest('Invalid accountId'));
+                return;
+            }
             if (modifiedTransaction.toAccountId !== undefined && modifiedTransaction.toAccountId !== null && await daos.accounts.account(userId, modifiedTransaction.toAccountId) === undefined) {
                 reply(Boom.badRequest('Invalid toAccountId'));
                 return;
