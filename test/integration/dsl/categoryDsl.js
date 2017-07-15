@@ -50,7 +50,7 @@ module.exports = class CategoryDsl {
         const currentCategory = this.categoriesByAlias.get(options.alias);
         const modifiedCategory = dslUtils.override(currentCategory, {
             name: options.name,
-            parentId: this.categoriesByAlias.get(options.parent) ? this.categoriesByAlias.get(options.parent).id : undefined,
+            parentId: options.parent !== undefined ? this.categoriesByAlias.get(options.parent).id : undefined,
         });
 
         const response = await this.server.put(`/api/categories/${encodeURIComponent(modifiedCategory.id)}/`, modifiedCategory);

@@ -62,7 +62,7 @@ class Dsl {
         const transactionsByAlias = new Map();
         const categoriesByAlias = new Map();
         this.accounts = new AccountsDsl(server, accountsByAlias, transactionsByAlias);
-        this.transactions = new TransactionsDsl(server, accountsByAlias, transactionsByAlias);
+        this.transactions = new TransactionsDsl(server, accountsByAlias, transactionsByAlias, categoriesByAlias);
         this.categories = new CategoriesDsl(server, categoriesByAlias);
         this.userIds = [];
     }

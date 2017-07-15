@@ -31,6 +31,6 @@ describe('Account Management', function() {
     });
 
     it('should not return 404 when attempting to update a category that does not exist', async function() {
-        await dsl.categories.modifyCategory({alias: 'category1', name: 'New Name', parent: 'category1', statusCode: 404});
+        await dsl.categories.modifyCategory({alias: 'category1', name: 'New Name', statusCode: 404});
     });
 });
