@@ -64,11 +64,11 @@ module.exports = class CategoryDsl {
         const currentCategory = this.categoriesByAlias.get(options.alias);
         const modifiedCategory = dslUtils.override(currentCategory, {
             name: options.name,
-            parentId: options.parent !== undefined ? this.categoriesByAlias.get(options.parent).id : undefined,
+            parentId: dslUtils.lookupId(options.parent, this.categoriesByAlias),
         });
 
         const response = await this.server.put(`/api/categories/${encodeURIComponent(modifiedCategory.id)}/`, modifiedCategory);
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code: ' + response.payload);
         if (options.statusCode === 200) {
             this.categoriesByAlias.set(options.alias, modifiedCategory);
         }

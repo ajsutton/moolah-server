@@ -49,4 +49,18 @@ describe('Account Management', function() {
     it('should reject creating a category with a parent that does not exist', async function() {
         await dsl.categories.createCategory({alias: 'category1', name: 'Category', parent: '<foo>', statusCode: 400});
     });
+
+    it('should reject updating a category when new parent category does not exist', async function() {
+        await dsl.categories.createCategory({alias: 'category1', name: 'Category 1'});
+
+        await dsl.categories.modifyCategory({alias: 'category1', parent: '<foo>', statusCode: 400});
+    });
+
+    it('should remove parent category', async function() {
+        await dsl.categories.createCategory({alias: 'category1', name: 'Category 1'});
+        await dsl.categories.createCategory({alias: 'category2', name: 'Category 2', parent: 'category1'});
+
+        await dsl.categories.modifyCategory({alias: 'category2', parent: null});
+        await dsl.categories.verifyCategories({categories: ['category1', 'category2']});
+    });
 });
