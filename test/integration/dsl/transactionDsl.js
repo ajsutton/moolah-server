@@ -110,4 +110,13 @@ module.exports = class TransactionsDsl {
             hasMore: options.expectHasMore,
         });
     }
+
+    async deleteTransaction(args) {
+        const options = Object.assign({
+            alias: null,
+            statusCode: 204,
+        }, args);
+        const transactionId = dslUtils.lookupId(options.alias, this.transactionsByAlias);
+        await this.server.delete(`/api/transactions/${encodeURIComponent(transactionId)}/`, options.statusCode);
+    }
 };

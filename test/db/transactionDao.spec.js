@@ -80,6 +80,12 @@ describe('Transaction DAO', function() {
         assert.deepEqual(await transactionDao.transaction(userId, originalTransaction.id), modifiedTransaction);
     });
 
+    it('should delete transaction', async function() {
+        await transactionDao.create(userId, minimalTransaction);
+        await transactionDao.delete(userId, minimalTransaction.id);
+        assert.isUndefined(await transactionDao.transaction(userId, minimalTransaction.id));
+    });
+
     it('should get list of transactions in account ordered by date descending', async function() {
         const transaction1 = makeTransaction({amount: 5000, date: '2017-06-01'});
         const transaction2 = makeTransaction({amount: -2000, date: '2017-05-30'});

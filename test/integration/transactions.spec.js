@@ -92,6 +92,13 @@ describe('Transaction Management', function() {
         await dsl.transactions.modifyTransaction({alias: 'transaction1', date: '2017-06-02', account: 'account2', amount: 200, payee: 'George', notes: 'From George'});
     });
 
+    it('should delete a transaction', async function() {
+        await dsl.transactions.createTransaction({alias: 'transaction1', date: '2017-06-01', account: 'account1', amount: 100});
+        await dsl.transactions.deleteTransaction({alias: 'transaction1'});
+
+        await dsl.accounts.verifyAccount({alias: 'account1', balance: 0});
+    });
+
     describe('Transaction Categories', function() {
         it('should create transaction with category', async function() {
             await dsl.categories.createCategory({alias: 'category1'});

@@ -18,5 +18,10 @@ module.exports = [
         method: 'PUT',
         path: '/api/transactions/{id}/',
         config: require('../handlers/transaction/putTransaction'),
-    }
+    },
+    {
+        method: 'DELETE',
+        path: '/api/transactions/{id}/',
+        config: require('../handlers/transaction/deleteTransaction'),
+    },
 ];

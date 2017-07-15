@@ -32,13 +32,17 @@ module.exports = class TransactionDao {
             notes: transaction.notes,
             category_id: transaction.categoryId,
         };
-        return this.query('UPDATE transaction SET ? WHERE user_id = ? and id = ?',
+        return this.query('UPDATE transaction SET ? WHERE user_id = ? AND id = ?',
             toStore, userId, transaction.id);
+    }
+
+    delete(userId, transactionId) {
+        return this.query('DELETE FROM transaction WHERE user_id = ? AND id = ?', userId, transactionId);
     }
 
     async transaction(userId, transactionId) {
         const results = await this.query(
-            'SELECT id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId, to_account_id as toAccountId ' +
+            'SELECT id, type, date, account_id AS accountId, payee, amount, notes, category_id AS categoryId, to_account_id AS toAccountId ' +
             '  FROM transaction ' +
             ' WHERE user_id = ? ' +
             '   AND id = ?',
