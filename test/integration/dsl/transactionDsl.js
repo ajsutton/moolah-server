@@ -31,8 +31,7 @@ module.exports = class TransactionsDsl {
             notes: options.notes,
             categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias),
         });
-        const response = await this.server.post('/api/transactions/', createTransactionRequest);
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code: ' + response.payload);
+        const response = await this.server.post('/api/transactions/', createTransactionRequest, options.statusCode);
         const createdTransaction = JSON.parse(response.payload);
         assert.include(createdTransaction, createTransactionRequest);
         if (options.alias) {
@@ -65,8 +64,7 @@ module.exports = class TransactionsDsl {
             categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias),
         });
 
-        const response = await this.server.put(`/api/transactions/${encodeURIComponent(currentTransaction.id)}/`, modifiedTransaction);
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        const response = await this.server.put(`/api/transactions/${encodeURIComponent(currentTransaction.id)}/`, modifiedTransaction, options.statusCode);
         if (options.statusCode === 200) {
             this.transactionsByAlias.set(options.alias, modifiedTransaction);
         }
@@ -79,9 +77,7 @@ module.exports = class TransactionsDsl {
             statusCode: 200,
         }, args);
         const transaction = dslUtils.override(this.transactionsByAlias.get(options.alias), { categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias) });
-        const response = await this.server.get(`/api/transactions/${encodeURIComponent(transaction.id)}/`);
-        console.log(response.payload);
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        const response = await this.server.get(`/api/transactions/${encodeURIComponent(transaction.id)}/`, options.statusCode);
         if (response.statusCode === 200) {
             assert.deepEqual(JSON.parse(response.payload), transaction, 'Did not match transaction');
         }
@@ -101,8 +97,7 @@ module.exports = class TransactionsDsl {
         const expectedTransactions = options.expectTransactions.map(alias => this.transactionsByAlias.get(alias));
         const pageSizeArg = options.pageSize !== undefined ? `&pageSize=${encodeURIComponent(options.pageSize)}` : '';
         const offsetArg = options.offset !== undefined ? `&offset=${encodeURIComponent(options.offset)}` : '';
-        const response = await this.server.get(`/api/transactions/?account=${encodeURIComponent(account.id)}${pageSizeArg}${offsetArg}`);
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        const response = await this.server.get(`/api/transactions/?account=${encodeURIComponent(account.id)}${pageSizeArg}${offsetArg}`, options.statusCode);
         const result = JSON.parse(response.payload);
         assert.deepEqual(result, {
             transactions: expectedTransactions,

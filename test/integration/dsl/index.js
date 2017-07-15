@@ -11,7 +11,8 @@ class Server {
         this.profile = null;
     }
 
-    post(url, payload) {
+    post(url, payload, expectedStatusCode) {
+        const stack = new Error();
         return new Promise((resolve, reject) => {
             this.hapiServer.inject({
                     url: url,
@@ -20,12 +21,17 @@ class Server {
                     credentials: this.profile,
                 },
                 function(response) {
-                    resolve(response);
+                    if (response.statusCode !== expectedStatusCode) {
+                        stack.message = `Incorrect status code. Expected ${expectedStatusCode} but got ${response.statusCode}. Payload: ${response.payload}`;
+                        reject(stack);
+                    } else {
+                        resolve(response);
+                    }
                 });
         });
     }
 
-    get(url) {
+    get(url, expectedStatusCode) {
         return new Promise((resolve, reject) => {
             this.hapiServer.inject({
                 url: url,
@@ -37,7 +43,7 @@ class Server {
         });
     }
 
-    put(url, payload) {
+    put(url, payload, expectedStatusCode) {
         return new Promise((resolve, reject) => {
             this.hapiServer.inject({
                 url,
@@ -46,11 +52,11 @@ class Server {
                 credentials: this.profile,
             }, function(response) {
                 resolve(response);
-            })
+            });
         });
     }
 
-    delete(url) {
+    delete(url, expectedStatusCode) {
         return new Promise((resolve, reject) => {
             this.hapiServer.inject({
                 url: url,

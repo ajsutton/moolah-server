@@ -23,8 +23,7 @@ module.exports = class AccountsDsl {
             type: options.type,
             balance: options.balance,
             position: options.position,
-        });
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        }, options.statusCode);
         const account = JSON.parse(response.payload);
 
         if (options.alias) {
@@ -44,8 +43,7 @@ module.exports = class AccountsDsl {
             statusCode: 200,
         }, args);
         const account = dslUtils.override(this.accountsByAlias.get(options.alias), {balance: options.balance, position: options.position});
-        const response = await this.server.get(`/api/accounts/${encodeURIComponent(account.id)}/`);
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        const response = await this.server.get(`/api/accounts/${encodeURIComponent(account.id)}/`, options.statusCode);
         if (response.statusCode === 200) {
             assert.deepEqual(JSON.parse(response.payload), account, 'Did not match account');
         }
@@ -56,8 +54,7 @@ module.exports = class AccountsDsl {
             statusCode: 200,
             accounts: undefined,
         }, args);
-        const response = await this.server.get('/api/accounts/');
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        const response = await this.server.get('/api/accounts/', options.statusCode);
         if (options.accounts !== undefined) {
             const actualAccounts = JSON.parse(response.payload).accounts;
             const expectedAccounts = options.accounts.map(alias => this.getAccount(alias));
@@ -78,8 +75,7 @@ module.exports = class AccountsDsl {
             type: options.type,
             balance: options.balance
         });
-        const response = await this.server.put('/api/accounts/' + encodeURIComponent(currentAccount.id) + '/', modifiedAccount);
-        assert.equal(response.statusCode, options.statusCode);
+        const response = await this.server.put('/api/accounts/' + encodeURIComponent(currentAccount.id) + '/', modifiedAccount, options.statusCode);
         if (options.statusCode === 200) {
             this.accountsByAlias.set(options.alias, JSON.parse(response.payload));
         }

@@ -18,8 +18,7 @@ module.exports = class CategoryDsl {
         const response = await this.server.post('/api/categories/', {
             name: options.name,
             parentId: dslUtils.lookupId(options.parent, this.categoriesByAlias),
-        });
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        }, options.statusCode);
         const category = JSON.parse(response.payload);
 
         if (options.alias) {
@@ -35,8 +34,7 @@ module.exports = class CategoryDsl {
         }, args);
 
         const category = dslUtils.override(this.categoriesByAlias.get(options.alias), { parentId: dslUtils.lookupId(options.parent, this.categoriesByAlias) });
-        const response = await this.server.get(`/api/categories/${encodeURIComponent(category.id)}/`);
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        const response = await this.server.get(`/api/categories/${encodeURIComponent(category.id)}/`, options.statusCode);
 
         assert.deepEqual(JSON.parse(response.payload), category);
     }
@@ -48,8 +46,7 @@ module.exports = class CategoryDsl {
         }, args);
 
         const expectedCategories = options.categories.map(alias => this.categoriesByAlias.get(alias));
-        const response = await this.server.get('/api/categories/');
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+        const response = await this.server.get('/api/categories/', options.statusCode);
 
         assert.deepEqual(JSON.parse(response.payload), {categories: expectedCategories});
     }
@@ -68,8 +65,7 @@ module.exports = class CategoryDsl {
             parentId: dslUtils.lookupId(options.parent, this.categoriesByAlias),
         });
 
-        const response = await this.server.put(`/api/categories/${encodeURIComponent(modifiedCategory.id)}/`, modifiedCategory);
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code: ' + response.payload);
+        const response = await this.server.put(`/api/categories/${encodeURIComponent(modifiedCategory.id)}/`, modifiedCategory, options.statusCode);
         if (options.statusCode === 200) {
             this.categoriesByAlias.set(options.alias, modifiedCategory);
         }
@@ -82,7 +78,6 @@ module.exports = class CategoryDsl {
         }, args);
 
         const category = this.categoriesByAlias.get(options.alias);
-        const response = await this.server.delete(`/api/categories/${encodeURIComponent(category.id)}/`);
-        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code: ' + response.payload);
+        const response = await this.server.delete(`/api/categories/${encodeURIComponent(category.id)}/`, options.statusCode);
     }
 };

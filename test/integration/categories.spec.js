@@ -1,6 +1,6 @@
 const Dsl = require('./dsl');
 
-describe('Account Management', function() {
+describe('Category Management', function() {
     let dsl;
 
     beforeEach(async function() {
