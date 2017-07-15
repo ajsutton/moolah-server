@@ -151,5 +151,10 @@ describe('Transaction Management', function() {
         it('should reject creating a transaction with a toAccountId that does not exist', async function() {
             await dsl.transactions.createTransaction({alias: 'transfer', type: 'transfer', account: '<noAccount>', toAccount: 'account2', amount: -100, statusCode: 400});
         });
+
+        it('should reject modifying a transaction when toAccountId does not exist', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'transfer', account: 'account1', toAccount: 'account2', amount: -100});
+            await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', toAccount: '<noAccount>', statusCode: 400});
+        });
     });
 });

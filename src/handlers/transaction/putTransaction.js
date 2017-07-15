@@ -13,11 +13,15 @@ module.exports = {
             const transaction = await daos.transactions.transaction(userId, request.params.id);
             if (transaction === undefined) {
                 reply(Boom.notFound('Transaction not found'));
-            } else {
-                const modifiedTransaction = Object.assign(transaction, request.payload);
-                await daos.transactions.store(userId, modifiedTransaction);
-                reply(modifiedTransaction);
+                return;
             }
+            const modifiedTransaction = Object.assign(transaction, request.payload);
+            if (modifiedTransaction.toAccountId !== undefined && modifiedTransaction.toAccountId !== null && await daos.accounts.account(userId, modifiedTransaction.toAccountId) === undefined) {
+                reply(Boom.badRequest('Invalid toAccountId'));
+                return;
+            }
+            await daos.transactions.store(userId, modifiedTransaction);
+            reply(modifiedTransaction);
         },
     },
     validate: {
