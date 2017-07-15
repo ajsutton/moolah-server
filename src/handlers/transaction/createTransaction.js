@@ -14,7 +14,9 @@ module.exports = {
             const transactionData = request.payload;
             const account = await daos.accounts.account(userId, transactionData.accountId);
             if (account === undefined) {
-                reply(Boom.badRequest('Invalid account'));
+                reply(Boom.badRequest('Invalid accountId'));
+            } else if (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null && await daos.accounts.account(userId, transactionData.toAccountId) === undefined) {
+                reply(Boom.badRequest('Invalid toAccountId'));
             } else {
                 while (true) {
                     try {

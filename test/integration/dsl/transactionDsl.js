@@ -24,7 +24,7 @@ module.exports = class TransactionsDsl {
         }, args);
 
         const createTransactionRequest = dslUtils.withoutUndefined({
-            accountId: this.accountsByAlias.get(options.account).id,
+            accountId: dslUtils.lookupId(options.account, this.accountsByAlias),
             amount: options.amount,
             type: options.type,
             date: options.date,
@@ -35,8 +35,8 @@ module.exports = class TransactionsDsl {
         });
         const response = await this.server.post('/api/transactions/', createTransactionRequest, options.statusCode);
         const createdTransaction = JSON.parse(response.payload);
-        assert.include(createdTransaction, createTransactionRequest);
-        if (options.alias) {
+        if (options.statusCode === 201) {
+            assert.include(createdTransaction, createTransactionRequest);
             this.transactionsByAlias.set(options.alias, createdTransaction);
         }
     }

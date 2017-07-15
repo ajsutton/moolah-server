@@ -30,7 +30,7 @@ describe('Create Transaction Handler', function() {
             amount: 5000,
         });
         assert.equal(response.statusCode, 400);
-        assert.deepEqual(response.payload, BoomOutput.badRequest('Invalid account'));
+        assert.deepEqual(response.payload, BoomOutput.badRequest('Invalid accountId'));
         sinon.assert.calledOnce(daos.accounts.account); // Double check we got that far.
     });
 

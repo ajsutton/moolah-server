@@ -147,5 +147,9 @@ describe('Transaction Management', function() {
             await dsl.accounts.verifyAccount({alias: 'account1', balance: -100});
             await dsl.accounts.verifyAccount({alias: 'account2', balance: 0});
         });
+
+        it('should reject creating a transaction with a toAccountId that does not exist', async function() {
+            await dsl.transactions.createTransaction({alias: 'transfer', type: 'transfer', account: '<noAccount>', toAccount: 'account2', amount: -100, statusCode: 400});
+        });
     });
 });
