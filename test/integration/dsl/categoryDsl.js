@@ -26,6 +26,19 @@ module.exports = class CategoryDsl {
         }
     }
 
+    async verifyCategory(args) {
+        const options = Object.assign({
+            alias: null,
+            statusCode: 200,
+        }, args);
+
+        const category = this.categoriesByAlias.get(options.alias);
+        const response = await this.server.get(`/api/categories/${encodeURIComponent(category.id)}/`);
+        assert.equal(response.statusCode, options.statusCode, 'Incorrect status code');
+
+        assert.deepEqual(JSON.parse(response.payload), category);
+    }
+
     async verifyCategories(args) {
         const options = Object.assign({
             categories: [],

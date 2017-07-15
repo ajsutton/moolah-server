@@ -10,8 +10,13 @@ module.exports = [
         config: require('../handlers/category/createCategory'),
     },
     {
+        method: 'GET',
+        path: '/api/categories/{id}/',
+        config: require('../handlers/category/getCategory'),
+    },
+    {
         method: 'PUT',
         path: '/api/categories/{id}/',
         config: require('../handlers/category/putCategory'),
-    }
+    },
 ];

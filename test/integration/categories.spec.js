@@ -33,4 +33,9 @@ describe('Account Management', function() {
     it('should not return 404 when attempting to update a category that does not exist', async function() {
         await dsl.categories.modifyCategory({alias: 'category1', name: 'New Name', statusCode: 404});
     });
+
+    it('should get individual category', async function() {
+        await dsl.categories.createCategory({alias: 'category1', name: 'Category 1'});
+        await dsl.categories.verifyCategory({alias: 'category1'});
+    });
 });
