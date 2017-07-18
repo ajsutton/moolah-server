@@ -8,6 +8,13 @@ function asTransaction(object) {
             transaction[key] = value;
         }
     });
+    if (transaction.transferIn) {
+        const actualAccountId = transaction.accountId;
+        transaction.accountId = transaction.toAccountId;
+        transaction.toAccountId = actualAccountId;
+        transaction.amount *= -1;
+    }
+    delete transaction.transferIn;
     return transaction;
 }
 
@@ -51,11 +58,11 @@ module.exports = class TransactionDao {
     }
 
     async transactions(userId, accountId, pageSize = 1000, offset = 0) {
-        const args = [userId, accountId];
-        let query = ` SELECT id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId, to_account_id as toAccountId  
+        const args = [accountId, userId, accountId, accountId];
+        let query = ` SELECT id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId, to_account_id as toAccountId, to_account_id = ? as transferIn
             FROM transaction 
            WHERE user_id = ? 
-             AND account_id = ? 
+             AND (account_id = ? OR to_account_id = ?) 
         ORDER BY date DESC, id `;
         if (pageSize !== undefined) {
             query += 'LIMIT ? OFFSET ?';

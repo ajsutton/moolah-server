@@ -98,6 +98,22 @@ describe('Transaction DAO', function() {
         assert.deepEqual(transactions, [transaction3, transaction1, transaction2]);
     });
 
+    it('should include transfer to the account in the list of transactions', async function() {
+        const transaction1 = makeTransaction({amount: 5000, date: '2017-06-01'});
+        const transaction2 = makeTransaction({accountId: 'otherAccount', type: 'transfer', toAccountId: minimalTransaction.accountId, amount: -2000, date: '2017-05-30'});
+        const transaction3 = makeTransaction({amount: 300, date: '2017-06-03'});
+        await transactionDao.create(userId, transaction1);
+        await transactionDao.create(userId, transaction2);
+        await transactionDao.create(userId, transaction3);
+
+        const transactions = await transactionDao.transactions(userId, minimalTransaction.accountId);
+        assert.deepEqual(transactions, [
+            transaction3,
+            transaction1,
+            makeTransaction({id: transaction2.id, accountId: minimalTransaction.accountId, type: 'transfer', toAccountId: 'otherAccount', amount: 2000, date: '2017-05-30'}),
+        ]);
+    });
+
     it('should return empty list when no transactions in account', async function() {
         const transactions = await transactionDao.transactions(userId, minimalTransaction.accountId);
         assert.deepEqual(transactions, []);
