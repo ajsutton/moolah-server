@@ -41,7 +41,7 @@ module.exports = {
             balance: types.money.default(null),
             payee: types.payee.default(null),
             notes: types.notes.default(null),
-            categoryId: types.id.default(null),
+            categoryId: types.id.allow(null).default(null),
             toAccountId: types.id.allow(null).default(null),
         }),
         headers: Joi.object({
