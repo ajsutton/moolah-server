@@ -41,8 +41,8 @@ module.exports = {
             amount: types.money.required(),
             payee: types.payee,
             notes: types.notes,
-            categoryId: types.id,
-            toAccountId: types.id,
+            categoryId: types.id.allow(null),
+            toAccountId: types.id.allow(null),
         }),
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
