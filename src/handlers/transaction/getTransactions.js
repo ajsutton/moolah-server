@@ -10,13 +10,14 @@ module.exports = {
             const userId = session.getUserId(request);
             const daos = db.daos(request);
             const accountId = request.query.account;
+            const scheduled = request.query.scheduled;
             const pageSize = request.query.pageSize;
             const offset = request.query.offset;
-            if (await daos.accounts.account(userId, accountId) === undefined) {
+            if (accountId !== undefined && await daos.accounts.account(userId, accountId) === undefined) {
                 reply(Boom.notFound('Account not found'));
                 return;
             }
-            const searchOptions = {accountId: accountId};
+            const searchOptions = {accountId: accountId, scheduled};
             if (pageSize !== undefined) {
                 searchOptions['pageSize'] = pageSize + 1;
             }
@@ -35,7 +36,8 @@ module.exports = {
     },
     validate: {
         query: {
-            account: types.id.required(),
+            account: types.id.default(undefined),
+            scheduled: types.boolean.default(false),
             pageSize: types.pageSize,
             offset: types.offset,
         },

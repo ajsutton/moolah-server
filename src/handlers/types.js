@@ -12,3 +12,4 @@ exports.notes = Joi.string().max(10000).allow('');
 exports.pageSize = Joi.number().integer().positive();
 exports.offset = Joi.number().integer().min(0);
 exports.jsonContentType = Joi.any().valid('application/json');
+exports.boolean = Joi.boolean();
