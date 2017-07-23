@@ -38,7 +38,7 @@ describe('Get Transactions Handler', function() {
 
     it('should return the transaction when it exists', async function() {
         daos.accounts.account.withArgs(userId, accountId).resolves({id: accountId});
-        daos.transactions.transactions.withArgs(userId, accountId).resolves([transaction]);
+        daos.transactions.transactions.withArgs(userId, {accountId: accountId}).resolves([transaction]);
         const response = await makeRequest(accountId);
         assert.equal(response.statusCode, 200);
         assert.deepEqual(response.payload, JSON.stringify({

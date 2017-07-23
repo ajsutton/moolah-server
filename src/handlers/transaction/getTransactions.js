@@ -16,7 +16,14 @@ module.exports = {
                 reply(Boom.notFound('Account not found'));
                 return;
             }
-            const transactions = await daos.transactions.transactions(userId, accountId, pageSize !== undefined ? pageSize + 1 : undefined, offset);
+            const searchOptions = {accountId: accountId};
+            if (pageSize !== undefined) {
+                searchOptions['pageSize'] = pageSize + 1;
+            }
+            if (offset !== undefined) {
+                searchOptions['offset'] = offset;
+            }
+            const transactions = await daos.transactions.transactions(userId, searchOptions);
             const hasMore = transactions.length > pageSize;
             const priorBalance = hasMore ? await daos.transactions.balance(userId, accountId, transactions[transactions.length - 1]) : 0;
             reply({

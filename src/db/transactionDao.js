@@ -24,8 +24,11 @@ module.exports = class TransactionDao {
     }
 
     create(userId, transaction) {
-        return this.query('INSERT INTO transaction (user_id, id, type, date, account_id, payee, amount, notes, category_id, to_account_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            userId, transaction.id, transaction.type, transaction.date, transaction.accountId, transaction.payee, transaction.amount, transaction.notes, transaction.categoryId, transaction.toAccountId);
+        return this.query(
+            'INSERT INTO transaction (user_id, id, type, date, account_id, payee, amount, notes, category_id, to_account_id, recur_every, recur_period) ' +
+            '     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            userId, transaction.id, transaction.type, transaction.date, transaction.accountId, transaction.payee, transaction.amount, transaction.notes, transaction.categoryId,
+            transaction.toAccountId, transaction.recurEvery, transaction.recurPeriod);
     }
 
     store(userId, transaction) {
@@ -38,6 +41,8 @@ module.exports = class TransactionDao {
             amount: transaction.amount,
             notes: transaction.notes,
             category_id: transaction.categoryId,
+            recur_every: transaction.recurEvery,
+            recur_period: transaction.recurPeriod,
         };
         return this.query('UPDATE transaction SET ? WHERE user_id = ? AND id = ?',
             toStore, userId, transaction.id);
@@ -49,7 +54,7 @@ module.exports = class TransactionDao {
 
     async transaction(userId, transactionId) {
         const results = await this.query(
-            'SELECT id, type, date, account_id AS accountId, payee, amount, notes, category_id AS categoryId, to_account_id AS toAccountId ' +
+            'SELECT id, type, date, account_id AS accountId, payee, amount, notes, category_id AS categoryId, to_account_id AS toAccountId, recur_every as recurEvery, recur_period as recurPeriod ' +
             '  FROM transaction ' +
             ' WHERE user_id = ? ' +
             '   AND id = ?',
@@ -57,16 +62,25 @@ module.exports = class TransactionDao {
         return asTransaction(results[0]);
     }
 
-    async transactions(userId, accountId, pageSize = 1000, offset = 0) {
-        const args = [accountId, userId, accountId, accountId];
-        let query = ` SELECT id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId, to_account_id as toAccountId, to_account_id = ? as transferIn
+    async transactions(userId, options = { pageSize: 1000, offset: 0, accountId: null, scheduled: false}) {
+        const opts = Object.assign({ pageSize: 1000, offset: 0, accountId: null, scheduled: false}, options);
+        const args = [opts.accountId, userId];
+        let query = ` SELECT id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId, to_account_id as toAccountId, to_account_id = ? as transferIn, recur_every as recurEvery, recur_period as recurPeriod
             FROM transaction 
-           WHERE user_id = ? 
-             AND (account_id = ? OR to_account_id = ?) 
-        ORDER BY date DESC, id `;
-        if (pageSize !== undefined) {
+           WHERE user_id = ? `;
+        if (opts.accountId !== null) {
+            query += ` AND (account_id = ? OR to_account_id = ?) `;
+            args.push(opts.accountId, opts.accountId);
+        }
+        if (opts.scheduled) {
+            query += ' AND recur_every IS NOT NULL ';
+        } else {
+            query += ' AND recur_every IS NULL '
+        }
+        query += ` ORDER BY date DESC, id `;
+        if (opts.pageSize !== undefined) {
             query += 'LIMIT ? OFFSET ?';
-            args.push(pageSize, offset);
+            args.push(opts.pageSize, opts.offset);
         }
         const results = await this.query(
             query,

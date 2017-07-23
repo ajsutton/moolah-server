@@ -38,11 +38,13 @@ describe('Transaction DAO', function() {
             notes: 'Bought some apple. No worries!',
             categoryId: 'category-id',
             toAccountId: 'account-2',
+            recurEvery: 2,
+            recurPeriod: 'MONTH'
         };
         await transactionDao.create(userId, transaction);
         const result = await transactionDao.transaction(userId, transaction.id);
         assert.deepEqual(result, transaction);
-        assert.deepEqual(await transactionDao.transactions(userId, 'account-id'), [transaction]);
+        assert.deepEqual(await transactionDao.transactions(userId, {accountId: 'account-id', scheduled: true}), [transaction]);
     });
 
     it('should create transaction with minimal required values', async function() {
@@ -75,6 +77,8 @@ describe('Transaction DAO', function() {
             type: 'income',
             categoryId: '3',
             toAccountId: '7',
+            recurEvery: 3,
+            recurPeriod: 'YEAR',
         });
         await transactionDao.store(userId, modifiedTransaction);
         assert.deepEqual(await transactionDao.transaction(userId, originalTransaction.id), modifiedTransaction);
@@ -94,7 +98,7 @@ describe('Transaction DAO', function() {
         await transactionDao.create(userId, transaction2);
         await transactionDao.create(userId, transaction3);
 
-        const transactions = await transactionDao.transactions(userId, minimalTransaction.accountId);
+        const transactions = await transactionDao.transactions(userId, {accountId: minimalTransaction.accountId});
         assert.deepEqual(transactions, [transaction3, transaction1, transaction2]);
     });
 
@@ -106,7 +110,7 @@ describe('Transaction DAO', function() {
         await transactionDao.create(userId, transaction2);
         await transactionDao.create(userId, transaction3);
 
-        const transactions = await transactionDao.transactions(userId, minimalTransaction.accountId);
+        const transactions = await transactionDao.transactions(userId, {accountId: minimalTransaction.accountId});
         assert.deepEqual(transactions, [
             transaction3,
             transaction1,
@@ -114,8 +118,39 @@ describe('Transaction DAO', function() {
         ]);
     });
 
+    it('should exclude scheduled transactions', async function() {
+        const transaction1 = makeTransaction({amount: 5000, date: '2017-06-01'});
+        const transaction2 = makeTransaction({amount: -2000, date: '2017-05-30', recurEvery: 1, recurPeriod: 'MONTH'});
+        const transaction3 = makeTransaction({amount: 300, date: '2017-06-03'});
+        await transactionDao.create(userId, transaction1);
+        await transactionDao.create(userId, transaction2);
+        await transactionDao.create(userId, transaction3);
+
+        const transactions = await transactionDao.transactions(userId, {accountId: minimalTransaction.accountId});
+        assert.deepEqual(transactions, [
+            transaction3,
+            transaction1,
+        ]);
+    });
+
+    it('should query all scheduled transactions in any account', async function() {
+        const transaction1 = makeTransaction({amount: 5000, date: '2017-06-01', recurEvery: 1, recurPeriod: 'MONTH', accountId: 'account1'});
+        const transaction2 = makeTransaction({amount: -2000, date: '2017-05-30', recurEvery: 1, recurPeriod: 'MONTH', accountId: 'account2'});
+        const transaction3 = makeTransaction({amount: 300, date: '2017-06-03', accountId: 'account1'});
+        const transaction4 = makeTransaction({amount: -2000, date: '2017-06-02', toAccountId: 'account1', recurEvery: 1, recurPeriod: 'MONTH', accountId: 'account2'});
+        await transactionDao.create(userId, transaction1);
+        await transactionDao.create(userId, transaction2);
+        await transactionDao.create(userId, transaction3);
+
+        const transactions = await transactionDao.transactions(userId, {scheduled: true});
+        assert.deepEqual(transactions, [
+            transaction1,
+            transaction2,
+        ]);
+    });
+
     it('should return empty list when no transactions in account', async function() {
-        const transactions = await transactionDao.transactions(userId, minimalTransaction.accountId);
+        const transactions = await transactionDao.transactions(userId, {accountId: minimalTransaction.accountId});
         assert.deepEqual(transactions, []);
     });
 
