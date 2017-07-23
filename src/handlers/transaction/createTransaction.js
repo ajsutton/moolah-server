@@ -17,6 +17,9 @@ module.exports = {
                 reply(Boom.badRequest('Invalid accountId'));
             } else if (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null && await daos.accounts.account(userId, transactionData.toAccountId) === undefined) {
                 reply(Boom.badRequest('Invalid toAccountId'));
+            } else if ((transactionData.recurEvery !== undefined && transactionData.recurPeriod === undefined) ||
+                       (transactionData.recurEvery === undefined && transactionData.recurPeriod !== undefined)) {
+                reply(Boom.badRequest('Must specify recurEvery and recurPeriod together'));
             } else {
                 while (true) {
                     try {
@@ -43,6 +46,8 @@ module.exports = {
             notes: types.notes,
             categoryId: types.id.allow(null),
             toAccountId: types.id.allow(null),
+            recurEvery: types.recurEvery.allow(null),
+            recurPeriod: types.recurPeriod.allow(null),
         }),
         headers: Joi.object({
             'Content-Type': types.jsonContentType,

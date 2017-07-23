@@ -24,6 +24,11 @@ module.exports = {
                 reply(Boom.badRequest('Invalid toAccountId'));
                 return;
             }
+            if ((modifiedTransaction.recurEvery !== undefined && modifiedTransaction.recurPeriod === undefined) ||
+                (modifiedTransaction.recurEvery === undefined && modifiedTransaction.recurPeriod !== undefined)) {
+                reply(Boom.badRequest('Must specify recurEvery and recurPeriod together'));
+                return;
+            }
             await daos.transactions.store(userId, modifiedTransaction);
             reply(modifiedTransaction);
         },
@@ -43,6 +48,8 @@ module.exports = {
             notes: types.notes.default(null),
             categoryId: types.id.allow(null).default(null),
             toAccountId: types.id.allow(null).default(null),
+            recurEvery: types.recurEvery.allow(null),
+            recurPeriod: types.recurPeriod.allow(null),
         }),
         headers: Joi.object({
             'Content-Type': types.jsonContentType,

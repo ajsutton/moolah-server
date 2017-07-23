@@ -13,3 +13,5 @@ exports.pageSize = Joi.number().integer().positive();
 exports.offset = Joi.number().integer().min(0);
 exports.jsonContentType = Joi.any().valid('application/json');
 exports.boolean = Joi.boolean();
+exports.recurEvery = Joi.number().integer().min(1);
+exports.recurPeriod = Joi.any().valid('ONCE', 'DAY', 'WEEK', 'MONTH', 'YEAR');
