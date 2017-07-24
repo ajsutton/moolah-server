@@ -24,9 +24,8 @@ module.exports = {
                 reply(Boom.badRequest('Invalid toAccountId'));
                 return;
             }
-            if ((modifiedTransaction.recurEvery !== undefined && modifiedTransaction.recurPeriod === undefined) ||
-                (modifiedTransaction.recurEvery === undefined && modifiedTransaction.recurPeriod !== undefined)) {
-                reply(Boom.badRequest('Must specify recurEvery and recurPeriod together'));
+            if (modifiedTransaction.recurEvery !== undefined && modifiedTransaction.recurPeriod === undefined) {
+                reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
                 return;
             }
             await daos.transactions.store(userId, modifiedTransaction);

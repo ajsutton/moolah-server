@@ -74,9 +74,9 @@ module.exports = class TransactionDao {
             args.push(opts.accountId, opts.accountId);
         }
         if (opts.scheduled) {
-            query += ' AND recur_every IS NOT NULL ';
+            query += ' AND recur_period IS NOT NULL ';
         } else {
-            query += ' AND recur_every IS NULL '
+            query += ' AND recur_period IS NULL '
         }
         query += ` ORDER BY date DESC, id `;
         if (opts.pageSize !== undefined) {

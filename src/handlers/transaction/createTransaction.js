@@ -17,9 +17,8 @@ module.exports = {
                 reply(Boom.badRequest('Invalid accountId'));
             } else if (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null && await daos.accounts.account(userId, transactionData.toAccountId) === undefined) {
                 reply(Boom.badRequest('Invalid toAccountId'));
-            } else if ((transactionData.recurEvery !== undefined && transactionData.recurPeriod === undefined) ||
-                       (transactionData.recurEvery === undefined && transactionData.recurPeriod !== undefined)) {
-                reply(Boom.badRequest('Must specify recurEvery and recurPeriod together'));
+            } else if (transactionData.recurEvery !== undefined && transactionData.recurPeriod === undefined) {
+                reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
             } else {
                 while (true) {
                     try {
