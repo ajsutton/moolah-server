@@ -141,9 +141,11 @@ describe('Transaction DAO', function() {
         await transactionDao.create(userId, transaction1);
         await transactionDao.create(userId, transaction2);
         await transactionDao.create(userId, transaction3);
+        await transactionDao.create(userId, transaction4);
 
         const transactions = await transactionDao.transactions(userId, {scheduled: true});
         assert.deepEqual(transactions, [
+            transaction4,
             transaction1,
             transaction2,
         ]);

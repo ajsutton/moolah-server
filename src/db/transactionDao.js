@@ -62,13 +62,14 @@ module.exports = class TransactionDao {
         return asTransaction(results[0]);
     }
 
-    async transactions(userId, options = { pageSize: 1000, offset: 0, accountId: null, scheduled: false}) {
-        const opts = Object.assign({ pageSize: 1000, offset: 0, accountId: null, scheduled: false}, options);
+    async transactions(userId, options = {}) {
+        const opts = Object.assign({ pageSize: 1000, offset: 0, accountId: undefined, scheduled: false}, options);
         const args = [opts.accountId, userId];
         let query = ` SELECT id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId, to_account_id as toAccountId, to_account_id = ? as transferIn, recur_every as recurEvery, recur_period as recurPeriod
             FROM transaction 
            WHERE user_id = ? `;
-        if (opts.accountId !== null) {
+
+        if (opts.accountId !== undefined) {
             query += ` AND (account_id = ? OR to_account_id = ?) `;
             args.push(opts.accountId, opts.accountId);
         }

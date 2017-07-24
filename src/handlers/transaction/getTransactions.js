@@ -13,11 +13,12 @@ module.exports = {
             const scheduled = request.query.scheduled;
             const pageSize = request.query.pageSize;
             const offset = request.query.offset;
+
             if (accountId !== undefined && await daos.accounts.account(userId, accountId) === undefined) {
                 reply(Boom.notFound('Account not found'));
                 return;
             }
-            const searchOptions = {accountId: accountId, scheduled};
+            const searchOptions = {accountId, scheduled};
             if (pageSize !== undefined) {
                 searchOptions['pageSize'] = pageSize + 1;
             }
