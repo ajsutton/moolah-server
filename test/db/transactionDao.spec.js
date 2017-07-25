@@ -179,6 +179,18 @@ describe('Transaction DAO', function() {
         assert.equal(balance, 7300);
     });
 
+    it('should exclude scheduled transactions when calculating balance', async function() {
+        const transaction1 = makeTransaction({amount: 5000, date: '2017-06-01'});
+        const transaction2 = makeTransaction({amount: -2000, date: '2017-05-30', recurEvery: 1, recurPeriod: 'MONTH'});
+        const transaction3 = makeTransaction({amount: 300, date: '2017-06-03'});
+        await transactionDao.create(userId, transaction1);
+        await transactionDao.create(userId, transaction2);
+        await transactionDao.create(userId, transaction3);
+
+        const balance = await transactionDao.balance(userId, minimalTransaction.accountId);
+        assert.equal(balance, 5300);
+    });
+
     function makeTransaction(args, template = minimalTransaction) {
         return Object.assign({}, template, {id: idGenerator()}, args);
     }

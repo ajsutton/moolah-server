@@ -91,7 +91,7 @@ module.exports = class TransactionDao {
 
     async balance(userId, accountId, priorToTransaction) {
         const args = [accountId, userId, accountId, accountId];
-        let query = 'SELECT SUM(IF(account_id = ?, amount, -amount)) as balance FROM transaction WHERE user_id = ? AND (account_id = ? OR to_account_id = ?) ';
+        let query = 'SELECT SUM(IF(account_id = ?, amount, -amount)) as balance FROM transaction WHERE user_id = ? AND (account_id = ? OR to_account_id = ?) AND recur_period IS NULL ';
         if (priorToTransaction !== undefined) {
             query += 'AND (date < ? OR (date = ? AND id < ?))';
             args.push(priorToTransaction.date, priorToTransaction.date, priorToTransaction.id);
