@@ -102,6 +102,21 @@ module.exports = class TransactionDao {
         return results[0].balance || 0;
     }
 
+    async incomeAndExpense(userId, currentDayOfMonth, afterDate) {
+        const query = `
+  SELECT MIN(date) as start,
+         MAX(date) as end,
+         SUM(IF(type = 'income', amount, 0)) AS income, 
+         SUM(IF(type = 'expense', amount, 0)) AS expense, 
+         SUM(IF(type = 'income' OR type = 'expense', amount, 0)) AS profit 
+    FROM transaction 
+   WHERE recur_period IS NULL 
+     AND user_id = ?
+     AND date > ?
+GROUP BY IF(DAYOFMONTH(date) > ?, EXTRACT(YEAR_MONTH FROM DATE_ADD(date, INTERVAL 1 MONTH)), EXTRACT(YEAR_MONTH FROM date));`
+        return this.query(query, userId, afterDate, currentDayOfMonth);
+    }
+
     async removeCategory(userId, categoryId) {
         return this.query('UPDATE transaction SET category_id = NULL WHERE user_id = ? and category_id = ?', userId, categoryId);
     }
