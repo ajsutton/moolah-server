@@ -15,3 +15,4 @@ exports.jsonContentType = Joi.any().valid('application/json');
 exports.boolean = Joi.boolean();
 exports.recurEvery = Joi.number().integer().min(1);
 exports.recurPeriod = Joi.any().valid('ONCE', 'DAY', 'WEEK', 'MONTH', 'YEAR');
+exports.monthEnd = Joi.number().integer().min(1).max(31);

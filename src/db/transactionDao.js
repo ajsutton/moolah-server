@@ -113,6 +113,7 @@ module.exports = class TransactionDao {
    WHERE recur_period IS NULL 
      AND user_id = ?
      AND date > ?
+     AND type IN ('income', 'expense') 
 GROUP BY IF(DAYOFMONTH(date) > ?, EXTRACT(YEAR_MONTH FROM DATE_ADD(date, INTERVAL 1 MONTH)), EXTRACT(YEAR_MONTH FROM date));`
         return this.query(query, userId, afterDate, currentDayOfMonth);
     }
