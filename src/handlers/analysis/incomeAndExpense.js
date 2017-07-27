@@ -10,7 +10,7 @@ module.exports = {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
             const daos = db.daos(request);
-            const results = await daos.transactions.incomeAndExpense(userId, request.query.monthEnd, request.query.after);
+            const results = await daos.analysis.incomeAndExpense(userId, request.query.monthEnd, request.query.after);
             reply({incomeAndExpense: results});
         },
     },

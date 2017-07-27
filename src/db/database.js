@@ -1,6 +1,7 @@
 const AccountDao = require('./accountDao');
 const TransactionDao = require('./transactionDao');
 const CategoryDao = require('./categoryDao');
+const AnalysisDao = require('./analysisDao');
 
 const resolveOrReject = (resolve, reject) => (err, value) => {
     if (err) {
@@ -42,6 +43,7 @@ module.exports = {
             accounts: new AccountDao(query),
             transactions: new TransactionDao(query),
             categories: new CategoryDao(query),
+            analysis: new AnalysisDao(query),
         };
     },
 
