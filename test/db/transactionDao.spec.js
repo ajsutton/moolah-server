@@ -165,6 +165,18 @@ describe('Transaction DAO', function() {
         assert.equal(balance, 3300);
     });
 
+    it('should calculate account balance prior to transaction', async function() {
+        const transaction1 = makeTransaction({amount: 5000, id: 1});
+        const transaction2 = makeTransaction({amount: -2000, id: 2});
+        const transaction3 = makeTransaction({amount: 300, id: 3});
+        await transactionDao.create(userId, transaction1);
+        await transactionDao.create(userId, transaction2);
+        await transactionDao.create(userId, transaction3);
+
+        const balance = await transactionDao.balance(userId, minimalTransaction.accountId, transaction2);
+        assert.equal(balance, -1700);
+    });
+
     it('should return 0 balance when there are no transactions', async function() {
         const balance = await transactionDao.balance(userId, minimalTransaction.accountId);
         assert.equal(balance, 0);

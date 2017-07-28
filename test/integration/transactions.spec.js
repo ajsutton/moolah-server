@@ -64,7 +64,7 @@ describe('Transaction Management', function() {
             account: 'account1',
             offset: 0,
             pageSize: 3,
-            expectPriorBalance: 300,
+            expectPriorBalance: 600,
             expectHasMore: true,
             expectTransactions: [
                 'account1',
