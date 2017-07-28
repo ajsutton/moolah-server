@@ -18,6 +18,21 @@ function asTransaction(object) {
     return transaction;
 }
 
+function transactionQuery(fields, userId, opts) {
+    let query = `SELECT ${fields} FROM transaction WHERE user_id = ?`;
+    const args = [userId];
+    if (opts.accountId !== undefined) {
+        query += ` AND (account_id = ? OR to_account_id = ?) `;
+        args.push(opts.accountId, opts.accountId);
+    }
+    if (opts.scheduled) {
+        query += ' AND recur_period IS NOT NULL ';
+    } else {
+        query += ' AND recur_period IS NULL ';
+    }
+    return {query, args};
+}
+
 module.exports = class TransactionDao {
     constructor(query) {
         this.query = query;
@@ -63,21 +78,11 @@ module.exports = class TransactionDao {
     }
 
     async transactions(userId, options = {}) {
-        const opts = Object.assign({ pageSize: 1000, offset: 0, accountId: undefined, scheduled: false}, options);
-        const args = [opts.accountId, userId];
-        let query = ` SELECT id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId, to_account_id as toAccountId, to_account_id = ? as transferIn, recur_every as recurEvery, recur_period as recurPeriod
-            FROM transaction 
-           WHERE user_id = ? `;
-
-        if (opts.accountId !== undefined) {
-            query += ` AND (account_id = ? OR to_account_id = ?) `;
-            args.push(opts.accountId, opts.accountId);
-        }
-        if (opts.scheduled) {
-            query += ' AND recur_period IS NOT NULL ';
-        } else {
-            query += ' AND recur_period IS NULL '
-        }
+        const opts = Object.assign({pageSize: 1000, offset: 0, accountId: undefined, scheduled: false}, options);
+        const args = [opts.accountId];
+        const builder = transactionQuery('id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId, to_account_id as toAccountId, to_account_id = ? as transferIn, recur_every as recurEvery, recur_period as recurPeriod', userId, opts);
+        let query = builder.query;
+        args.push(...builder.args);
         query += ` ORDER BY date DESC, id `;
         if (opts.pageSize !== undefined) {
             query += 'LIMIT ? OFFSET ?';
@@ -90,8 +95,9 @@ module.exports = class TransactionDao {
     }
 
     async balance(userId, accountId, priorToTransaction) {
-        const args = [accountId, userId, accountId, accountId];
-        let query = 'SELECT SUM(IF(account_id = ?, amount, -amount)) as balance FROM transaction WHERE user_id = ? AND (account_id = ? OR to_account_id = ?) AND recur_period IS NULL ';
+        const builder = transactionQuery('SUM(IF(account_id = ?, amount, -amount)) as balance', userId, {accountId: accountId, scheduled: false});
+        const args = [accountId, ...builder.args];
+        let query = builder.query;
         if (priorToTransaction !== undefined) {
             query += 'AND (date < ? OR (date = ? AND id < ?))';
             args.push(priorToTransaction.date, priorToTransaction.date, priorToTransaction.id);
