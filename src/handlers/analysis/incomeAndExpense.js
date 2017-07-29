@@ -16,7 +16,7 @@ module.exports = {
     },
     validate: {
         query: {
-            after: types.date.required(),
+            after: types.date.default(null),
             monthEnd: types.monthEnd.required(),
         },
     },
