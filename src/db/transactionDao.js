@@ -95,8 +95,16 @@ module.exports = class TransactionDao {
     }
 
     async balance(userId, accountId, forTransaction) {
-        const builder = transactionQuery('SUM(IF(account_id = ?, amount, -amount)) as balance', userId, {accountId: accountId, scheduled: false});
-        const args = [accountId, ...builder.args];
+        let selectBalance;
+        const args = [];
+        if (accountId === undefined) {
+            selectBalance = 'SUM(amount) as balance';
+        } else {
+            selectBalance = 'SUM(IF(account_id = ?, amount, -amount)) as balance';
+            args.push(accountId);
+        }
+        const builder = transactionQuery(selectBalance, userId, {accountId: accountId, scheduled: false});
+        args.push(...builder.args);
         let query = builder.query;
         if (forTransaction !== undefined) {
             query += 'AND (date < ? OR (date = ? AND id >= ?))';

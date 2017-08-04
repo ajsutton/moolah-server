@@ -24,10 +24,11 @@ module.exports = {
                                 id: account.id,
                                 accountId: account.id,
                                 type: 'openingBalance',
-                                date: new Date(),
+                                date: account.date !== null ? account.date : new Date(),
                                 amount: account.balance,
                             });
                     });
+                    delete account.date;
                     reply(account).code(201).header('Location', `/accounts/${encodeURIComponent(account.id)}/`);
                     return;
                 } catch (error) {
@@ -44,6 +45,7 @@ module.exports = {
             type: types.accountType.required(),
             balance: types.money.required(),
             position: types.position,
+            date: types.date.default(null),
         }),
         headers: Joi.object({
             'Content-Type': types.jsonContentType,

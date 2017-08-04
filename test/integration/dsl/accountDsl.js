@@ -15,6 +15,7 @@ module.exports = class AccountsDsl {
             type: 'bank',
             balance: 0,
             position: 0,
+            date: undefined,
             statusCode: 201,
         }, args);
 
@@ -23,6 +24,7 @@ module.exports = class AccountsDsl {
             type: options.type,
             balance: options.balance,
             position: options.position,
+            date: options.date,
         }, options.statusCode);
         const account = JSON.parse(response.payload);
 

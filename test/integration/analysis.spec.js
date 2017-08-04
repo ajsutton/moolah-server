@@ -6,7 +6,7 @@ describe('Analysis', function() {
     beforeEach(async function() {
         dsl = await Dsl.create();
         dsl.login();
-        await dsl.accounts.createAccount({alias: 'account1'});
+        await dsl.accounts.createAccount({alias: 'account1', date: '2017-05-31', balance: 0});
 
 
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-05-31', type: 'income', amount: 1000});
@@ -15,7 +15,7 @@ describe('Analysis', function() {
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-06-03', type: 'income', amount: -10});
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-06-30', type: 'income', amount: 100});
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-06-30', type: 'expense', amount: -50});
-        
+
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-01', type: 'openingBalance', amount: 500});
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-01', type: 'income', amount: 500});
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-01', type: 'expense', amount: -250});
@@ -38,5 +38,31 @@ describe('Analysis', function() {
                 {start: '2017-07-31', end: '2017-07-31', income: 300, expense: -700, profit: -400},
             ],
         });
+    });
+
+    it('should get daily balances', async function() {
+        await dsl.analysis.verifyDailyBalances({
+            expected: [
+                {date: '2017-05-31', balance: -4000},
+                {date: '2017-06-03', balance: -4000 + -10},
+                {date: '2017-06-30', balance: -4000 + -10 + 100 + -50},
+                {date: '2017-07-01', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250},
+                {date: '2017-07-15', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600},
+                {date: '2017-07-31', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600 + -700 + 300},
+            ]
+        })
+    });
+
+    it('should get daily balances after a specified date', async function() {
+        await dsl.analysis.verifyDailyBalances({
+            after: '2017-05-31',
+            expected: [
+                {date: '2017-06-03', balance: -4000 + -10},
+                {date: '2017-06-30', balance: -4000 + -10 + 100 + -50},
+                {date: '2017-07-01', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250},
+                {date: '2017-07-15', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600},
+                {date: '2017-07-31', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600 + -700 + 300},
+            ]
+        })
     });
 });

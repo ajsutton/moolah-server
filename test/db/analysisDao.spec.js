@@ -38,7 +38,7 @@ describe('Analysis DAO', function() {
             await transactionDao.create(userId, makeTransaction({date: '2017-06-03', type: 'income', amount: -10}));
             await transactionDao.create(userId, makeTransaction({date: '2017-06-30', type: 'income', amount: 100}));
             await transactionDao.create(userId, makeTransaction({date: '2017-06-30', type: 'expense', amount: -50}));
-            
+
             await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'openingBalance', amount: 500}));
             await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'income', amount: 500}));
             await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'expense', amount: -250}));
@@ -60,6 +60,31 @@ describe('Analysis DAO', function() {
                 {start: '2017-05-31', end: '2017-06-03', income: 990, expense: -5000, profit: -4010},
                 {start: '2017-06-30', end: '2017-07-15', income: 600, expense: -900, profit: -300},
                 {start: '2017-07-31', end: '2017-07-31', income: 300, expense: -700, profit: -400},
+            ]);
+        });
+    });
+
+    describe('Daily Profit and Loss', function() {
+        beforeEach(async function() {
+            await transactionDao.create(userId, makeTransaction({date: '2017-05-31', type: 'income', amount: 1000}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-05-31', type: 'expense', amount: -5000}));
+
+            await transactionDao.create(userId, makeTransaction({date: '2017-06-03', type: 'income', amount: -10}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-06-03', type: 'income', amount: 100}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-06-03', type: 'expense', amount: -50}));
+
+            await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'openingBalance', amount: 500}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'income', amount: 500}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'expense', amount: -250}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-07-31', type: 'expense', amount: -700}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-07-31', type: 'income', amount: 300}));
+        });
+
+        it('should get daily profit and loss', async function() {
+            assert.deepEqual(await analysisDao.dailyProfitAndLoss(userId, '2017-06-01'), [
+                {date: '2017-06-03', profit: -10 + 100 + -50},
+                {date: '2017-07-01', profit: 500 + 500 + -250},
+                {date: '2017-07-31', profit: -700 + 300},
             ]);
         });
     });
