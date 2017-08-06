@@ -107,8 +107,11 @@ module.exports = class TransactionDao {
         args.push(...builder.args);
         let query = builder.query;
         if (forTransaction !== undefined) {
-            query += 'AND (date < ? OR (date = ? AND id >= ?))';
+            query += 'AND (date < ? OR (date = ? AND id >= ?)) ';
             args.push(forTransaction.date, forTransaction.date, forTransaction.id);
+        }
+        if (accountId === undefined) {
+            query += 'AND type != "transfer" ';
         }
         const results = await this.query(
             query,
