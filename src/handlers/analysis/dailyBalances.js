@@ -3,7 +3,7 @@ const db = require('../../db/database');
 const session = require('../../auth/session');
 const addDays = require('date-fns/add_days');
 const formatDate = require('date-fns/format');
-
+const forecastScheduledTransactions = require('../../model/transaction/forecastScheduledTransactions');
 
 module.exports = {
     auth: 'session',
@@ -18,12 +18,18 @@ module.exports = {
                 currentBalance += dailyProfit.profit;
                 return {date: dailyProfit.date, balance: currentBalance}
             });
-            reply({dailyBalances: balances});
+            let scheduledBalances = undefined;
+            if (request.query.forecastUntil !== null) {
+                const scheduledTransactions = await daos.transactions.transactions(userId, {scheduled: true, pageSize: undefined});
+                scheduledBalances = forecastScheduledTransactions.forecastBalances(scheduledTransactions, currentBalance, request.query.forecastUntil);
+            }
+            reply({dailyBalances: balances, scheduledBalances});
         },
     },
     validate: {
         query: {
             after: types.date.default(null),
+            forecastUntil: types.date.default(null),
         },
     },
 };
