@@ -59,6 +59,15 @@ describe('Forecast Scheduled Transactions', function() {
                 {date: '2017-12-07', recurPeriod: 'MONTH', amount: 200, recurEvery: 1},
             ]);
         });
+
+        it('should not include transaction where next date is beyond forecast range', function() {
+            const result = forecastScheduledTransactions.extrapolateScheduledTransactions(
+                [
+                    {date: '2017-12-01', recurPeriod: 'MONTH', amount: 100, recurEvery: 2},
+                ],
+                '2017-06-01');
+            assert.deepEqual(result, []);
+        });
     });
 
     describe('forecastBalances', function() {

@@ -11,10 +11,10 @@ function extrapolateScheduledTransaction(transaction, forecastUntil) {
     const instances = [];
     const dateStepFunction = dueDateTools.dateStepFunction(transaction.recurPeriod);
     let date = transaction.date;
-    do {
+    while (!isAfter(date, forecastUntil)) {
         instances.push(Object.assign({}, transaction, {date: dateFormat(date, 'YYYY-MM-DD')}));
         date = dateStepFunction(date, transaction.recurEvery);
-    } while (!isAfter(date, forecastUntil));
+    }
     return instances;
 }
 
