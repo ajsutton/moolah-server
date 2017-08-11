@@ -1,4 +1,3 @@
-const db = require('../../src/db/database');
 const dbTestUtils = require('../utils/dbTestUtils');
 const AnalysisDao = require('../../src/db/analysisDao');
 const TransactionDao = require('../../src/db/transactionDao');
