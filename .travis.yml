@@ -20,6 +20,7 @@ deploy:
   on:
     branch: master
 cache:
+  yarn: true
   directories:
   - node_modules
 notifications:
