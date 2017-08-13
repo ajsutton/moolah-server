@@ -1,4 +1,3 @@
-const db = require('../../src/db/database');
 const dbTestUtils = require('../utils/dbTestUtils');
 const AccountDao = require('../../src/db/accountDao');
 const assert = require('chai').assert;
@@ -12,12 +11,12 @@ describe('Account DAO', function() {
 
     beforeEach(async function() {
         userId = idGenerator();
-        connection = dbTestUtils.createConnection();
+        connection = await dbTestUtils.createConnection();
         accountDao = new AccountDao(dbTestUtils.queryFunction(connection));
     });
 
     afterEach(async function() {
-        await dbTestUtils.deleteData(userId);
+        await dbTestUtils.deleteData(userId, connection);
         connection.destroy();
     });
 

@@ -30,6 +30,7 @@
   "dependencies": {
     "bell": "^8.7.0",
     "boom": "^5.1.0",
+    "configue": "^0.16.0",
     "date-fns": "^1.28.5",
     "get-env": "^0.5.10",
     "good": "^7.2.0",

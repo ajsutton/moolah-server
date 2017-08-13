@@ -751,7 +751,7 @@ Encoders['sqlite3'] = function() {
 var sys = require('util'),
     exec = require('child_process').exec,
     fs = require('fs'),
-    config = require('./config');
+    config = null
 
 var encoder, mysql, client;
 
@@ -1039,12 +1039,20 @@ var Connect = {
 // Determine if the user has run the script from the command-line and if so
 // attempt to connect to the database and execute the given command.
 if (process.argv[1].split('/').pop() == "migrate.js") {
-    if (!Encoders[config.dbms])
-        sys.puts("Invalid dbms set in configuraiton file.");
-    encoder = Encoders[config.dbms];
+    const configue = require('../src/config');
+    configue.resolve().then(() => {
+        config = {
+            dbms: 'mysql',
+            migration_path: './patches/',
+            mysql: configue.get('database')
+        };
+        if (!Encoders[config.dbms])
+            sys.puts("Invalid dbms set in configuration file.");
+        encoder = Encoders[config.dbms];
 
-    // Attempt to connect to the DB
-    Connect[config.dbms]();
+        // Attempt to connect to the DB
+        Connect[config.dbms]();
+    });
 }
 
 // "BURNING DOWN THE HOUSE!"

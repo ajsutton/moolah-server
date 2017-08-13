@@ -1,5 +1,3 @@
-const Hapi = require('hapi');
-
 const server = require('./src/server');
 
 server.create()

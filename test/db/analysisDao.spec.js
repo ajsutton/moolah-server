@@ -19,13 +19,13 @@ describe('Analysis DAO', function() {
 
     beforeEach(async function() {
         userId = idGenerator();
-        connection = dbTestUtils.createConnection();
+        connection = await dbTestUtils.createConnection();
         analysisDao = new AnalysisDao(dbTestUtils.queryFunction(connection));
         transactionDao = new TransactionDao(dbTestUtils.queryFunction(connection));
     });
 
     afterEach(async function() {
-        await dbTestUtils.deleteData(userId);
+        await dbTestUtils.deleteData(userId, connection);
         connection.destroy();
     });
 
