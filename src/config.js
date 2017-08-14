@@ -23,22 +23,19 @@ module.exports = Configue({
             connectionLimit: 50,
         },
         logging: {
-            reporters: {
-                console: [
-                    {
-                        module: 'good-squeeze',
-                        name: 'Squeeze',
-                        args: [{
-                            response: '*',
-                            log: '*',
-                            error: '*',
-                        }],
-                    },
-                    {
-                        module: 'good-console',
-                    },
-                    'stdout',
-                ],
+            console: {
+                enabled: true,
+                levels: {
+                    response: '*',
+                    log: '*',
+                    error: '*',
+                },
+            },
+            file: {
+                enabled: false,
+                path: 'moolah.log',
+                levels: {
+                },
             },
         },
     },
