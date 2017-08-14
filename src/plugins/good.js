@@ -1,23 +1,7 @@
 const Good = require('good');
-module.exports = {
+module.exports = server => ({
     register: Good,
     options: {
-        reporters: {
-            console: [
-                {
-                    module: 'good-squeeze',
-                    name: 'Squeeze',
-                    args: [{
-                        response: '*',
-                        log: '*',
-                        error: '*',
-                    }],
-                },
-                {
-                    module: 'good-console',
-                },
-                'stdout',
-            ],
-        },
+        reporters: server.configue('logging:reporters'),
     },
-};
+});

@@ -22,5 +22,24 @@ module.exports = Configue({
             dateStrings: true,
             connectionLimit: 50,
         },
+        logging: {
+            reporters: {
+                console: [
+                    {
+                        module: 'good-squeeze',
+                        name: 'Squeeze',
+                        args: [{
+                            response: '*',
+                            log: '*',
+                            error: '*',
+                        }],
+                    },
+                    {
+                        module: 'good-console',
+                    },
+                    'stdout',
+                ],
+            },
+        },
     },
 });

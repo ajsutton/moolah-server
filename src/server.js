@@ -12,7 +12,7 @@ exports.create = function() {
                 const authConfig = server.configue('authentication');
                 server.register([
                     require('hapi-async-handler'),
-                    require('./plugins/good'),
+                    require('./plugins/good')(server),
                     require('./plugins/database')(server),
                     require('hapi-auth-cookie'),
                     require('bell'),
