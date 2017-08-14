@@ -6,6 +6,7 @@ module.exports = Configue({
         {file: __dirname + '/../config/config.json'},
     ],
     defaults: {
+        https: true,
         authentication: {
             secureToken: uuidv4(),
             googleClientId: 'invalid',

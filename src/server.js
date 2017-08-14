@@ -1,4 +1,3 @@
-const env = require('get-env')();
 const Hapi = require('hapi');
 const configue = require('./config');
 
@@ -23,12 +22,12 @@ exports.create = function() {
                     } else {
                         server.auth.strategy('session', 'cookie', {
                             password: authConfig.secureToken,
-                            isSecure: env === 'prod',
+                            isSecure: server.configue('https'),
                         });
                         server.auth.strategy('google', 'bell', {
                             provider: 'google',
                             password: authConfig.secureToken,
-                            isSecure: env === 'prod',
+                            isSecure: server.configue('https'),
                             clientId: authConfig.googleClientId,
                             clientSecret: authConfig.clientSecret,
                             location: authConfig.baseUrl,
