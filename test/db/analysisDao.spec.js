@@ -1,5 +1,6 @@
 const dbTestUtils = require('../utils/dbTestUtils');
 const AnalysisDao = require('../../src/db/analysisDao');
+const CategoryDao = require('../../src/db/categoryDao');
 const TransactionDao = require('../../src/db/transactionDao');
 const assert = require('chai').assert;
 const idGenerator = require('../../src/utils/idGenerator');
@@ -84,6 +85,37 @@ describe('Analysis DAO', function() {
                 {date: '2017-06-03', profit: -10 + 100 + -50},
                 {date: '2017-07-01', profit: 500 + 500 + -250},
                 {date: '2017-07-31', profit: -700 + 300},
+            ]);
+        });
+    });
+
+    describe('Expense Breakdown', function() {
+        let categoryDao;
+
+        beforeEach(async function() {
+            categoryDao = new CategoryDao(dbTestUtils.queryFunction(connection));
+            await categoryDao.create(userId, {id: 1, name: 'Category 1'});
+            await categoryDao.create(userId, {id: 2, name: 'Category 2'});
+            await categoryDao.create(userId, {id: 3, name: 'Category 3'});
+        });
+
+        it('should calculate expense breakdown by category', async function() {
+            await transactionDao.create(userId, makeTransaction({date: '2017-05-31', type: 'income', categoryId: 1, amount: 1000}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-05-31', type: 'expense', categoryId: 2, amount: -5000}));
+
+            await transactionDao.create(userId, makeTransaction({date: '2017-06-03', type: 'expense', categoryId: 1, amount: -10}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-06-03', type: 'income', categoryId: 2, amount: 100}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-06-03', type: 'expense', categoryId: 3, amount: -50}));
+
+            await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'income', categoryId: 1, amount: 500}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'expense', categoryId: 2, amount: -250}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-07-31', type: 'expense', categoryId: 3, amount: -700}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-07-31', type: 'income', categoryId: 2, amount: 300}));
+
+            assert.deepEqual(await analysisDao.expenseBreakdown(userId, '2017-06-01'), [
+                {categoryId: "1", totalExpenses: -10},
+                {categoryId: "2", totalExpenses: -250},
+                {categoryId: "3", totalExpenses: -50 + -700},
             ]);
         });
     });

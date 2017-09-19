@@ -3,7 +3,7 @@ module.exports = class TransactionDao {
         this.query = query;
     }
 
-    async incomeAndExpense(userId, currentDayOfMonth, afterDate) {
+    incomeAndExpense(userId, currentDayOfMonth, afterDate) {
         const args = [userId];
         let query = ` SELECT MIN(date) as start,
                              MAX(date) as end,
@@ -36,5 +36,17 @@ module.exports = class TransactionDao {
         }
         query += `GROUP BY date `;
         return this.query(query, ...args);
+    }
+
+    expenseBreakdown(userId, afterDate) {
+        let query = ` SELECT category_id as categoryId, SUM(amount) as totalExpenses 
+                        FROM transaction 
+                       WHERE recur_period IS NULL 
+                         AND user_id = ?
+                         AND type = 'expense' 
+                         AND category_id IS NOT NULL
+                         AND date > ?
+                    GROUP BY category_id`
+        return this.query(query, userId, afterDate);
     }
 };
