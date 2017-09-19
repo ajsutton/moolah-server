@@ -9,4 +9,9 @@ module.exports = [
         path: '/api/analysis/dailyBalances/',
         config: require('../handlers/analysis/dailyBalances'),
     },
+    {
+        method: 'GET',
+        path: '/api/analysis/expenseBreakdown/',
+        config: require('../handlers/analysis/expenseBreakdown'),
+    },
 ];
