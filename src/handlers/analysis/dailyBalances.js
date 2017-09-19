@@ -2,8 +2,14 @@ const types = require('../types');
 const db = require('../../db/database');
 const session = require('../../auth/session');
 const addDays = require('date-fns/add_days');
+const differenceInDays = require('date-fns/difference_in_days');
 const formatDate = require('date-fns/format');
 const forecastScheduledTransactions = require('../../model/transaction/forecastScheduledTransactions');
+const regression = require('regression');
+
+function dateToNumber(date) {
+    return differenceInDays('1970-01-01', date);
+}
 
 module.exports = {
     auth: 'session',
@@ -22,6 +28,13 @@ module.exports = {
             if (request.query.forecastUntil !== null) {
                 const scheduledTransactions = await daos.transactions.transactions(userId, {scheduled: true, pageSize: undefined});
                 scheduledBalances = forecastScheduledTransactions.forecastBalances(scheduledTransactions, currentBalance, request.query.forecastUntil);
+            }
+            const balancesByTimestamp = balances.map(({date, balance}) => [dateToNumber(date), balance]);
+            
+            const bestFit = regression.linear(balancesByTimestamp);
+            balances.forEach(balanceEntry => balanceEntry.bestFit = bestFit.predict(dateToNumber(balanceEntry.date))[1]);
+            if (scheduledBalances) {
+                scheduledBalances.forEach(balanceEntry => balanceEntry.bestFit = bestFit.predict(dateToNumber(balanceEntry.date))[1]);
             }
             reply({dailyBalances: balances, scheduledBalances});
         },
