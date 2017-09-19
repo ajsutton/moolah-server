@@ -39,14 +39,18 @@ module.exports = class TransactionDao {
     }
 
     expenseBreakdown(userId, afterDate) {
+        const args = [userId];
         let query = ` SELECT category_id as categoryId, SUM(amount) as totalExpenses 
                         FROM transaction 
                        WHERE recur_period IS NULL 
                          AND user_id = ?
                          AND type = 'expense' 
-                         AND category_id IS NOT NULL
-                         AND date > ?
-                    GROUP BY category_id`
-        return this.query(query, userId, afterDate);
+                         AND category_id IS NOT NULL `;
+        if (afterDate) {
+            query += ' AND date > ? ';
+            args.push(afterDate);
+        }
+        query += ' GROUP BY category_id';
+        return this.query(query, ...args);
     }
 };
