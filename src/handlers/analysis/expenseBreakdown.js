@@ -12,14 +12,14 @@ module.exports = {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
             const daos = db.daos(request);
-            const after = request.query.after;
-            const results = await daos.analysis.expenseBreakdown(userId, after);
+            const results = await daos.analysis.expenseBreakdown(userId, request.query.monthEnd, request.query.after);
             reply(results);
         },
     },
     validate: {
         query: {
             after: types.date.default(null),
+            monthEnd: types.monthEnd.required(),
         },
     },
 };

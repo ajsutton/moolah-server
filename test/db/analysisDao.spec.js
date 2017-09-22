@@ -112,10 +112,11 @@ describe('Analysis DAO', function() {
             await transactionDao.create(userId, makeTransaction({date: '2017-07-31', type: 'expense', categoryId: 3, amount: -700}));
             await transactionDao.create(userId, makeTransaction({date: '2017-07-31', type: 'income', categoryId: 2, amount: 300}));
 
-            assert.deepEqual(await analysisDao.expenseBreakdown(userId, '2017-06-01'), [
-                {categoryId: "1", totalExpenses: -10},
-                {categoryId: "2", totalExpenses: -250},
-                {categoryId: "3", totalExpenses: -50 + -700},
+            assert.deepEqual(await analysisDao.expenseBreakdown(userId, 31, '2017-06-01'), [
+                {categoryId: "1", start: '2017-06-03', end: '2017-06-03', totalExpenses: -10},
+                {categoryId: "2", start: '2017-07-01', end: '2017-07-01', totalExpenses: -250},
+                {categoryId: "3", start: '2017-06-03', end: '2017-06-03', totalExpenses: -50},
+                {categoryId: "3", start: '2017-07-31', end: '2017-07-31', totalExpenses: -700},
             ]);
         });
     });

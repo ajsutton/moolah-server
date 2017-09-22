@@ -38,9 +38,12 @@ module.exports = class TransactionDao {
         return this.query(query, ...args);
     }
 
-    expenseBreakdown(userId, afterDate) {
+    expenseBreakdown(userId, currentDayOfMonth, afterDate) {
         const args = [userId];
-        let query = ` SELECT category_id as categoryId, SUM(amount) as totalExpenses 
+        let query = ` SELECT category_id as categoryId, 
+                             MIN(date) as start,
+                             MAX(date) as end,
+                             SUM(amount) as totalExpenses 
                         FROM transaction 
                        WHERE recur_period IS NULL 
                          AND user_id = ?
@@ -50,7 +53,8 @@ module.exports = class TransactionDao {
             query += ' AND date > ? ';
             args.push(afterDate);
         }
-        query += ' GROUP BY category_id';
+        query += `GROUP BY category_id, IF(DAYOFMONTH(date) > ?, EXTRACT(YEAR_MONTH FROM DATE_ADD(date, INTERVAL 1 MONTH)), EXTRACT(YEAR_MONTH FROM date));`;
+        args.push(currentDayOfMonth);
         return this.query(query, ...args);
     }
 };
