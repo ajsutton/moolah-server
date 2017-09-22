@@ -39,10 +39,9 @@ module.exports = class TransactionDao {
     }
 
     expenseBreakdown(userId, currentDayOfMonth, afterDate) {
-        const args = [userId];
+        const args = [currentDayOfMonth, userId];
         let query = ` SELECT category_id as categoryId, 
-                             MIN(date) as start,
-                             MAX(date) as end,
+                             IF(DAYOFMONTH(date) > ?, EXTRACT(YEAR_MONTH FROM DATE_ADD(date, INTERVAL 1 MONTH)), EXTRACT(YEAR_MONTH FROM date)) as month,
                              SUM(amount) as totalExpenses 
                         FROM transaction 
                        WHERE recur_period IS NULL 
