@@ -88,10 +88,15 @@ module.exports = class TransactionDao {
             query += 'LIMIT ? OFFSET ?';
             args.push(opts.pageSize, opts.offset);
         }
-        const results = await this.query(
-            query,
-            ...args);
+        const results = await this.query(query, ...args);
         return results.map(asTransaction);
+    }
+
+    async transactionCount(userId, options = {}) {
+        const opts = Object.assign({accountId: undefined, scheduled: false}, options);
+        const builder = transactionQuery('COUNT(*) as transactionCount', userId, opts);
+        const results = await this.query(builder.query, ...builder.args);
+        return results[0].transactionCount || 0;
     }
 
     async balance(userId, accountId, forTransaction) {

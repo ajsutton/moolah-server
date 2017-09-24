@@ -28,10 +28,12 @@ module.exports = {
             const transactions = await daos.transactions.transactions(userId, searchOptions);
             const hasMore = transactions.length > pageSize;
             const priorBalance = hasMore ? await daos.transactions.balance(userId, accountId, transactions[transactions.length - 1]) : 0;
+            const totalNumberOfTransactions = await daos.transactions.transactionCount(userId, {accountId, scheduled});
             reply({
                 transactions: transactions.slice(0, pageSize),
                 hasMore,
                 priorBalance,
+                totalNumberOfTransactions,
             });
         },
     },

@@ -203,6 +203,19 @@ describe('Transaction DAO', function() {
         assert.equal(balance, 5300);
     });
 
+    it('should count transactions', async function() {
+
+        const transaction1 = makeTransaction({amount: 5000, date: '2017-06-01'});
+        const transaction2 = makeTransaction({amount: -2000, date: '2017-05-30', recurEvery: 1, recurPeriod: 'MONTH'});
+        const transaction3 = makeTransaction({amount: 300, date: '2017-06-03'});
+        await transactionDao.create(userId, transaction1);
+        await transactionDao.create(userId, transaction2);
+        await transactionDao.create(userId, transaction3);
+
+        const count = await transactionDao.transactionCount(userId, {accountId: minimalTransaction.accountId, scheduled: false});
+        assert.equal(count, 2);
+    });
+
     function makeTransaction(args, template = minimalTransaction) {
         return Object.assign({}, template, {id: idGenerator()}, args);
     }

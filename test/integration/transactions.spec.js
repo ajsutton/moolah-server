@@ -71,6 +71,7 @@ describe('Transaction Management', function() {
                 'transaction5',
                 'transaction4',
             ],
+            transactionCount: 6,
         });
         await dsl.transactions.verifyTransactions({
             account: 'account1',
@@ -83,6 +84,7 @@ describe('Transaction Management', function() {
                 'transaction2',
                 'transaction1',
             ],
+            transactionCount: 6,
         });
     });
 

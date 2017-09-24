@@ -96,18 +96,21 @@ module.exports = class TransactionsDsl {
             expectPriorBalance: 0,
             expectHasMore: false,
             expectTransactions: [],
+            transactionCount: undefined,
             statusCode: 200,
         }, args);
         const account = this.accountsByAlias.get(options.account);
         const expectedTransactions = options.expectTransactions.map(alias => this.transactionsByAlias.get(alias));
         const pageSizeArg = options.pageSize !== undefined ? `&pageSize=${encodeURIComponent(options.pageSize)}` : '';
         const offsetArg = options.offset !== undefined ? `&offset=${encodeURIComponent(options.offset)}` : '';
+        const transactionCount = options.transactionCount !== undefined ? options.transactionCount : expectedTransactions.length;
         const response = await this.server.get(`/api/transactions/?account=${encodeURIComponent(account.id)}${pageSizeArg}${offsetArg}`, options.statusCode);
         const result = JSON.parse(response.payload);
         assert.deepEqual(result, {
             transactions: expectedTransactions,
             priorBalance: options.expectPriorBalance,
             hasMore: options.expectHasMore,
+            totalNumberOfTransactions: transactionCount,
         });
     }
 
