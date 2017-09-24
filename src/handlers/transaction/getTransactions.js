@@ -20,10 +20,10 @@ module.exports = {
             }
             const searchOptions = {accountId, scheduled};
             if (pageSize !== undefined) {
-                searchOptions['pageSize'] = pageSize + 1;
+                searchOptions.pageSize = pageSize + 1;
             }
             if (offset !== undefined) {
-                searchOptions['offset'] = offset;
+                searchOptions.offset = offset;
             }
             const transactions = await daos.transactions.transactions(userId, searchOptions);
             const hasMore = transactions.length > pageSize;
