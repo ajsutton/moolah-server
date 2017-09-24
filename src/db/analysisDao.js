@@ -4,9 +4,10 @@ module.exports = class TransactionDao {
     }
 
     incomeAndExpense(userId, currentDayOfMonth, afterDate) {
-        const args = [userId];
+        const args = [currentDayOfMonth, userId];
         let query = ` SELECT MIN(date) as start,
                              MAX(date) as end,
+                             IF(DAYOFMONTH(date) > ?, EXTRACT(YEAR_MONTH FROM DATE_ADD(date, INTERVAL 1 MONTH)), EXTRACT(YEAR_MONTH FROM date)) as month,
                              SUM(IF(type = 'income', amount, 0)) AS income, 
                              SUM(IF(type = 'expense', amount, 0)) AS expense, 
                              SUM(amount) AS profit 
