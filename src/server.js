@@ -32,6 +32,14 @@ exports.create = function() {
                             clientSecret: authConfig.clientSecret,
                             location: authConfig.baseUrl,
                         });
+                        server.auth.strategy('facebook', 'bell', {
+                            provider: 'facebook',
+                            password: authConfig.secureToken,
+                            isSecure: server.configue('https'),
+                            clientId: authConfig.facebookClientId,
+                            clientSecret: authConfig.facebookClientSecret,
+                            location: authConfig.baseUrl,
+                        });
                         server.register([
                             require('./plugins/router'),
                         ], err2 => {
