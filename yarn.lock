@@ -205,7 +205,7 @@ boom@5.x.x, boom@^5.2.0:
   dependencies:
     hoek "4.x.x"
 
-boom@6.0.0:
+boom@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/boom/-/boom-6.0.0.tgz#9b36c52a12afab3f0e55536131b7fd5021aad0cc"
   dependencies:
