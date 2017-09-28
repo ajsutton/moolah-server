@@ -1091,7 +1091,7 @@ items@2.x.x, items@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/items/-/items-2.1.1.tgz#8bd16d9c83b19529de5aea321acaada78364a198"
 
-joi@10.x.x, joi@^10.3.1, joi@^10.6.0:
+joi@10.x.x, joi@^10.3.1:
   version "10.6.0"
   resolved "https://registry.yarnpkg.com/joi/-/joi-10.6.0.tgz#52587f02d52b8b75cdb0c74f0b164a191a0e1fc2"
   dependencies:
@@ -1118,7 +1118,7 @@ joi@8.x.x:
     moment "2.x.x"
     topo "2.x.x"
 
-joi@^11.1.0:
+joi@^11.0.0, joi@^11.1.0:
   version "11.1.1"
   resolved "https://registry.yarnpkg.com/joi/-/joi-11.1.1.tgz#08194537d3b9c796bac8666deb3a825c1a5d83c1"
   dependencies:
