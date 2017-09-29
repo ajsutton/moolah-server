@@ -124,7 +124,7 @@ module.exports = class TransactionDao {
         return results[0].balance || 0;
     }
 
-    async removeCategory(userId, categoryId) {
-        return this.query('UPDATE transaction SET category_id = NULL WHERE user_id = ? and category_id = ?', userId, categoryId);
+    async removeCategory(userId, categoryId, replacementCategoryId = null) {
+        return this.query('UPDATE transaction SET category_id = ? WHERE user_id = ? and category_id = ?', replacementCategoryId, userId, categoryId);
     }
 };

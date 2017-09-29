@@ -16,7 +16,14 @@ module.exports = {
                     reply(Boom.notFound('Category not found'));
                 } else {
                     daos.categories.remove(userId, categoryId);
-                    daos.transactions.removeCategory(userId, categoryId);
+                    const replacementCategoryId = request.query.replaceWith === undefined ? null : request.query.replaceWith;
+                    if (replacementCategoryId !== null) {
+                        const replacementCategory = await daos.categories.category(userId, replacementCategoryId);
+                        if (replacementCategory === undefined) {
+                            reply(Boom.badRequest('Replacement category not found'));
+                        }
+                    }
+                    daos.transactions.removeCategory(userId, categoryId, replacementCategoryId);
                     reply().code(204);
                 }
             });
@@ -25,6 +32,9 @@ module.exports = {
     validate: {
         params: {
             id: types.id.required(),
+        },
+        query: {
+            replaceWith: types.id,
         },
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
