@@ -12,8 +12,8 @@ module.exports = {
         const session = {
             userId: `facebook-${profile.id}`,
             name: profile.displayName,
-            givenName: profile.name.given_name,
-            familyName: profile.name.family_name,
+            givenName: profile.name.first,
+            familyName: profile.name.last,
             picture: profile.raw.picture,
         };
         request.cookieAuth.set(session);
