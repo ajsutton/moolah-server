@@ -31,6 +31,7 @@ exports.create = function() {
                             clientId: authConfig.googleClientId,
                             clientSecret: authConfig.clientSecret,
                             location: authConfig.baseUrl,
+                            scope: ['profile'],
                         });
                         server.auth.strategy('facebook', 'bell', {
                             provider: 'facebook',
@@ -40,7 +41,7 @@ exports.create = function() {
                             clientSecret: authConfig.facebookClientSecret,
                             location: authConfig.baseUrl,
                             config: {
-                                fields: 'id,name,email,first_name,last_name,middle_name,gender,link,locale,timezone,updated_time,verified,picture'
+                                fields: 'id,name,first_name,last_name,picture'
                             }
                         });
                         server.register([
