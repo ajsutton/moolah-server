@@ -14,7 +14,7 @@ module.exports = {
             name: profile.displayName,
             givenName: profile.name.first,
             familyName: profile.name.last,
-            picture: profile.raw.picture,
+            picture: profile.raw.picture.data.url,
         };
         request.cookieAuth.set(session);
         reply.redirect('/');

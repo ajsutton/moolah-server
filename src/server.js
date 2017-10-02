@@ -39,6 +39,9 @@ exports.create = function() {
                             clientId: authConfig.facebookClientId,
                             clientSecret: authConfig.facebookClientSecret,
                             location: authConfig.baseUrl,
+                            config: {
+                                fields: 'id,name,email,first_name,last_name,middle_name,gender,link,locale,timezone,updated_time,verified,picture'
+                            }
                         });
                         server.register([
                             require('./plugins/router'),
