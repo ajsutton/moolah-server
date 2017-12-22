@@ -1040,7 +1040,7 @@ var Connect = {
 // attempt to connect to the database and execute the given command.
 if (process.argv[1].split('/').pop() == "migrate.js") {
     const configue = require('../src/config');
-    configue.resolve().then(() => {
+    configue.resolve();
         config = {
             dbms: 'mysql',
             migration_path: './patches/',
@@ -1052,7 +1052,6 @@ if (process.argv[1].split('/').pop() == "migrate.js") {
 
         // Attempt to connect to the DB
         Connect[config.dbms]();
-    });
 }
 
 // "BURNING DOWN THE HOUSE!"
