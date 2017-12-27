@@ -40,7 +40,7 @@
     "hapi": "^16.4.3",
     "hapi-async-handler": "^1.0.3",
     "hapi-auth-cookie": "^7.0.0",
-    "hapi-plugin-mysql": "^5.0.0",
+    "hapi-mysql2": "0.9.5",
     "hapi-router": "^3.5.0",
     "joi": "^13.0.0",
     "node-mysql": "^0.4.2",

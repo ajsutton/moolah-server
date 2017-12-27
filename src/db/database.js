@@ -35,27 +35,40 @@ function rollback(connection) {
     });
 }
 
+function makeDaos(connection) {
+    const query = doQuery.bind(undefined, connection);
+    return {
+        accounts: new AccountDao(query),
+        transactions: new TransactionDao(query),
+        categories: new CategoryDao(query),
+        analysis: new AnalysisDao(query),
+    };
+}
+
+function getConnection(pool) {
+    return new Promise((resolve, reject) => {
+        pool.getConnection(resolveOrReject(resolve, reject));
+    });
+}
+
 module.exports = {
     daos(request) {
-        const connection = request.app.db;
-        const query = doQuery.bind(undefined, connection);
-        return {
-            accounts: new AccountDao(query),
-            transactions: new TransactionDao(query),
-            categories: new CategoryDao(query),
-            analysis: new AnalysisDao(query),
-        };
+        const connection = request.server.plugins['hapi-mysql2'].pool;
+        return makeDaos(connection);
     },
 
     async withTransaction(request, action) {
-        const daos = this.daos(request);
+        const connection = await getConnection(request.server.plugins['hapi-mysql2'].pool);
         try {
-            await beginTransaction(request.app.db);
+            const daos = makeDaos(connection);
+            await beginTransaction(connection);
             await action(daos);
-            await commit(request.app.db);
+            await commit(connection);
         } catch (err) {
-            rollback(request.app.db);
+            rollback(connection);
             throw err;
+        } finally {
+            connection.release();
         }
     },
 };

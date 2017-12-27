@@ -109,6 +109,12 @@ async@^1.4.0:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
+async@^2.5.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/async/-/async-2.6.0.tgz#61a29abb6fcc026fea77e56d1c6ec53a795951f4"
+  dependencies:
+    lodash "^4.14.0"
+
 asynckit@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
@@ -822,12 +828,13 @@ hapi-auth-cookie@^7.0.0:
     hoek "4.x.x"
     joi "8.x.x"
 
-hapi-plugin-mysql@^5.0.0:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/hapi-plugin-mysql/-/hapi-plugin-mysql-5.0.2.tgz#7d9ada334202080629c0428819fd5bf3c02f563c"
+hapi-mysql2@0.9.5:
+  version "0.9.5"
+  resolved "https://registry.yarnpkg.com/hapi-mysql2/-/hapi-mysql2-0.9.5.tgz#e439e07547a8ce0f726ad93a7c49878711a3d7ed"
   dependencies:
-    hoek "4.2.x"
-    mysql "~2.15.0"
+    async "^2.5.0"
+    joi "^11.0.1"
+    mysql "^2.14.1"
 
 hapi-router@^3.5.0:
   version "3.5.0"
@@ -903,7 +910,7 @@ hoek@2.x.x:
   version "2.16.3"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-2.16.3.tgz#20bb7403d3cea398e91dc4710a8ff1b8274a25ed"
 
-hoek@4.2.x, hoek@4.x.x, hoek@^4.2.0:
+hoek@4.x.x, hoek@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-4.2.0.tgz#72d9d0754f7fe25ca2d01ad8f8f9a9449a89526d"
 
@@ -1122,7 +1129,7 @@ joi@8.x.x:
     moment "2.x.x"
     topo "2.x.x"
 
-joi@^11.1.0:
+joi@^11.0.1, joi@^11.1.0:
   version "11.4.0"
   resolved "https://registry.yarnpkg.com/joi/-/joi-11.4.0.tgz#f674897537b625e9ac3d0b7e1604c828ad913ccb"
   dependencies:
@@ -1239,7 +1246,7 @@ lodash.get@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
 
-lodash@^4.16.6, lodash@^4.2.0:
+lodash@^4.14.0, lodash@^4.16.6, lodash@^4.2.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -1368,7 +1375,7 @@ ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
 
-mysql@*, mysql@~2.15.0:
+mysql@*, mysql@^2.14.1:
   version "2.15.0"
   resolved "https://registry.yarnpkg.com/mysql/-/mysql-2.15.0.tgz#ea16841156343e8f2e47fc8985ec41cdd9573b5c"
   dependencies:
