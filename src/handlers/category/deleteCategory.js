@@ -23,7 +23,7 @@ module.exports = {
                             reply(Boom.badRequest('Replacement category not found'));
                         }
                     }
-                    daos.transactions.removeCategory(userId, categoryId, replacementCategoryId);
+                    await daos.transactions.removeCategory(userId, categoryId, replacementCategoryId);
                     reply().code(204);
                 }
             });

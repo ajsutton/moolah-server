@@ -7,12 +7,13 @@ module.exports = {
         async: async function(request, reply) {
             try {
                 const userId = session.getUserId(request);
-                const daos = db.daos(request);
-                const accounts = await daos.accounts.accounts(userId);
-                await Promise.all(accounts.map(async account => {
-                    account.balance = await daos.transactions.balance(userId, account.id);
-                }));
-                reply({accounts: accounts});
+                await db.withTransaction(request, async daos => {
+                    const accounts = await daos.accounts.accounts(userId);
+                    await Promise.all(accounts.map(async account => {
+                        account.balance = await daos.transactions.balance(userId, account.id);
+                    }));
+                    reply({accounts: accounts});
+                });
             } catch (err) {
                 console.error('Error while accessing accounts', err);
                 reply(err, 500);

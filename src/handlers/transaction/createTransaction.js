@@ -10,29 +10,30 @@ module.exports = {
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
-            const daos = db.daos(request);
-            const transactionData = request.payload;
-            const account = await daos.accounts.account(userId, transactionData.accountId);
-            if (account === undefined) {
-                reply(Boom.badRequest('Invalid accountId'));
-            } else if (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null && await daos.accounts.account(userId, transactionData.toAccountId) === undefined) {
-                reply(Boom.badRequest('Invalid toAccountId'));
-            } else if (transactionData.recurEvery !== undefined && transactionData.recurPeriod === undefined) {
-                reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
-            } else {
-                while (true) {
-                    try {
-                        const transaction = Object.assign({id: idGenerator()}, request.payload);
-                        await daos.transactions.create(userId, transaction);
-                        reply(transaction).code(201).header('Location', `/transactions/${encodeURIComponent(transaction.id)}/`);
-                        return;
-                    } catch (error) {
-                        if (error.code !== 'ER_DUP_ENTRY') {
-                            throw error;
+            await db.withTransaction(request, async daos => {
+                const transactionData = request.payload;
+                const account = await daos.accounts.account(userId, transactionData.accountId);
+                if (account === undefined) {
+                    reply(Boom.badRequest('Invalid accountId'));
+                } else if (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null && await daos.accounts.account(userId, transactionData.toAccountId) === undefined) {
+                    reply(Boom.badRequest('Invalid toAccountId'));
+                } else if (transactionData.recurEvery !== undefined && transactionData.recurPeriod === undefined) {
+                    reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
+                } else {
+                    while (true) {
+                        try {
+                            const transaction = Object.assign({id: idGenerator()}, request.payload);
+                            await daos.transactions.create(userId, transaction);
+                            reply(transaction).code(201).header('Location', `/transactions/${encodeURIComponent(transaction.id)}/`);
+                            return;
+                        } catch (error) {
+                            if (error.code !== 'ER_DUP_ENTRY') {
+                                throw error;
+                            }
                         }
                     }
                 }
-            }
+            });
         },
     },
     validate: {

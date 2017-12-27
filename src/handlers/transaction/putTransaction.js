@@ -9,27 +9,28 @@ module.exports = {
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
-            const daos = db.daos(request);
-            const transaction = await daos.transactions.transaction(userId, request.params.id);
-            if (transaction === undefined) {
-                reply(Boom.notFound('Transaction not found'));
-                return;
-            }
-            const modifiedTransaction = Object.assign(transaction, request.payload);
-            if (await daos.accounts.account(userId, modifiedTransaction.accountId) === undefined) {
-                reply(Boom.badRequest('Invalid accountId'));
-                return;
-            }
-            if (modifiedTransaction.toAccountId !== undefined && modifiedTransaction.toAccountId !== null && await daos.accounts.account(userId, modifiedTransaction.toAccountId) === undefined) {
-                reply(Boom.badRequest('Invalid toAccountId'));
-                return;
-            }
-            if (modifiedTransaction.recurEvery !== undefined && modifiedTransaction.recurPeriod === undefined) {
-                reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
-                return;
-            }
-            await daos.transactions.store(userId, modifiedTransaction);
-            reply(modifiedTransaction);
+            await db.withTransaction(request, async daos => {
+                const transaction = await daos.transactions.transaction(userId, request.params.id);
+                if (transaction === undefined) {
+                    reply(Boom.notFound('Transaction not found'));
+                    return;
+                }
+                const modifiedTransaction = Object.assign(transaction, request.payload);
+                if (await daos.accounts.account(userId, modifiedTransaction.accountId) === undefined) {
+                    reply(Boom.badRequest('Invalid accountId'));
+                    return;
+                }
+                if (modifiedTransaction.toAccountId !== undefined && modifiedTransaction.toAccountId !== null && await daos.accounts.account(userId, modifiedTransaction.toAccountId) === undefined) {
+                    reply(Boom.badRequest('Invalid toAccountId'));
+                    return;
+                }
+                if (modifiedTransaction.recurEvery !== undefined && modifiedTransaction.recurPeriod === undefined) {
+                    reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
+                    return;
+                }
+                await daos.transactions.store(userId, modifiedTransaction);
+                reply(modifiedTransaction);
+            });
         },
     },
     validate: {

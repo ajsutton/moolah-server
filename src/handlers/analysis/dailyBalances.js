@@ -16,27 +16,28 @@ module.exports = {
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
-            const daos = db.daos(request);
-            const after = request.query.after;
-            let currentBalance = after === null ? 0 : await daos.transactions.balance(userId, undefined, {date: formatDate(addDays(after, 1), 'YYYY-MM-DD'), id: null});
-            const results = await daos.analysis.dailyProfitAndLoss(userId, after);
-            const balances = results.map(dailyProfit => {
-                currentBalance += dailyProfit.profit;
-                return {date: dailyProfit.date, balance: currentBalance}
+            await db.withTransaction(request, async daos => {
+                const after = request.query.after;
+                let currentBalance = after === null ? 0 : await daos.transactions.balance(userId, undefined, {date: formatDate(addDays(after, 1), 'YYYY-MM-DD'), id: null});
+                const results = await daos.analysis.dailyProfitAndLoss(userId, after);
+                const balances = results.map(dailyProfit => {
+                    currentBalance += dailyProfit.profit;
+                    return {date: dailyProfit.date, balance: currentBalance}
+                });
+                let scheduledBalances = undefined;
+                if (request.query.forecastUntil !== null) {
+                    const scheduledTransactions = await daos.transactions.transactions(userId, {scheduled: true, pageSize: undefined});
+                    scheduledBalances = forecastScheduledTransactions.forecastBalances(scheduledTransactions, currentBalance, request.query.forecastUntil);
+                }
+                const balancesByTimestamp = balances.map(({date, balance}) => [dateToNumber(date), balance]);
+                
+                const bestFit = regression.linear(balancesByTimestamp);
+                balances.forEach(balanceEntry => balanceEntry.bestFit = bestFit.predict(dateToNumber(balanceEntry.date))[1]);
+                if (scheduledBalances) {
+                    scheduledBalances.forEach(balanceEntry => balanceEntry.bestFit = bestFit.predict(dateToNumber(balanceEntry.date))[1]);
+                }
+                reply({dailyBalances: balances, scheduledBalances});
             });
-            let scheduledBalances = undefined;
-            if (request.query.forecastUntil !== null) {
-                const scheduledTransactions = await daos.transactions.transactions(userId, {scheduled: true, pageSize: undefined});
-                scheduledBalances = forecastScheduledTransactions.forecastBalances(scheduledTransactions, currentBalance, request.query.forecastUntil);
-            }
-            const balancesByTimestamp = balances.map(({date, balance}) => [dateToNumber(date), balance]);
-            
-            const bestFit = regression.linear(balancesByTimestamp);
-            balances.forEach(balanceEntry => balanceEntry.bestFit = bestFit.predict(dateToNumber(balanceEntry.date))[1]);
-            if (scheduledBalances) {
-                scheduledBalances.forEach(balanceEntry => balanceEntry.bestFit = bestFit.predict(dateToNumber(balanceEntry.date))[1]);
-            }
-            reply({dailyBalances: balances, scheduledBalances});
         },
     },
     validate: {

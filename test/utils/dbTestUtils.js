@@ -53,15 +53,12 @@ module.exports = {
             accounts: accountDao,
             transactions: transactionDao,
         };
-        sinon.stub(db, 'daos');
         sinon.stub(db, 'withTransaction');
-        db.daos.returns(daos);
         db.withTransaction.callsFake((request, action) => action(daos));
         return daos;
     },
 
     restoreDaos() {
-        db.daos.restore();
         db.withTransaction.restore();
     },
 };

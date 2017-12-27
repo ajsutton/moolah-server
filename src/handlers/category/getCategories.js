@@ -7,10 +7,11 @@ module.exports = {
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
-            const daos = db.daos(request);
-            const categories = await daos.categories.categories(userId);
-            reply({
-                categories
+            await db.withTransaction(request, async daos => {
+                const categories = await daos.categories.categories(userId);
+                reply({
+                    categories
+                });
             });
         },
     },

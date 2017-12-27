@@ -52,11 +52,6 @@ function getConnection(pool) {
 }
 
 module.exports = {
-    daos(request) {
-        const connection = request.server.plugins['hapi-mysql2'].pool;
-        return makeDaos(connection);
-    },
-
     async withTransaction(request, action) {
         const connection = await getConnection(request.server.plugins['hapi-mysql2'].pool);
         try {

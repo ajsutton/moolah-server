@@ -9,9 +9,10 @@ module.exports = {
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
-            const daos = db.daos(request);
-            const results = await daos.analysis.incomeAndExpense(userId, request.query.monthEnd, request.query.after);
-            reply({incomeAndExpense: results});
+            await db.withTransaction(request, async daos => {
+                const results = await daos.analysis.incomeAndExpense(userId, request.query.monthEnd, request.query.after);
+                reply({incomeAndExpense: results});
+            });
         },
     },
     validate: {

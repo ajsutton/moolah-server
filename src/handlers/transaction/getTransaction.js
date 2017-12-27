@@ -8,14 +8,15 @@ module.exports = {
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
-            const daos = db.daos(request);
-            const transactionId = request.params.id;
-            const transaction = await daos.transactions.transaction(userId, transactionId);
-            if (transaction === undefined) {
-                reply(Boom.notFound('Transaction not found'));
-            } else {
-                reply(transaction);
-            }
+            await db.withTransaction(request, async daos => {
+                const transactionId = request.params.id;
+                const transaction = await daos.transactions.transaction(userId, transactionId);
+                if (transaction === undefined) {
+                    reply(Boom.notFound('Transaction not found'));
+                } else {
+                    reply(transaction);
+                }
+            });
         },
     },
     validate: {
