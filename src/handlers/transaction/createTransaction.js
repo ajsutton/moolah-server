@@ -23,6 +23,8 @@ module.exports = {
                     reply(Boom.badRequest('Cannot transfer to own account'));
                 } else if (transactionData.type === 'transfer' && (transactionData.toAccountId === undefined || transactionData.toAccountId === null)) {
                     reply(Boom.badRequest('toAccountId is required when type is transfer'));
+                } else if (transactionData.type !== 'transfer' && (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null)) {
+                    reply(Boom.badRequest('toAccountId invalid when type is not transfer'));
                 } else {
                     while (true) {
                         try {

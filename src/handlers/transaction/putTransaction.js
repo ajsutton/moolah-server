@@ -36,6 +36,10 @@ module.exports = {
                     reply(Boom.badRequest('toAccountId is required when type is transfer'));
                     return;
                 }
+                if (modifiedTransaction.type !== 'transfer' && (modifiedTransaction.toAccountId !== undefined && modifiedTransaction.toAccountId !== null)) {
+                    reply(Boom.badRequest('toAccountId invalid when type is not transfer'));
+                    return;
+                }
                 await daos.transactions.store(userId, modifiedTransaction);
                 reply(modifiedTransaction);
             });

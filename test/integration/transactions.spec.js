@@ -198,5 +198,19 @@ describe('Transaction Management', function() {
             await dsl.transactions.createTransaction({alias: 'transaction', type: 'transfer', account: 'account1', toAccount: 'account2', amount: -100});
             await dsl.transactions.modifyTransaction({alias: 'transaction', toAccount: null, statusCode: 400});
         });
+
+        it('should reject creating a transaction with toAccountId without type being transfer', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'expense', account: 'account1', toAccount: 'account2', amount: -100, statusCode: 400});
+        });
+
+        it('should reject adding a toAcccountId to a transaction without making it a transfer', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: 100});
+            await dsl.transactions.modifyTransaction({alias: 'transaction', toAccount: 'account2', statusCode: 400});
+        });
+
+        it('should reject changing type from transfer without removing toAccountId', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'transfer', account: 'account1', toAccount: 'account2', amount: -100});
+            await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', statusCode: 400});
+        });
     });
 });
