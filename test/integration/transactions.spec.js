@@ -6,25 +6,40 @@ describe('Transaction Management', function() {
     beforeEach(async function() {
         dsl = await Dsl.create();
         dsl.login();
-        await dsl.accounts.createAccount({alias: 'account1'});
+        await dsl.accounts.createAccount({alias: 'account1', date: '2017-04-30'});
     });
 
     afterEach(function() {
         return dsl.tearDown();
     });
 
-    it('should create and retrieve a transaction', async function() {
-        await dsl.transactions.createTransaction({alias: 'transaction1', account: 'account1', amount: 5023});
-        await dsl.transactions.verifyTransaction({alias: 'transaction1'});
-    });
+    describe('Transaction Maintenance', function() {
+        it('should create and retrieve a transaction', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction1', account: 'account1', amount: 5023});
+            await dsl.transactions.verifyTransaction({alias: 'transaction1'});
+        });
 
-    it('should reject creating a transaction when account does not exist', async function() {
-        await dsl.transactions.createTransaction({alias: 'transaction1', account: '<noAccount>', amount: 5023, statusCode: 400});
-    });
+        it('should reject creating a transaction when account does not exist', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction1', account: '<noAccount>', amount: 5023, statusCode: 400});
+        });
 
-    it('should reject updating a transaction when account does not exist', async function() {
-        await dsl.transactions.createTransaction({alias: 'transaction1', account: 'account1', amount: 5023});
-        await dsl.transactions.modifyTransaction({alias: 'transaction1', account: '<noAccount>', amount: 5023, statusCode: 400});
+        it('should reject updating a transaction when account does not exist', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction1', account: 'account1', amount: 5023});
+            await dsl.transactions.modifyTransaction({alias: 'transaction1', account: '<noAccount>', amount: 5023, statusCode: 400});
+        });
+
+        it('should update transaction', async function() {
+            await dsl.accounts.createAccount({alias: 'account2'});
+            await dsl.transactions.createTransaction({alias: 'transaction1', date: '2017-06-01', account: 'account1', amount: 100});
+            await dsl.transactions.modifyTransaction({alias: 'transaction1', date: '2017-06-02', account: 'account2', amount: 200, payee: 'George', notes: 'From George'});
+        });
+
+        it('should delete a transaction', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction1', date: '2017-06-01', account: 'account1', amount: 100});
+            await dsl.transactions.deleteTransaction({alias: 'transaction1'});
+
+            await dsl.accounts.verifyAccount({alias: 'account1', balance: 0});
+        });
     });
 
     it('should calculate account balance from transactions', async function() {
@@ -36,69 +51,106 @@ describe('Transaction Management', function() {
         await dsl.accounts.verifyAccount({alias: 'account1', balance: -999});
     });
 
-    it('should retrieve transaction in an account', async function() {
-        await dsl.transactions.createTransaction({alias: 'transaction1', date: '2017-06-03', account: 'account1', amount: 5023});
-        await dsl.transactions.createTransaction({alias: 'transaction2', date: '2017-06-02', account: 'account1', amount: -22});
-        await dsl.transactions.createTransaction({alias: 'transaction3', date: '2017-06-01', account: 'account1', amount: -6000});
+    describe('Search Transactions', function() {
+        it('should retrieve transaction in an account', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction1', date: '2017-06-03', account: 'account1', amount: 5023});
+            await dsl.transactions.createTransaction({alias: 'transaction2', date: '2017-06-02', account: 'account1', amount: -22});
+            await dsl.transactions.createTransaction({alias: 'transaction3', date: '2017-06-01', account: 'account1', amount: -6000});
 
-        await dsl.transactions.verifyTransactions({
-            account: 'account1',
-            expectTransactions: [
-                'account1',
-                'transaction1',
-                'transaction2',
-                'transaction3',
-            ],
+            await dsl.transactions.verifyTransactions({
+                account: 'account1',
+                expectTransactions: [
+                    'transaction1',
+                    'transaction2',
+                    'transaction3',
+                    'account1',
+                ],
+            });
         });
-    });
 
-    it('should page transactions and include balance prior to earliest included transaction', async function() {
-        await dsl.transactions.createTransaction({alias: 'transaction1', date: '2017-06-01', account: 'account1', amount: 100});
-        await dsl.transactions.createTransaction({alias: 'transaction2', date: '2017-06-02', account: 'account1', amount: 200});
-        await dsl.transactions.createTransaction({alias: 'transaction3', date: '2017-06-03', account: 'account1', amount: 300});
-        await dsl.transactions.createTransaction({alias: 'transaction4', date: '2017-06-04', account: 'account1', amount: -400});
-        await dsl.transactions.createTransaction({alias: 'transaction5', date: '2017-06-05', account: 'account1', amount: 500});
+        it('should page transactions and include balance prior to earliest included transaction', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction1', date: '2017-06-01', account: 'account1', amount: 100});
+            await dsl.transactions.createTransaction({alias: 'transaction2', date: '2017-06-02', account: 'account1', amount: 200});
+            await dsl.transactions.createTransaction({alias: 'transaction3', date: '2017-06-03', account: 'account1', amount: 300});
+            await dsl.transactions.createTransaction({alias: 'transaction4', date: '2017-06-04', account: 'account1', amount: -400});
+            await dsl.transactions.createTransaction({alias: 'transaction5', date: '2017-06-05', account: 'account1', amount: 500});
 
 
-        await dsl.transactions.verifyTransactions({
-            account: 'account1',
-            offset: 0,
-            pageSize: 3,
-            expectPriorBalance: 600,
-            expectHasMore: true,
-            expectTransactions: [
-                'account1',
-                'transaction5',
-                'transaction4',
-            ],
-            transactionCount: 6,
+            await dsl.transactions.verifyTransactions({
+                account: 'account1',
+                offset: 0,
+                pageSize: 3,
+                expectPriorBalance: 300,
+                expectHasMore: true,
+                expectTransactions: [
+                    'transaction5',
+                    'transaction4',
+                    'transaction3',
+                ],
+                transactionCount: 6,
+            });
+            await dsl.transactions.verifyTransactions({
+                account: 'account1',
+                pageSize: 3,
+                offset: 3,
+                expectPriorBalance: 0,
+                expectHasMore: false,
+                expectTransactions: [
+                    'transaction2',
+                    'transaction1',
+                    'account1',
+                ],
+                transactionCount: 6,
+            });
         });
-        await dsl.transactions.verifyTransactions({
-            account: 'account1',
-            pageSize: 3,
-            offset: 3,
-            expectPriorBalance: 0,
-            expectHasMore: false,
-            expectTransactions: [
-                'transaction3',
-                'transaction2',
-                'transaction1',
-            ],
-            transactionCount: 6,
+
+        it('should filter transactions by date', async function() {
+            await dsl.accounts.createAccount({alias: 'account2', date: '2017-05-29'});
+            await dsl.transactions.createTransaction({alias: 'transaction1', date: '2017-06-01', account: 'account1', amount: 100});
+            await dsl.transactions.createTransaction({alias: 'transaction2', date: '2017-06-02', account: 'account2', amount: 200});
+            await dsl.transactions.createTransaction({alias: 'transaction3', date: '2017-06-03', account: 'account1', amount: 300});
+            await dsl.transactions.createTransaction({alias: 'transaction4', date: '2017-06-04', account: 'account1', amount: -400});
+            await dsl.transactions.createTransaction({alias: 'transaction5', date: '2017-06-05', account: 'account2', amount: 500});
+
+            await dsl.transactions.verifyTransactions({
+                from: '2017-06-02',
+                expectPriorBalance: 0,
+                expectHasMore: false,
+                expectTransactions: [
+                    'transaction5',
+                    'transaction4',
+                    'transaction3',
+                    'transaction2',
+                ],
+                transactionCount: 4,
+            });
+            await dsl.transactions.verifyTransactions({
+                to: '2017-06-04',
+                expectPriorBalance: 0,
+                expectHasMore: false,
+                expectTransactions: [
+                    'transaction4',
+                    'transaction3',
+                    'transaction2',
+                    'transaction1',
+                    'account2',
+                    'account1',
+                ],
+                transactionCount: 6,
+            });
+            await dsl.transactions.verifyTransactions({
+                from: '2017-06-02',
+                to: '2017-06-04',
+                expectPriorBalance: 0,
+                expectHasMore: false,
+                expectTransactions: [
+                    'transaction4',
+                    'transaction3',
+                    'transaction2',
+                ],
+                transactionCount: 3,
+            });
         });
-    });
-
-    it('should update transaction', async function() {
-        await dsl.accounts.createAccount({alias: 'account2'});
-        await dsl.transactions.createTransaction({alias: 'transaction1', date: '2017-06-01', account: 'account1', amount: 100});
-        await dsl.transactions.modifyTransaction({alias: 'transaction1', date: '2017-06-02', account: 'account2', amount: 200, payee: 'George', notes: 'From George'});
-    });
-
-    it('should delete a transaction', async function() {
-        await dsl.transactions.createTransaction({alias: 'transaction1', date: '2017-06-01', account: 'account1', amount: 100});
-        await dsl.transactions.deleteTransaction({alias: 'transaction1'});
-
-        await dsl.accounts.verifyAccount({alias: 'account1', balance: 0});
     });
 
     describe('Transaction Categories', function() {

@@ -11,6 +11,8 @@ module.exports = {
             await db.withTransaction(request, async daos => {
                 const accountId = request.query.account;
                 const scheduled = request.query.scheduled;
+                const from = request.query.from;
+                const to = request.query.to;
                 const pageSize = request.query.pageSize;
                 const offset = request.query.offset;
 
@@ -18,7 +20,7 @@ module.exports = {
                     reply(Boom.notFound('Account not found'));
                     return;
                 }
-                const searchOptions = {accountId, scheduled};
+                const searchOptions = {accountId, scheduled, from, to};
                 if (pageSize !== undefined) {
                     searchOptions.pageSize = pageSize + 1;
                 }
@@ -28,7 +30,7 @@ module.exports = {
                 const transactions = await daos.transactions.transactions(userId, searchOptions);
                 const hasMore = transactions.length > pageSize;
                 const priorBalance = hasMore ? await daos.transactions.balance(userId, accountId, transactions[transactions.length - 1]) : 0;
-                const totalNumberOfTransactions = await daos.transactions.transactionCount(userId, {accountId, scheduled});
+                const totalNumberOfTransactions = await daos.transactions.transactionCount(userId, {accountId, scheduled, from, to});
                 reply({
                     transactions: transactions.slice(0, pageSize),
                     hasMore,
@@ -41,6 +43,8 @@ module.exports = {
     validate: {
         query: {
             account: types.id.default(undefined),
+            from: types.date.default(undefined),
+            to: types.date.default(undefined),
             scheduled: types.boolean.default(false),
             pageSize: types.pageSize,
             offset: types.offset,

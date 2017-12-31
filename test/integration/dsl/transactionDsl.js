@@ -90,6 +90,8 @@ module.exports = class TransactionsDsl {
     async verifyTransactions(args) {
         const options = Object.assign({
             account: undefined,
+            from: undefined,
+            to: undefined,
             pageSize: undefined,
             offset: undefined,
             expectPriorBalance: 0,
@@ -98,12 +100,18 @@ module.exports = class TransactionsDsl {
             transactionCount: undefined,
             statusCode: 200,
         }, args);
-        const account = this.accountsByAlias.get(options.account);
         const expectedTransactions = options.expectTransactions.map(alias => this.transactionsByAlias.get(alias));
         const pageSizeArg = options.pageSize !== undefined ? `&pageSize=${encodeURIComponent(options.pageSize)}` : '';
         const offsetArg = options.offset !== undefined ? `&offset=${encodeURIComponent(options.offset)}` : '';
         const transactionCount = options.transactionCount !== undefined ? options.transactionCount : expectedTransactions.length;
-        const response = await this.server.get(`/api/transactions/?account=${encodeURIComponent(account.id)}${pageSizeArg}${offsetArg}`, options.statusCode);
+        const queryArgs = dslUtils.formatQueryArgs({
+            account: options.account ? this.accountsByAlias.get(options.account).id : undefined,
+            pageSize: options.pageSize,
+            offset: options.offset,
+            from: options.from,
+            to: options.to
+        });
+        const response = await this.server.get(`/api/transactions/${queryArgs}`, options.statusCode);
         const result = JSON.parse(response.payload);
         assert.deepEqual(result, {
             transactions: expectedTransactions,

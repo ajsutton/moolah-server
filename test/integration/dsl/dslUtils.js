@@ -29,8 +29,17 @@ function lookupId(alias, aliasToObjectMap) {
     }
 }
 
+function formatQueryArgs(args) {
+    const query = Object.entries(args)
+        .filter(([key, value]) => value !== undefined)
+        .map(([key, value]) => encodeURIComponent(key) + '=' + encodeURIComponent(value))
+        .join('&');
+    return query !== '' ? '?' + query : '';
+}
+
 module.exports = {
     withoutUndefined,
     override,
-    lookupId
+    lookupId,
+    formatQueryArgs
 };
