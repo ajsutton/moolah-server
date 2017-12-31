@@ -21,6 +21,8 @@ module.exports = {
                     reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
                 } else if (transactionData.toAccountId === transactionData.accountId) {
                     reply(Boom.badRequest('Cannot transfer to own account'));
+                } else if (transactionData.type === 'transfer' && (transactionData.toAccountId === undefined || transactionData.toAccountId === null)) {
+                    reply(Boom.badRequest('toAccountId is required when type is transfer'));
                 } else {
                     while (true) {
                         try {

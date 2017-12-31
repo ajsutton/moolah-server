@@ -7,14 +7,15 @@ describe('Analysis', function() {
         dsl = await Dsl.create();
         dsl.login();
         await dsl.accounts.createAccount({alias: 'account1', date: '2017-05-31', balance: 0});
+        await dsl.accounts.createAccount({alias: 'account2', date: '2017-05-31', balance: 0});
 
 
-        await dsl.transactions.createTransaction({account: 'account1', date: '2017-05-31', type: 'transfer', toAccountId: 'account2', amount: 1234});
+        await dsl.transactions.createTransaction({account: 'account1', date: '2017-05-31', type: 'transfer', toAccount: 'account2', amount: 1234});
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-05-31', type: 'income', amount: 1000});
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-05-31', type: 'expense', amount: -5000});
 
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-06-03', type: 'income', amount: -10});
-        await dsl.transactions.createTransaction({account: 'account1', date: '2017-06-03', type: 'transfer', toAccountId: 'account2', amount: 4444});
+        await dsl.transactions.createTransaction({account: 'account1', date: '2017-06-03', type: 'transfer', toAccount: 'account2', amount: 4444});
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-06-30', type: 'income', amount: 100});
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-06-30', type: 'expense', amount: -50});
 
@@ -24,7 +25,7 @@ describe('Analysis', function() {
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-15', type: 'expense', amount: -600});
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-31', type: 'expense', amount: -700});
         await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-31', type: 'income', amount: 300});
-        await dsl.transactions.createTransaction({account: 'account1', date: '2017-08-15', type: 'transfer', toAccountId: 'account2', amount: 9000});
+        await dsl.transactions.createTransaction({account: 'account1', date: '2017-08-15', type: 'transfer', toAccount: 'account2', amount: 9000});
     });
 
     afterEach(function() {
