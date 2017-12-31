@@ -29,7 +29,7 @@ module.exports = {
                     return;
                 }
                 if (modifiedTransaction.accountId == modifiedTransaction.toAccountId) {
-                    reply(Boom.badRequest('cannot transfer to own account'));
+                    reply(Boom.badRequest('Cannot transfer to own account'));
                     return;
                 }
                 await daos.transactions.store(userId, modifiedTransaction);
