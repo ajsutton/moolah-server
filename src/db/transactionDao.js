@@ -30,6 +30,14 @@ function transactionQuery(fields, userId, opts) {
     } else {
         query += ' AND recur_period IS NULL ';
     }
+    if (opts.from) {
+        query += ' AND date >= ?';
+        args.push(opts.from);
+    }
+    if (opts.to) {
+        query += ' AND date <= ?';
+        args.push(opts.to);
+    }
     return {query, args};
 }
 
@@ -78,7 +86,7 @@ module.exports = class TransactionDao {
     }
 
     async transactions(userId, options = {}) {
-        const opts = Object.assign({pageSize: 1000, offset: 0, accountId: undefined, scheduled: false}, options);
+        const opts = Object.assign({pageSize: 1000, offset: 0, accountId: undefined, scheduled: false, from: undefined, to: undefined}, options);
         const args = [opts.accountId];
         const builder = transactionQuery('id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId, to_account_id as toAccountId, to_account_id = ? as transferIn, recur_every as recurEvery, recur_period as recurPeriod', userId, opts);
         let query = builder.query;
@@ -93,7 +101,7 @@ module.exports = class TransactionDao {
     }
 
     async transactionCount(userId, options = {}) {
-        const opts = Object.assign({accountId: undefined, scheduled: false}, options);
+        const opts = Object.assign({accountId: undefined, scheduled: false, from: undefined, to: undefined}, options);
         const builder = transactionQuery('COUNT(*) as transactionCount', userId, opts);
         const results = await this.query(builder.query, ...builder.args);
         return results[0].transactionCount || 0;
