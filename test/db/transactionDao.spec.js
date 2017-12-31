@@ -92,7 +92,7 @@ describe('Transaction DAO', function() {
         });
     });
 
-    describe.only('Searching Transations', function() {
+    describe('Searching Transations', function() {
         it('should get list of transactions in account ordered by date descending', async function() {
             const transaction1 = makeTransaction({amount: 5000, date: '2017-06-01'});
             const transaction2 = makeTransaction({amount: -2000, date: '2017-05-30'});
