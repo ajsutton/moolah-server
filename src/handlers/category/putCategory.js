@@ -4,6 +4,19 @@ const db = require('../../db/database');
 const Boom = require('boom');
 const session = require('../../auth/session');
 
+async function getParentIdRejectionReason(userId, daos, categoryId, parentId) {
+    while (parentId !== null && parentId !== undefined) {
+        const parentCategory = await daos.categories.category(userId, parentId);
+        if (parentCategory === undefined) {
+            return Boom.badRequest('Unknown parent category');
+        } else if (parentCategory.id === categoryId) {
+            return Boom.badRequest('Category can not be its own ancestor');
+        }
+        parentId = parentCategory.parentId;
+    }
+    return undefined;
+}
+
 module.exports = {
     auth: 'session',
     handler: {
@@ -13,12 +26,15 @@ module.exports = {
                 const currentCategory = await daos.categories.category(userId, request.params.id);
                 if (currentCategory === undefined) {
                     reply(Boom.notFound('Category not found'));
-                } else if (request.payload.parentId !== undefined && request.payload.parentId !== null && await daos.categories.category(userId, request.payload.parentId) === undefined) {
-                    reply(Boom.badRequest('Unknown parent category', request.payload.parentId));
                 } else {
-                    const modifiedCategory = Object.assign({}, currentCategory, request.payload);
-                    await daos.categories.store(userId, modifiedCategory);
-                    reply(modifiedCategory);
+                    const parentIdRejectionReason = await getParentIdRejectionReason(userId, daos, request.params.id, request.payload.parentId);
+                    if (parentIdRejectionReason !== undefined) {
+                        reply(parentIdRejectionReason);
+                    } else {
+                        const modifiedCategory = Object.assign({}, currentCategory, request.payload);
+                        await daos.categories.store(userId, modifiedCategory);
+                        reply(modifiedCategory);
+                    }
                 }
             });
         },

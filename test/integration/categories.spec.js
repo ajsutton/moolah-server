@@ -24,7 +24,7 @@ describe('Category Management', function() {
         await dsl.categories.createCategory({alias: 'category1', name: 'Category 1'});
         await dsl.categories.createCategory({alias: 'category2', name: 'Category 2'});
 
-        await dsl.categories.modifyCategory({alias: 'category1', name: 'New Name', parent: 'category1'});
+        await dsl.categories.modifyCategory({alias: 'category1', name: 'New Name', parent: 'category2'});
 
 
         await dsl.categories.verifyCategories({categories: ['category2', 'category1']});
@@ -87,5 +87,18 @@ describe('Category Management', function() {
 
         await dsl.categories.deleteCategory({alias: 'category1'});
         await dsl.transactions.verifyTransaction({alias: 'transaction', category: null});
+    });
+
+    it('should prevent setting a category to be its own parent', async function() {
+        await dsl.categories.createCategory({alias: 'category1'});
+        await dsl.categories.modifyCategory({alias: 'category1', parent: 'category1', statusCode: 400});
+    });
+
+    it('should prevent setting a category to have its ancestor as a parent', async function() {
+        await dsl.categories.createCategory({alias: 'category1'});
+        await dsl.categories.createCategory({alias: 'category2', parent: 'category1'});
+        await dsl.categories.createCategory({alias: 'category3', parent: 'category2'});
+
+        await dsl.categories.modifyCategory({alias: 'category1', parent: 'category3', statusCode: 400});
     });
 });

@@ -24,7 +24,7 @@ module.exports = class CategoryDao {
         return asCategory(results[0]);
     }
 
-    async categories(userId, id) {
+    async categories(userId) {
         const results = await this.query('SELECT id, name, parent_id as parentId FROM category WHERE user_id = ? ORDER BY name, id', userId);
         return results.map(asCategory);
     }
