@@ -82,7 +82,6 @@ module.exports = class TransactionsDsl {
         }, args);
         const transaction = dslUtils.override(this.transactionsByAlias.get(options.alias), { categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias) });
         const response = await this.server.get(`/api/transactions/${encodeURIComponent(transaction.id)}/`, options.statusCode);
-        console.log(response.payload);
         if (response.statusCode === 200) {
             assert.deepEqual(JSON.parse(response.payload), transaction, 'Did not match transaction');
         }

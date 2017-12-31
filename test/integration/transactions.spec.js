@@ -174,5 +174,11 @@ describe('Transaction Management', function() {
             await dsl.transactions.createTransaction({alias: 'transaction', type: 'transfer', account: 'account1', toAccount: 'account2', amount: -100});
             await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', toAccount: '<noAccount>', statusCode: 400});
         });
+
+        it('should reject modifying a transaction when toAccountId and accountId are the same', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'transfer', account: 'account1', toAccount: 'account2', amount: -100});
+            await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', toAccount: 'account1', statusCode: 400});
+            await dsl.transactions.verifyTransaction({alias: 'transaction'});
+        })
     });
 });

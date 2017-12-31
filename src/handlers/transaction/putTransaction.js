@@ -28,6 +28,10 @@ module.exports = {
                     reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
                     return;
                 }
+                if (modifiedTransaction.accountId == modifiedTransaction.toAccountId) {
+                    reply(Boom.badRequest('cannot transfer to own account'));
+                    return;
+                }
                 await daos.transactions.store(userId, modifiedTransaction);
                 reply(modifiedTransaction);
             });
