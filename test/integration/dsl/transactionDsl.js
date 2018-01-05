@@ -92,6 +92,7 @@ module.exports = class TransactionsDsl {
             account: undefined,
             from: undefined,
             to: undefined,
+            categories: [],
             pageSize: undefined,
             offset: undefined,
             expectPriorBalance: 0,
@@ -109,7 +110,8 @@ module.exports = class TransactionsDsl {
             pageSize: options.pageSize,
             offset: options.offset,
             from: options.from,
-            to: options.to
+            to: options.to,
+            category: options.categories.map(categoryId => dslUtils.lookupId(categoryId, this.categoriesByAlias)),
         });
         const response = await this.server.get(`/api/transactions/${queryArgs}`, options.statusCode);
         const result = JSON.parse(response.payload);

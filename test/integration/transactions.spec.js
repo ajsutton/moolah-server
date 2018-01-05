@@ -151,6 +151,31 @@ describe('Transaction Management', function() {
                 transactionCount: 3,
             });
         });
+
+        it('should filter by category', async function() {
+            await dsl.categories.createCategory({alias: 'category1'});
+            await dsl.categories.createCategory({alias: 'category2'});
+            await dsl.categories.createCategory({alias: 'category3'});
+            await dsl.categories.createCategory({alias: 'category1a', parent: 'category1'});
+            await dsl.accounts.createAccount({alias: 'account2', date: '2017-05-29'});
+            await dsl.transactions.createTransaction({alias: 'transaction1', date: '2017-06-01', account: 'account1', category: 'category1', amount: 100});
+            await dsl.transactions.createTransaction({alias: 'transaction2', date: '2017-06-02', account: 'account2', category: 'category2', amount: 200});
+            await dsl.transactions.createTransaction({alias: 'transaction3', date: '2017-06-03', account: 'account1', category: 'category3', amount: 300});
+            await dsl.transactions.createTransaction({alias: 'transaction4', date: '2017-06-04', account: 'account1', category: 'category1', amount: -400});
+            await dsl.transactions.createTransaction({alias: 'transaction5', date: '2017-06-05', account: 'account2', category: 'category1a', amount: 500});
+
+            await dsl.transactions.verifyTransactions({
+                categories: ['category1', 'category2'],
+                expectPriorBalance: 0,
+                expectHasMore: false,
+                expectTransactions: [
+                    'transaction4',
+                    'transaction2',
+                    'transaction1',
+                ],
+                transactionCount: 3,
+            });
+        });
     });
 
     describe('Transaction Categories', function() {

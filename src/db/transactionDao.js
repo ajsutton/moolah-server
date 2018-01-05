@@ -38,6 +38,10 @@ function transactionQuery(fields, userId, opts) {
         query += ' AND date <= ?';
         args.push(opts.to);
     }
+    if (opts.categories && opts.categories.length > 0) {
+        query += ' AND category_id IN (?) ';
+        args.push(opts.categories);
+    }
     return {query, args};
 }
 

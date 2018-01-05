@@ -13,6 +13,7 @@ module.exports = {
                 const scheduled = request.query.scheduled;
                 const from = request.query.from;
                 const to = request.query.to;
+                const categories = request.query.category;
                 const pageSize = request.query.pageSize;
                 const offset = request.query.offset;
 
@@ -20,7 +21,17 @@ module.exports = {
                     reply(Boom.notFound('Account not found'));
                     return;
                 }
-                const searchOptions = {accountId, scheduled, from, to};
+                const loadedCategories = await Promise.all(categories
+                    .map(async categoryId => ({
+                        id: categoryId, 
+                        category: await daos.categories.category(userId, categoryId)
+                    })));
+                const missingCategories = loadedCategories.filter(data => data.category === undefined);
+                if (missingCategories.length > 0) {
+                    reply(Boom.notFound('Unknown category ' + missingCategories.map(data => data.id).join(', ')));
+                    return;
+                }
+                const searchOptions = {accountId, scheduled, from, to, categories};
                 if (pageSize !== undefined) {
                     searchOptions.pageSize = pageSize + 1;
                 }
@@ -30,7 +41,7 @@ module.exports = {
                 const transactions = await daos.transactions.transactions(userId, searchOptions);
                 const hasMore = transactions.length > pageSize;
                 const priorBalance = hasMore ? await daos.transactions.balance(userId, accountId, transactions[transactions.length - 1]) : 0;
-                const totalNumberOfTransactions = await daos.transactions.transactionCount(userId, {accountId, scheduled, from, to});
+                const totalNumberOfTransactions = await daos.transactions.transactionCount(userId, {accountId, scheduled, from, to, categories});
                 reply({
                     transactions: transactions.slice(0, pageSize),
                     hasMore,
@@ -45,6 +56,7 @@ module.exports = {
             account: types.id.default(undefined),
             from: types.date.default(undefined),
             to: types.date.default(undefined),
+            category: types.arrayOf(types.id).default([]),
             scheduled: types.boolean.default(false),
             pageSize: types.pageSize,
             offset: types.offset,

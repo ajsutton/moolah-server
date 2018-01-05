@@ -32,9 +32,16 @@ function lookupId(alias, aliasToObjectMap) {
 function formatQueryArgs(args) {
     const query = Object.entries(args)
         .filter(([key, value]) => value !== undefined)
-        .map(([key, value]) => encodeURIComponent(key) + '=' + encodeURIComponent(value))
+        .map(formatQueryArg)
         .join('&');
     return query !== '' ? '?' + query : '';
+}
+
+function formatQueryArg([key, value]) {
+    if (value instanceof Array) {
+        return value.map(singleValue => encodeURIComponent(key) + '=' + encodeURIComponent(singleValue)).join('&');
+    }
+    return encodeURIComponent(key) + '=' + encodeURIComponent(value);
 }
 
 module.exports = {
