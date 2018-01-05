@@ -111,28 +111,26 @@ module.exports = class TransactionDao {
         return results[0].transactionCount || 0;
     }
 
-    async balance(userId, accountId, forTransaction) {
+    async balance(userId, options, forTransaction) {
         let selectBalance;
         const args = [];
-        if (accountId === undefined) {
+        if (options.accountId === undefined) {
             selectBalance = 'SUM(amount) as balance';
         } else {
             selectBalance = 'SUM(IF(account_id = ?, amount, -amount)) as balance';
-            args.push(accountId);
+            args.push(options.accountId);
         }
-        const builder = transactionQuery(selectBalance, userId, {accountId: accountId, scheduled: false});
+        const builder = transactionQuery(selectBalance, userId, options);
         args.push(...builder.args);
         let query = builder.query;
         if (forTransaction !== undefined) {
             query += 'AND (date < ? OR (date = ? AND id >= ?)) ';
             args.push(forTransaction.date, forTransaction.date, forTransaction.id);
         }
-        if (accountId === undefined) {
+        if (options.accountId === undefined) {
             query += 'AND type != "transfer" ';
         }
-        const results = await this.query(
-            query,
-            ...args);
+        const results = await this.query(query, ...args);
         return results[0].balance || 0;
     }
 

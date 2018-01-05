@@ -213,7 +213,7 @@ describe('Transaction DAO', function() {
             await transactionDao.create(userId, makeTransaction({amount: -2000}));
             await transactionDao.create(userId, makeTransaction({amount: 300}));
 
-            const balance = await transactionDao.balance(userId, minimalTransaction.accountId);
+            const balance = await transactionDao.balance(userId, {accountId: minimalTransaction.accountId});
             assert.equal(balance, 3300);
         });
 
@@ -225,12 +225,12 @@ describe('Transaction DAO', function() {
             await transactionDao.create(userId, transaction2);
             await transactionDao.create(userId, transaction3);
 
-            const balance = await transactionDao.balance(userId, minimalTransaction.accountId, transaction2);
+            const balance = await transactionDao.balance(userId, {accountId: minimalTransaction.accountId}, transaction2);
             assert.equal(balance, -1700);
         });
 
         it('should return 0 balance when there are no transactions', async function() {
-            const balance = await transactionDao.balance(userId, minimalTransaction.accountId);
+            const balance = await transactionDao.balance(userId, {accountId: minimalTransaction.accountId});
             assert.equal(balance, 0);
         });
 
@@ -239,7 +239,7 @@ describe('Transaction DAO', function() {
             await transactionDao.create(userId, makeTransaction({amount: -2000, accountId: 'otherAccount', toAccountId: minimalTransaction.accountId}));
             await transactionDao.create(userId, makeTransaction({amount: 300}));
 
-            const balance = await transactionDao.balance(userId, minimalTransaction.accountId);
+            const balance = await transactionDao.balance(userId, {accountId: minimalTransaction.accountId});
             assert.equal(balance, 7300);
         });
 
@@ -251,7 +251,7 @@ describe('Transaction DAO', function() {
             await transactionDao.create(userId, transaction2);
             await transactionDao.create(userId, transaction3);
 
-            const balance = await transactionDao.balance(userId, minimalTransaction.accountId);
+            const balance = await transactionDao.balance(userId, {accountId: minimalTransaction.accountId});
             assert.equal(balance, 5300);
         });
     });

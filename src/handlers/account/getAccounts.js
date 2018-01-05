@@ -10,7 +10,7 @@ module.exports = {
                 await db.withTransaction(request, async daos => {
                     const accounts = await daos.accounts.accounts(userId);
                     await Promise.all(accounts.map(async account => {
-                        account.balance = await daos.transactions.balance(userId, account.id);
+                        account.balance = await daos.transactions.balance(userId, {accountId: account.id});
                     }));
                     reply({accounts: accounts});
                 });

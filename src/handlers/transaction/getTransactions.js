@@ -32,16 +32,17 @@ module.exports = {
                     return;
                 }
                 const searchOptions = {accountId, scheduled, from, to, categories};
+                const searchOptionsWithPaging = Object.assign({}, searchOptions);
                 if (pageSize !== undefined) {
-                    searchOptions.pageSize = pageSize + 1;
+                    searchOptionsWithPaging.pageSize = pageSize + 1;
                 }
                 if (offset !== undefined) {
-                    searchOptions.offset = offset;
+                    searchOptionsWithPaging.offset = offset;
                 }
-                const transactions = await daos.transactions.transactions(userId, searchOptions);
+                const transactions = await daos.transactions.transactions(userId, searchOptionsWithPaging);
                 const hasMore = transactions.length > pageSize;
-                const priorBalance = hasMore ? await daos.transactions.balance(userId, accountId, transactions[transactions.length - 1]) : 0;
-                const totalNumberOfTransactions = await daos.transactions.transactionCount(userId, {accountId, scheduled, from, to, categories});
+                const priorBalance = hasMore ? await daos.transactions.balance(userId, searchOptions, transactions[transactions.length - 1]) : 0;
+                const totalNumberOfTransactions = await daos.transactions.transactionCount(userId, searchOptions);
                 reply({
                     transactions: transactions.slice(0, pageSize),
                     hasMore,

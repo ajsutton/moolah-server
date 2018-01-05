@@ -9,7 +9,7 @@ module.exports = {
             const userId = session.getUserId(request);
             await db.withTransaction(request, async daos => {
                 const account = await daos.accounts.account(userId, request.params.id);
-                account.balance = await daos.transactions.balance(userId, account.id);
+                account.balance = await daos.transactions.balance(userId, {accountId: account.id});
                 if (account === undefined) {
                     reply(Boom.notFound('Account not found'));
                 } else {
