@@ -9,6 +9,7 @@ exports.create = function() {
             if (configErr) {
                 reject(configErr);
             } else {
+                require('./plugins/securityHeaders')(server);
                 const authConfig = server.configue('authentication');
                 server.register([
                     require('hapi-async-handler'),

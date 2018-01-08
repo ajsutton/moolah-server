@@ -843,6 +843,10 @@ hapi-router@^3.5.0:
     cast-array "^1.0.0"
     glob "^5.0.3"
 
+hapi-set-header@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/hapi-set-header/-/hapi-set-header-1.0.2.tgz#2afae002c6719d6d54f3fa88462f822892d2df13"
+
 hapi@^16.4.3:
   version "16.6.2"
   resolved "https://registry.yarnpkg.com/hapi/-/hapi-16.6.2.tgz#690554fc9c5ca7ad2f8030bbfe21d5e5886cdc14"

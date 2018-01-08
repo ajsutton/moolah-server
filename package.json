@@ -42,6 +42,7 @@
     "hapi-auth-cookie": "^7.0.0",
     "hapi-mysql2": "0.9.5",
     "hapi-router": "^3.5.0",
+    "hapi-set-header": "^1.0.2",
     "joi": "^13.0.0",
     "node-mysql": "^0.4.2",
     "regression": "^2.0.0",
