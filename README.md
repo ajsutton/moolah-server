@@ -1,7 +1,7 @@
 # Moolah Server
 > Back-end server for Moolah money tracker
 
-This project provides a st of APIs that clients can use. A [web based UI](https://github.com/bretthenderson/moolah) is under development as a separate project.
+This project provides a st of APIs that clients can use. A [web based UI](https://github.com/ajsutton/moolah) is under development as a separate project.
 
 ## Configuration
 Moolah requires a MySQL database for storage and a Google OAuth 2.0 client ID for authentication. These are configured in config/config.json  An example config file showing the syntax is provided in config/config.example.json.
