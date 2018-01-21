@@ -47,7 +47,7 @@ module.exports = class AccountsDao {
 
     store(userId, account) {
         return this.query(
-            'UPDATE account SET name = ?, type = ?, position = ? WHERE user_id = ? AND id = ?',
-            account.name, account.type, account.position || DEFAULT_POSITION, userId, account.id);
+            'UPDATE account SET name = ?, type = ?, position = ?, saving_target = ?, saving_start_date = ?, saving_end_date = ? WHERE user_id = ? AND id = ?',
+            account.name, account.type, account.position || DEFAULT_POSITION, account.savingsTarget, account.savingsStartDate, account.savingsEndDate, userId, account.id);
     }
 };
