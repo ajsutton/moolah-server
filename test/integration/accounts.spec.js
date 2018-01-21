@@ -78,7 +78,12 @@ describe('Account Management', function() {
         it('should modify account to change savings goal', async function() {
             await dsl.accounts.createAccount({alias: 'account1', savingsTarget: 500000, savingsStartDate: '2017-06-01', savingsEndDate: '2018-01-01'});
             await dsl.accounts.modifyAccount({alias: 'account1', name: 'Foo', type: 'cc', savingsTarget: 25000, savingsStartDate: '2018-06-01', savingsEndDate: '2018-02-01'});
-            await dsl.accounts.verifyAccount({alias: 'account1', savingsTarget: 25000, savingsStartDate: '2018-06-01', savingsEndDate: '2018-02-01'});
+            await dsl.accounts.verifyAccount({alias: 'account1', name: 'Foo', type: 'cc', savingsTarget: 25000, savingsStartDate: '2018-06-01', savingsEndDate: '2018-02-01'});
+        });
+
+        it('should include savings goal in full accounts list', async function() {
+            await dsl.accounts.createAccount({alias: 'account1', savingsTarget: 500000, savingsStartDate: '2017-06-01', savingsEndDate: '2018-01-01'});
+            await dsl.accounts.verifyAccounts({accounts: ['account1']});
         });
     });
 });
