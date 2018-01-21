@@ -56,4 +56,29 @@ describe('Account Management', function() {
         await dsl.accounts.createAccount({alias: 'account1', position: undefined});
         await dsl.accounts.verifyAccount({alias: 'account1', position: 0});
     });
+
+    describe('Savings Goals', function() {
+        it('should create account with savings goal', async function() {
+            await dsl.accounts.createAccount({alias: 'account1', savingsTarget: 500000, savingsStartDate: '2017-06-01', savingsEndDate: '2018-01-01'});
+            await dsl.accounts.verifyAccount({alias: 'account1', savingsTarget: 500000, savingsStartDate: '2017-06-01', savingsEndDate: '2018-01-01'});
+        });
+
+        it('should modify account to add savings goal', async function() {
+            await dsl.accounts.createAccount({alias: 'account1'});
+            await dsl.accounts.modifyAccount({alias: 'account1', name: 'Foo', type: 'cc', savingsTarget: 500000, savingsStartDate: '2017-06-01', savingsEndDate: '2018-01-01'});
+            await dsl.accounts.verifyAccount({alias: 'account1', savingsTarget: 500000, savingsStartDate: '2017-06-01', savingsEndDate: '2018-01-01'});
+        });
+
+        it('should modify account to remove savings goal', async function() {
+            await dsl.accounts.createAccount({alias: 'account1', savingsTarget: 500000, savingsStartDate: '2017-06-01', savingsEndDate: '2018-01-01'});
+            await dsl.accounts.modifyAccount({alias: 'account1', name: 'Foo', type: 'cc'});
+            await dsl.accounts.verifyAccount({alias: 'account1'});
+        });
+
+        it('should modify account to change savings goal', async function() {
+            await dsl.accounts.createAccount({alias: 'account1', savingsTarget: 500000, savingsStartDate: '2017-06-01', savingsEndDate: '2018-01-01'});
+            await dsl.accounts.modifyAccount({alias: 'account1', name: 'Foo', type: 'cc', savingsTarget: 25000, savingsStartDate: '2018-06-01', savingsEndDate: '2018-02-01'});
+            await dsl.accounts.verifyAccount({alias: 'account1', savingsTarget: 25000, savingsStartDate: '2018-06-01', savingsEndDate: '2018-02-01'});
+        });
+    });
 });

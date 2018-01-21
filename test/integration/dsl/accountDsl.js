@@ -16,6 +16,9 @@ module.exports = class AccountsDsl {
             balance: 0,
             position: 0,
             date: undefined,
+            savingsTarget: undefined,
+            savingsStartDate: undefined,
+            savingsEndDate: undefined,
             statusCode: 201,
         }, args);
 
@@ -25,6 +28,9 @@ module.exports = class AccountsDsl {
             balance: options.balance,
             position: options.position,
             date: options.date,
+            savingsTarget: options.savingsTarget,
+            savingsStartDate: options.savingsStartDate,
+            savingsEndDate: options.savingsEndDate,
         }, options.statusCode);
         const account = JSON.parse(response.payload);
 
