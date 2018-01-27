@@ -4,6 +4,11 @@ const db = require('../../db/database');
 const Boom = require('boom');
 const session = require('../../auth/session');
 
+async function isInvalidToAccountId(transactionData, daos, userId) {
+    const toAccount = await daos.accounts.account(userId, transactionData.toAccountId);
+    return toAccount === undefined || toAccount.type === 'earmark';
+}
+
 module.exports = {
     auth: 'session',
     handler: {
@@ -16,11 +21,12 @@ module.exports = {
                     return;
                 }
                 const modifiedTransaction = Object.assign(transaction, request.payload);
-                if (await daos.accounts.account(userId, modifiedTransaction.accountId) === undefined) {
+                const account = await daos.accounts.account(userId, modifiedTransaction.accountId);
+                if (account === undefined) {
                     reply(Boom.badRequest('Invalid accountId'));
                     return;
                 }
-                if (modifiedTransaction.toAccountId !== undefined && modifiedTransaction.toAccountId !== null && await daos.accounts.account(userId, modifiedTransaction.toAccountId) === undefined) {
+                if (modifiedTransaction.toAccountId !== undefined && modifiedTransaction.toAccountId !== null && await isInvalidToAccountId(modifiedTransaction, daos, userId)) {
                     reply(Boom.badRequest('Invalid toAccountId'));
                     return;
                 }
@@ -30,6 +36,10 @@ module.exports = {
                 }
                 if (modifiedTransaction.accountId == modifiedTransaction.toAccountId) {
                     reply(Boom.badRequest('Cannot transfer to own account'));
+                    return;
+                }
+                if (modifiedTransaction.type !== 'income' && account.type === 'earmark') {
+                    reply(Boom.badRequest('Only income transactions are allowed for earmark accounts'));
                     return;
                 }
                 if (modifiedTransaction.type === 'transfer' && (modifiedTransaction.toAccountId === undefined || modifiedTransaction.toAccountId === null)) {

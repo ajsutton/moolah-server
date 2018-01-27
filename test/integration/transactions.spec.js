@@ -290,4 +290,31 @@ describe('Transaction Management', function() {
             await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', statusCode: 400});
         });
     });
+
+    describe('Earmark Transactions', function() {
+        beforeEach(async function() {
+            await dsl.accounts.createAccount({alias: 'earmark', type: 'earmark'});
+            await dsl.accounts.createAccount({alias: 'account2'});
+        });
+
+        it('should not allow transfers to earmark accounts via creation', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'transfer', account: 'account1', toAccount: 'earmark', amount: -100, statusCode: 400});
+        });
+
+        it('should not allow transfers to earmark accounts via modification', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'transfer', account: 'account1', toAccount: 'account2', amount: -100});
+            await dsl.transactions.modifyTransaction({alias: 'transaction', toAccount: 'earmark', statusCode: 400});
+        });
+
+        it('should only allow income transaction type in earmark accounts via creation', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'transfer', account: 'earmark', toAccount: 'account2', amount: -100, statusCode: 400});
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'expense', account: 'earmark', amount: -100, statusCode: 400});
+        });
+
+        it('should only allow income transaction type in earmark accounts via modification', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'income', account: 'earmark', amount: -100});
+            await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'transfer', toAccount: 'account2', statusCode: 400});
+            await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', statusCode: 400});
+        });
+    });
 });

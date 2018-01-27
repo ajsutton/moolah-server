@@ -5,6 +5,11 @@ const idGenerator = require('../../utils/idGenerator');
 const Boom = require('boom');
 const session = require('../../auth/session');
 
+async function isInvalidToAccountId(transactionData, daos, userId) {
+    const toAccount = await daos.accounts.account(userId, transactionData.toAccountId);
+    return toAccount === undefined || toAccount.type === 'earmark';
+}
+
 module.exports = {
     auth: 'session',
     handler: {
@@ -15,12 +20,14 @@ module.exports = {
                 const account = await daos.accounts.account(userId, transactionData.accountId);
                 if (account === undefined) {
                     reply(Boom.badRequest('Invalid accountId'));
-                } else if (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null && await daos.accounts.account(userId, transactionData.toAccountId) === undefined) {
+                } else if (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null && await isInvalidToAccountId(transactionData, daos, userId)) {
                     reply(Boom.badRequest('Invalid toAccountId'));
                 } else if (transactionData.recurEvery !== undefined && transactionData.recurPeriod === undefined) {
                     reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
                 } else if (transactionData.toAccountId === transactionData.accountId) {
                     reply(Boom.badRequest('Cannot transfer to own account'));
+                } else if (transactionData.type !== 'income' && account.type === 'earmark') {
+                    reply(Boom.badRequest('Only income transactions are allowed for earmark accounts'));
                 } else if (transactionData.type === 'transfer' && (transactionData.toAccountId === undefined || transactionData.toAccountId === null)) {
                     reply(Boom.badRequest('toAccountId is required when type is transfer'));
                 } else if (transactionData.type !== 'transfer' && (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null)) {
