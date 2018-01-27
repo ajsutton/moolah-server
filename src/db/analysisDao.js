@@ -5,16 +5,18 @@ module.exports = class TransactionDao {
 
     incomeAndExpense(userId, currentDayOfMonth, afterDate) {
         const args = [currentDayOfMonth, userId];
-        let query = ` SELECT MIN(date) as start,
-                             MAX(date) as end,
-                             IF(DAYOFMONTH(date) > ?, EXTRACT(YEAR_MONTH FROM DATE_ADD(date, INTERVAL 1 MONTH)), EXTRACT(YEAR_MONTH FROM date)) as month,
-                             SUM(IF(type = 'income', amount, 0)) AS income, 
-                             SUM(IF(type = 'expense', amount, 0)) AS expense, 
-                             SUM(amount) AS profit 
-                        FROM transaction 
-                       WHERE recur_period IS NULL 
-                         AND user_id = ?
-                         AND type IN ('income', 'expense') `;
+        let query = ` SELECT MIN(t.date) as start,
+                             MAX(t.date) as end,
+                             IF(DAYOFMONTH(t.date) > ?, EXTRACT(YEAR_MONTH FROM DATE_ADD(t.date, INTERVAL 1 MONTH)), EXTRACT(YEAR_MONTH FROM t.date)) as month,
+                             SUM(IF(t.type = 'income', amount, 0)) AS income, 
+                             SUM(IF(t.type = 'expense', amount, 0)) AS expense, 
+                             SUM(t.amount) AS profit 
+                        FROM transaction t
+                        JOIN account a ON t.account_id = a.id
+                       WHERE t.recur_period IS NULL 
+                         AND t.user_id = ?
+                         AND t.type IN ('income', 'expense') 
+                         AND a.type != 'earmark' `;
         if (afterDate) {
             query += 'AND date > ? ';
             args.push(afterDate);
