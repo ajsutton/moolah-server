@@ -1,12 +1,13 @@
-const db = require('../../src/db/database');
 const dbTestUtils = require('../utils/dbTestUtils');
 const TransactionDao = require('../../src/db/transactionDao');
+const AccountsDao = require('../../src/db/accountDao');
 const assert = require('chai').assert;
 const idGenerator = require('../../src/utils/idGenerator');
 
 describe('Transaction DAO', function() {
     let connection;
     let transactionDao;
+    let accountsDao;
     let userId;
     const minimalTransaction = {
         id: 'transaction1',
@@ -19,7 +20,13 @@ describe('Transaction DAO', function() {
     beforeEach(async function() {
         userId = idGenerator();
         connection = await dbTestUtils.createConnection();
+        accountsDao = new AccountsDao(dbTestUtils.queryFunction(connection));
         transactionDao = new TransactionDao(dbTestUtils.queryFunction(connection));
+        await accountsDao.create(userId, {id: 'account-id', name: 'Account 1', type: 'bank', position: 7});
+        await accountsDao.create(userId, {id: 'account1', name: 'Account 1', type: 'bank', position: 7});
+        await accountsDao.create(userId, {id: 'account2', name: 'Account 1', type: 'bank', position: 7});
+        await accountsDao.create(userId, {id: 'otherAccount', name: 'Account 1', type: 'bank', position: 7});
+        await accountsDao.create(userId, {id: 'earmark', name: 'Earmark', type: 'earmark', position: 7});
     });
 
     afterEach(async function() {
@@ -246,6 +253,18 @@ describe('Transaction DAO', function() {
         it('should exclude scheduled transactions when calculating balance', async function() {
             const transaction1 = makeTransaction({amount: 5000, date: '2017-06-01'});
             const transaction2 = makeTransaction({amount: -2000, date: '2017-05-30', recurEvery: 1, recurPeriod: 'MONTH'});
+            const transaction3 = makeTransaction({amount: 300, date: '2017-06-03'});
+            await transactionDao.create(userId, transaction1);
+            await transactionDao.create(userId, transaction2);
+            await transactionDao.create(userId, transaction3);
+
+            const balance = await transactionDao.balance(userId, {accountId: minimalTransaction.accountId});
+            assert.equal(balance, 5300);
+        });
+
+        it('should exclude transactions in earmark accounts when calculating balance', async function() {
+            const transaction1 = makeTransaction({amount: 5000, date: '2017-06-01'});
+            const transaction2 = makeTransaction({amount: -2000, date: '2017-05-30', accountId: 'earmark'});
             const transaction3 = makeTransaction({amount: 300, date: '2017-06-03'});
             await transactionDao.create(userId, transaction1);
             await transactionDao.create(userId, transaction2);

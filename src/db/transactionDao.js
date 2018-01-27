@@ -19,27 +19,32 @@ function asTransaction(object) {
 }
 
 function transactionQuery(fields, userId, opts) {
-    let query = `SELECT ${fields} FROM transaction WHERE user_id = ?`;
+    let query = `SELECT ${fields} 
+                   FROM transaction t
+                   JOIN account a ON t.account_id = a.id 
+                  WHERE t.user_id = ?`;
     const args = [userId];
     if (opts.accountId !== undefined) {
-        query += ` AND (account_id = ? OR to_account_id = ?) `;
+        query += ` AND (t.account_id = ? OR t.to_account_id = ?) `;
         args.push(opts.accountId, opts.accountId);
+    } else {
+        query += ` AND a.type != 'earmark' `;
     }
     if (opts.scheduled) {
-        query += ' AND recur_period IS NOT NULL ';
+        query += ' AND t.recur_period IS NOT NULL ';
     } else {
-        query += ' AND recur_period IS NULL ';
+        query += ' AND t.recur_period IS NULL ';
     }
     if (opts.from) {
-        query += ' AND date >= ?';
+        query += ' AND t.date >= ?';
         args.push(opts.from);
     }
     if (opts.to) {
-        query += ' AND date <= ?';
+        query += ' AND t.date <= ?';
         args.push(opts.to);
     }
     if (opts.categories && opts.categories.length > 0) {
-        query += ' AND category_id IN (?) ';
+        query += ' AND t.category_id IN (?) ';
         args.push(opts.categories);
     }
     return {query, args};
@@ -92,7 +97,7 @@ module.exports = class TransactionDao {
     async transactions(userId, options = {}) {
         const opts = Object.assign({pageSize: 1000, offset: 0, accountId: undefined, scheduled: false, from: undefined, to: undefined}, options);
         const args = [opts.accountId];
-        const builder = transactionQuery('id, type, date, account_id as accountId, payee, amount, notes, category_id as categoryId, to_account_id as toAccountId, to_account_id = ? as transferIn, recur_every as recurEvery, recur_period as recurPeriod', userId, opts);
+        const builder = transactionQuery('t.id, t.type, t.date, t.account_id as accountId, t.payee, t.amount, t.notes, t.category_id as categoryId, t.to_account_id as toAccountId, t.to_account_id = ? as transferIn, t.recur_every as recurEvery, t.recur_period as recurPeriod', userId, opts);
         let query = builder.query;
         args.push(...builder.args);
         query += ` ORDER BY date DESC, id `;
@@ -115,20 +120,20 @@ module.exports = class TransactionDao {
         let selectBalance;
         const args = [];
         if (options.accountId === undefined) {
-            selectBalance = 'SUM(amount) as balance';
+            selectBalance = 'SUM(t.amount) as balance';
         } else {
-            selectBalance = 'SUM(IF(account_id = ?, amount, -amount)) as balance';
+            selectBalance = 'SUM(IF(t.account_id = ?, t.amount, -t.amount)) as balance';
             args.push(options.accountId);
         }
         const builder = transactionQuery(selectBalance, userId, options);
         args.push(...builder.args);
         let query = builder.query;
         if (forTransaction !== undefined) {
-            query += 'AND (date < ? OR (date = ? AND id >= ?)) ';
+            query += 'AND (t.date < ? OR (t.date = ? AND t.id >= ?)) ';
             args.push(forTransaction.date, forTransaction.date, forTransaction.id);
         }
         if (options.accountId === undefined) {
-            query += 'AND type != "transfer" ';
+            query += 'AND t.type != "transfer" ';
         }
         const results = await this.query(query, ...args);
         return results[0].balance || 0;

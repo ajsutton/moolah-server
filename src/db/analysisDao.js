@@ -26,11 +26,12 @@ module.exports = class TransactionDao {
 
     dailyProfitAndLoss(userId, afterDate) {
         const args = [userId];
-        let query = ` SELECT date, SUM(amount) AS profit 
-                        FROM transaction 
+        let query = ` SELECT date, SUM(IF(a.type != 'earmark', amount, 0)) AS profit 
+                        FROM transaction t
+                        JOIN account a ON t.account_id = a.id
                        WHERE recur_period IS NULL 
-                         AND user_id = ?
-                         AND type != 'transfer' `;
+                         AND t.user_id = ?
+                         AND t.type != 'transfer' `;
         if (afterDate) {
             query += ' AND DATE > ? ';
             args.push(afterDate);
