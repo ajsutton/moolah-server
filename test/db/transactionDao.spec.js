@@ -46,6 +46,7 @@ describe('Transaction DAO', function() {
                 notes: 'Bought some apple. No worries!',
                 categoryId: 'category-id',
                 toAccountId: 'account-2',
+                earmark: 'earmark',
                 recurEvery: 2,
                 recurPeriod: 'MONTH'
             };

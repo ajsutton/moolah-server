@@ -4,11 +4,6 @@ function override(object, overrides) {
 
 function withoutUndefined(object) {
     return withoutValues(object, undefined);
-    const result = {};
-    Object.entries(object)
-        .filter(([key, value]) => value !== undefined)
-        .forEach(([key, value]) => result[key] = value);
-    return result;
 }
 
 function withoutValues(object, disallowedValue) {

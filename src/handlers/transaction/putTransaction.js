@@ -9,6 +9,11 @@ async function isInvalidToAccountId(transactionData, daos, userId) {
     return toAccount === undefined || toAccount.type === 'earmark';
 }
 
+async function isInvalidEarmarktId(daos, userId, accountId) {
+    const toAccount = await daos.accounts.account(userId, accountId);
+    return toAccount === undefined || toAccount.type !== 'earmark';
+}
+
 module.exports = {
     auth: 'session',
     handler: {
@@ -50,6 +55,11 @@ module.exports = {
                     reply(Boom.badRequest('toAccountId invalid when type is not transfer'));
                     return;
                 }
+                if (modifiedTransaction.earmark !== undefined && modifiedTransaction.earmark !== null && await isInvalidEarmarktId(daos, userId, modifiedTransaction.earmark))
+                {
+                    reply(Boom.badRequest('Invalid earmark'));
+                    return;
+                }
                 await daos.transactions.store(userId, modifiedTransaction);
                 reply(modifiedTransaction);
             });
@@ -70,6 +80,7 @@ module.exports = {
             notes: types.notes.default(null),
             categoryId: types.id.allow(null).default(null),
             toAccountId: types.id.allow(null).default(null),
+            earmark: types.id.allow(null).default(null),
             recurEvery: types.recurEvery.allow(null),
             recurPeriod: types.recurPeriod.allow(null),
         }),

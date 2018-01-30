@@ -20,6 +20,7 @@ module.exports = class TransactionsDsl {
             notes: undefined,
             category: undefined,
             toAccount: undefined,
+            earmark: undefined,
             statusCode: 201,
         }, args);
 
@@ -32,6 +33,7 @@ module.exports = class TransactionsDsl {
             notes: options.notes,
             categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias),
             toAccountId: dslUtils.lookupId(options.toAccount, this.accountsByAlias),
+            earmark: dslUtils.lookupId(options.earmark, this.accountsByAlias),
         });
         const response = await this.server.post('/api/transactions/', createTransactionRequest, options.statusCode);
         const createdTransaction = JSON.parse(response.payload);
@@ -52,6 +54,7 @@ module.exports = class TransactionsDsl {
             notes: undefined,
             category: undefined,
             toAccount: undefined,
+            earmark: undefined,
             statusCode: 200,
         }, args);
 
@@ -66,6 +69,7 @@ module.exports = class TransactionsDsl {
             accountId: dslUtils.lookupId(options.account, this.accountsByAlias),
             toAccountId: dslUtils.lookupId(options.toAccount, this.accountsByAlias),
             categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias),
+            earmark: dslUtils.lookupId(options.earmark, this.accountsByAlias),
         });
 
         await this.server.put(`/api/transactions/${encodeURIComponent(currentTransaction.id)}/`, modifiedTransaction, options.statusCode);

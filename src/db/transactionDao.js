@@ -57,10 +57,10 @@ module.exports = class TransactionDao {
 
     create(userId, transaction) {
         return this.query(
-            'INSERT INTO transaction (user_id, id, type, date, account_id, payee, amount, notes, category_id, to_account_id, recur_every, recur_period) ' +
-            '     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO transaction (user_id, id, type, date, account_id, payee, amount, notes, category_id, to_account_id, earmark, recur_every, recur_period) ' +
+            '     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             userId, transaction.id, transaction.type, transaction.date, transaction.accountId, transaction.payee, transaction.amount, transaction.notes, transaction.categoryId,
-            transaction.toAccountId, transaction.recurEvery, transaction.recurPeriod);
+            transaction.toAccountId, transaction.earmark, transaction.recurEvery, transaction.recurPeriod);
     }
 
     store(userId, transaction) {
@@ -69,6 +69,7 @@ module.exports = class TransactionDao {
             date: transaction.date,
             account_id: transaction.accountId,
             to_account_id: transaction.toAccountId,
+            earmark: transaction.earmark,
             payee: transaction.payee,
             amount: transaction.amount,
             notes: transaction.notes,
@@ -86,7 +87,7 @@ module.exports = class TransactionDao {
 
     async transaction(userId, transactionId) {
         const results = await this.query(
-            'SELECT id, type, date, account_id AS accountId, payee, amount, notes, category_id AS categoryId, to_account_id AS toAccountId, recur_every as recurEvery, recur_period as recurPeriod ' +
+            'SELECT id, type, date, account_id AS accountId, payee, amount, notes, category_id AS categoryId, to_account_id AS toAccountId, earmark, recur_every as recurEvery, recur_period as recurPeriod ' +
             '  FROM transaction ' +
             ' WHERE user_id = ? ' +
             '   AND id = ?',
@@ -97,7 +98,7 @@ module.exports = class TransactionDao {
     async transactions(userId, options = {}) {
         const opts = Object.assign({pageSize: 1000, offset: 0, accountId: undefined, scheduled: false, from: undefined, to: undefined}, options);
         const args = [opts.accountId];
-        const builder = transactionQuery('t.id, t.type, t.date, t.account_id as accountId, t.payee, t.amount, t.notes, t.category_id as categoryId, t.to_account_id as toAccountId, t.to_account_id = ? as transferIn, t.recur_every as recurEvery, t.recur_period as recurPeriod', userId, opts);
+        const builder = transactionQuery('t.id, t.type, t.date, t.account_id as accountId, t.payee, t.amount, t.notes, t.category_id as categoryId, t.to_account_id as toAccountId, earmark, t.to_account_id = ? as transferIn, t.recur_every as recurEvery, t.recur_period as recurPeriod', userId, opts);
         let query = builder.query;
         args.push(...builder.args);
         query += ` ORDER BY date DESC, id `;

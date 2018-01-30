@@ -291,7 +291,7 @@ describe('Transaction Management', function() {
         });
     });
 
-    describe('Earmark Transactions', function() {
+    describe('Earmark Account Transactions', function() {
         beforeEach(async function() {
             await dsl.accounts.createAccount({alias: 'earmark', type: 'earmark'});
             await dsl.accounts.createAccount({alias: 'account2'});
@@ -315,6 +315,43 @@ describe('Transaction Management', function() {
             await dsl.transactions.createTransaction({alias: 'transaction', type: 'income', account: 'earmark', amount: -100});
             await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'transfer', toAccount: 'account2', statusCode: 400});
             await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', statusCode: 400});
+        });
+    });
+
+    describe('Earmark Spending', function() {
+        beforeEach(async function() {
+            await dsl.accounts.createAccount({alias: 'earmark', type: 'earmark'});
+        });
+
+        it('should allow adding earmark to new transaction', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: -100, earmark: 'earmark'});
+            await dsl.transactions.verifyTransaction({alias: 'transaction'});
+        });
+
+        it('should allow adding earmark when modifying transaction', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: -100});
+            await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: -100, earmark: 'earmark'});
+            await dsl.transactions.verifyTransaction({alias: 'transaction'});
+        });
+
+        it('should not allow creating transaction with unknown earmark account', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: -100, earmark: '<unknown>', statusCode: 400});
+        });
+
+        it('should not allow creating transaction with non-earmark account', async function() {
+            await dsl.accounts.createAccount({alias: 'account2'});
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: -100, earmark: 'account2', statusCode: 400});
+        });
+
+        it('should not allow modifying transaction with unknown earmark account', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: -100});
+            await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: -100, earmark: '<unknown>', statusCode: 400});
+        });
+
+        it('should not allow modifying transaction with non-earmark account', async function() {
+            await dsl.accounts.createAccount({alias: 'account2'});
+            await dsl.transactions.createTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: -100});
+            await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: -100, earmark: 'account2', statusCode: 400});
         });
     });
 });

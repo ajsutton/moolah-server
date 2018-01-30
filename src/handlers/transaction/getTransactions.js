@@ -23,7 +23,7 @@ module.exports = {
                 }
                 const loadedCategories = await Promise.all(categories
                     .map(async categoryId => ({
-                        id: categoryId, 
+                        id: categoryId,
                         category: await daos.categories.category(userId, categoryId)
                     })));
                 const missingCategories = loadedCategories.filter(data => data.category === undefined);

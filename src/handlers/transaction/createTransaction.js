@@ -5,9 +5,14 @@ const idGenerator = require('../../utils/idGenerator');
 const Boom = require('boom');
 const session = require('../../auth/session');
 
-async function isInvalidToAccountId(transactionData, daos, userId) {
-    const toAccount = await daos.accounts.account(userId, transactionData.toAccountId);
+async function isInvalidToAccountId(daos, userId, accountId) {
+    const toAccount = await daos.accounts.account(userId, accountId);
     return toAccount === undefined || toAccount.type === 'earmark';
+}
+
+async function isInvalidEarmarktId(daos, userId, accountId) {
+    const toAccount = await daos.accounts.account(userId, accountId);
+    return toAccount === undefined || toAccount.type !== 'earmark';
 }
 
 module.exports = {
@@ -20,7 +25,7 @@ module.exports = {
                 const account = await daos.accounts.account(userId, transactionData.accountId);
                 if (account === undefined) {
                     reply(Boom.badRequest('Invalid accountId'));
-                } else if (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null && await isInvalidToAccountId(transactionData, daos, userId)) {
+                } else if (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null && await isInvalidToAccountId(daos, userId, transactionData.toAccountId)) {
                     reply(Boom.badRequest('Invalid toAccountId'));
                 } else if (transactionData.recurEvery !== undefined && transactionData.recurPeriod === undefined) {
                     reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
@@ -32,6 +37,8 @@ module.exports = {
                     reply(Boom.badRequest('toAccountId is required when type is transfer'));
                 } else if (transactionData.type !== 'transfer' && (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null)) {
                     reply(Boom.badRequest('toAccountId invalid when type is not transfer'));
+                } else if (transactionData.earmark !== null && transactionData.earmark !== undefined && await isInvalidEarmarktId(daos, userId, transactionData.earmark)) {
+                    reply(Boom.badRequest('Invalid earmark'));
                 } else {
                     while (true) {
                         try {
@@ -59,6 +66,7 @@ module.exports = {
             notes: types.notes,
             categoryId: types.id.allow(null),
             toAccountId: types.id.allow(null),
+            earmark: types.id.allow(null),
             recurEvery: types.recurEvery.allow(null),
             recurPeriod: types.recurPeriod.allow(null),
         }),
