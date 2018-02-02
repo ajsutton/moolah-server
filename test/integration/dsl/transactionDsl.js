@@ -106,8 +106,6 @@ module.exports = class TransactionsDsl {
             statusCode: 200,
         }, args);
         const expectedTransactions = options.expectTransactions.map(alias => this.transactionsByAlias.get(alias));
-        const pageSizeArg = options.pageSize !== undefined ? `&pageSize=${encodeURIComponent(options.pageSize)}` : '';
-        const offsetArg = options.offset !== undefined ? `&offset=${encodeURIComponent(options.offset)}` : '';
         const transactionCount = options.transactionCount !== undefined ? options.transactionCount : expectedTransactions.length;
         const queryArgs = dslUtils.formatQueryArgs({
             account: options.account ? this.accountsByAlias.get(options.account).id : undefined,

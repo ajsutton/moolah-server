@@ -2,8 +2,10 @@ const assert = require('chai').assert;
 const dslUtils = require('./dslUtils');
 
 module.exports = class AnalysisDsl {
-    constructor(server) {
+    constructor(server, accountsByAlias, categoriesByAlias) {
         this.server = server;
+        this.accountsByAlias = accountsByAlias;
+        this.categoriesByAlias = categoriesByAlias;
     }
 
     async verifyIncomeAndExpense(args) {
@@ -26,5 +28,29 @@ module.exports = class AnalysisDsl {
         const afterParam = options.after !== undefined ? `?after=${options.after}` : '';
         const response = await this.server.get(`/api/analysis/dailyBalances/${afterParam}`, options.statusCode);
         assert.deepEqual(JSON.parse(response.payload).dailyBalances, options.expected);
+    }
+
+    async verifyCategoryBalances(args) {
+        const options = Object.assign({
+            account: undefined,
+            from: undefined,
+            to: undefined,
+            categories: [],
+            expected: [],
+            statusCode: 200,
+        }, args);
+
+        const queryArgs = dslUtils.formatQueryArgs({
+            account: options.account ? this.accountsByAlias.get(options.account).id : undefined,
+            pageSize: options.pageSize,
+            offset: options.offset,
+            from: options.from,
+            to: options.to,
+            category: options.categories.map(categoryId => dslUtils.lookupId(categoryId, this.categoriesByAlias)),
+        });
+        const response = await this.server.get(`/api/analysis/categoryBalances/${queryArgs}`, options.statusCode);
+        const expected = {};
+        options.expected.forEach(expectedBalance => expected[dslUtils.lookupId(expectedBalance.category, this.categoriesByAlias)] = expectedBalance.balance);
+        assert.deepEqual(JSON.parse(response.payload), expected);
     }
 };

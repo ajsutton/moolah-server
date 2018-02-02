@@ -14,4 +14,9 @@ module.exports = [
         path: '/api/analysis/expenseBreakdown/',
         config: require('../handlers/analysis/expenseBreakdown'),
     },
+    {
+        method: 'GET',
+        path: '/api/analysis/categoryBalances/',
+        config: require('../handlers/analysis/categoryBalances'),
+    }
 ];

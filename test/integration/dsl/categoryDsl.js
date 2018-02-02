@@ -78,6 +78,6 @@ module.exports = class CategoryDsl {
         }, args);
 
         const category = this.categoriesByAlias.get(options.alias);
-        const response = await this.server.delete(`/api/categories/${encodeURIComponent(category.id)}/`, options.statusCode);
+        await this.server.delete(`/api/categories/${encodeURIComponent(category.id)}/`, options.statusCode);
     }
 };

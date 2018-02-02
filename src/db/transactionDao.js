@@ -151,7 +151,7 @@ module.exports = class TransactionDao {
         const args = [];
         const builder = transactionQuery('category_id as categoryId, ' + selectBalance(options, args), userId, options);
         args.push(...builder.args);
-        let query = builder.query;
+        let query = builder.query + ' AND t.category_id IS NOT NULL ';
 
         if (forTransaction !== undefined) {
             query += 'AND (t.date < ? OR (t.date = ? AND t.id >= ?)) ';
