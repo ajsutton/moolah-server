@@ -1,5 +1,6 @@
 const dbTestUtils = require('../utils/dbTestUtils');
 const TransactionDao = require('../../src/db/transactionDao');
+const CategoryDao = require('../../src/db/categoryDao');
 const AccountsDao = require('../../src/db/accountDao');
 const assert = require('chai').assert;
 const idGenerator = require('../../src/utils/idGenerator');
@@ -273,6 +274,41 @@ describe('Transaction DAO', function() {
 
             const balance = await transactionDao.balance(userId, {accountId: minimalTransaction.accountId});
             assert.equal(balance, 5300);
+        });
+    });
+
+    describe('Balance by Category', function() {
+        let categoryDao;
+        beforeEach(async function() {
+            categoryDao = new CategoryDao(dbTestUtils.queryFunction(connection));
+            await categoryDao.create(userId, {id: 'test1', name: 'Test1'});
+            await categoryDao.create(userId, {id: 'test2', name: 'Test2'});
+            await categoryDao.create(userId, {id: 'test2a', name: 'Test2a', parentId: 'test2'});
+        });
+
+        it('should calculate total balance by category', async function() {
+            await transactionDao.create(userId, makeTransaction({amount: 5000, categoryId: 'test1'}));
+            await transactionDao.create(userId, makeTransaction({amount: -2000, categoryId: 'test1'}));
+            await transactionDao.create(userId, makeTransaction({amount: 300, categoryId: 'test2'}));
+
+            const balances = await transactionDao.balanceByCategory(userId, {});
+            assert.deepEqual(balances, {
+                test1: 3000,
+                test2: 300
+            });
+        });
+
+        it('should calculate total balance by category for an account', async function() {
+            await transactionDao.create(userId, makeTransaction({amount: 5000, categoryId: 'test1', accountId: 'earmark'}));
+            await transactionDao.create(userId, makeTransaction({amount: -2000, categoryId: 'test1', accountId: 'earmark'}));
+            await transactionDao.create(userId, makeTransaction({amount: 300, categoryId: 'test2', accountId: 'account1'}));
+            await transactionDao.create(userId, makeTransaction({amount: 400, categoryId: 'test3', accountId: 'earmark'}));
+
+            const balances = await transactionDao.balanceByCategory(userId, {accountId: 'earmark'});
+            assert.deepEqual(balances, {
+                test1: 3000,
+                test3: 400
+            });
         });
     });
 

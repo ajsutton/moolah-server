@@ -47,9 +47,23 @@ function transactionQuery(fields, userId, opts) {
         query += ' AND t.category_id IN (?) ';
         args.push(opts.categories);
     }
+    if (opts.earmark) {
+        query += ' AND t.earmark = ? ';
+        args.push(opts.earmark);
+    }
     return {query, args};
 }
 
+let selectBalance = function(options, args) {
+    let selectBalance;
+    if (options.accountId === undefined) {
+        selectBalance = 'SUM(t.amount) as balance';
+    } else {
+        selectBalance = 'SUM(IF(t.account_id = ?, t.amount, -t.amount)) as balance';
+        args.push(options.accountId);
+    }
+    return selectBalance;
+};
 module.exports = class TransactionDao {
     constructor(query) {
         this.query = query;
@@ -118,15 +132,8 @@ module.exports = class TransactionDao {
     }
 
     async balance(userId, options, forTransaction) {
-        let selectBalance;
         const args = [];
-        if (options.accountId === undefined) {
-            selectBalance = 'SUM(t.amount) as balance';
-        } else {
-            selectBalance = 'SUM(IF(t.account_id = ?, t.amount, -t.amount)) as balance';
-            args.push(options.accountId);
-        }
-        const builder = transactionQuery(selectBalance, userId, options);
+        const builder = transactionQuery(selectBalance(options, args), userId, options);
         args.push(...builder.args);
         let query = builder.query;
         if (forTransaction !== undefined) {
@@ -138,6 +145,28 @@ module.exports = class TransactionDao {
         }
         const results = await this.query(query, ...args);
         return results[0].balance || 0;
+    }
+
+    async balanceByCategory(userId, options, forTransaction) {
+        const args = [];
+        const builder = transactionQuery('category_id as categoryId, ' + selectBalance(options, args), userId, options);
+        args.push(...builder.args);
+        let query = builder.query;
+
+        if (forTransaction !== undefined) {
+            query += 'AND (t.date < ? OR (t.date = ? AND t.id >= ?)) ';
+            args.push(forTransaction.date, forTransaction.date, forTransaction.id);
+        }
+        if (options.accountId === undefined) {
+            query += 'AND t.type != "transfer" ';
+        }
+        query += ' GROUP BY category_id';
+
+        const results = await this.query(query, ...args);
+        return results.reduce((result, {categoryId, balance}) => {
+            result[categoryId] = balance;
+            return result;
+        }, {});
     }
 
     async removeCategory(userId, categoryId, replacementCategoryId = null) {
