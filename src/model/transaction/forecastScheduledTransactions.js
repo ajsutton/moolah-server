@@ -6,7 +6,7 @@ const transactionComparator = require('./transactionComparator');
 
 function extrapolateScheduledTransaction(transaction, forecastUntil) {
     if (transaction.recurPeriod === 'ONCE') {
-        return [transaction];
+        return isAfter(transaction.date, forecastUntil) ? [] : [transaction];
     }
     const instances = [];
     const dateStepFunction = dueDateTools.dateStepFunction(transaction.recurPeriod);
