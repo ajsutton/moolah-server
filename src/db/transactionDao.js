@@ -47,9 +47,9 @@ function transactionQuery(fields, userId, opts) {
         query += ' AND t.category_id IN (?) ';
         args.push(opts.categories);
     }
-    if (opts.earmark) {
+    if (opts.earmarkId) {
         query += ' AND t.earmark = ? ';
-        args.push(opts.earmark);
+        args.push(opts.earmarkId);
     }
     return {query, args};
 }

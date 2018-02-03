@@ -353,5 +353,25 @@ describe('Transaction Management', function() {
             await dsl.transactions.createTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: -100});
             await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', account: 'account1', amount: -100, earmark: 'account2', statusCode: 400});
         });
+
+        it('should find transactions with an earmark', async function() {
+            await dsl.accounts.createAccount({alias: 'account2'});
+            await dsl.accounts.createAccount({alias: 'earmark2', type: 'earmark'});
+            await dsl.transactions.createTransaction({alias: 'transaction1', type: 'expense', account: 'account1', amount: -100, date: '2017-06-01', earmark: 'earmark'});
+            await dsl.transactions.createTransaction({alias: 'transaction2', type: 'expense', account: 'account2', amount: -500, date: '2017-06-02', earmark: 'earmark'});
+            await dsl.transactions.createTransaction({alias: 'transaction3', type: 'expense', account: 'account2', amount: -500, date: '2017-06-03', earmark: 'earmark2'});
+            await dsl.transactions.createTransaction({alias: 'transaction4', type: 'expense', account: 'account2', amount: -500, date: '2017-06-04'});
+
+            await dsl.transactions.verifyTransactions({
+                earmark: 'earmark',
+                expectPriorBalance: 0,
+                expectHasMore: false,
+                expectTransactions: [
+                    'transaction2',
+                    'transaction1',
+                ],
+                transactionCount: 2,
+            });
+        });
     });
 });

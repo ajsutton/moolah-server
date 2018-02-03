@@ -94,6 +94,7 @@ module.exports = class TransactionsDsl {
     async verifyTransactions(args) {
         const options = Object.assign({
             account: undefined,
+            earmark: undefined,
             from: undefined,
             to: undefined,
             categories: [],
@@ -109,6 +110,7 @@ module.exports = class TransactionsDsl {
         const transactionCount = options.transactionCount !== undefined ? options.transactionCount : expectedTransactions.length;
         const queryArgs = dslUtils.formatQueryArgs({
             account: options.account ? this.accountsByAlias.get(options.account).id : undefined,
+            earmark: dslUtils.lookupId(options.earmark, this.accountsByAlias),
             pageSize: options.pageSize,
             offset: options.offset,
             from: options.from,
