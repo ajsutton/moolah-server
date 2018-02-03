@@ -4,19 +4,13 @@ const CategoryDao = require('../../src/db/categoryDao');
 const AccountsDao = require('../../src/db/accountDao');
 const assert = require('chai').assert;
 const idGenerator = require('../../src/utils/idGenerator');
+const {minimalTransaction, makeTransaction} = require('./transactionHelper');
 
 describe('Transaction DAO', function() {
     let connection;
     let transactionDao;
     let accountsDao;
     let userId;
-    const minimalTransaction = {
-        id: 'transaction1',
-        type: 'expense',
-        date: '2017-06-04',
-        accountId: 'account-id',
-        amount: 5000,
-    };
 
     beforeEach(async function() {
         userId = idGenerator();
@@ -311,8 +305,4 @@ describe('Transaction DAO', function() {
             });
         });
     });
-
-    function makeTransaction(args, template = minimalTransaction) {
-        return Object.assign({}, template, {id: idGenerator()}, args);
-    }
 });

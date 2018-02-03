@@ -1,18 +1,25 @@
 const dbTestUtils = require('../utils/dbTestUtils');
 const EarmarkDao = require('../../src/db/earmarkDao');
+const TransactionDao = require('../../src/db/transactionDao');
+const AccountsDao = require('../../src/db/accountDao');
 const assert = require('chai').assert;
 const idGenerator = require('../../src/utils/idGenerator');
+const {minimalTransaction, makeTransaction} = require('./transactionHelper');
 
 describe('Earmark DAO', function() {
     let connection;
     let userId;
     let earmarkDao;
+    let transactionDao;
+    let accountsDao;
 
 
     beforeEach(async function() {
         userId = idGenerator();
         connection = await dbTestUtils.createConnection();
         earmarkDao = new EarmarkDao(dbTestUtils.queryFunction(connection));
+        transactionDao = new TransactionDao(dbTestUtils.queryFunction(connection));
+        accountsDao = new AccountsDao(dbTestUtils.queryFunction(connection));
     });
 
     afterEach(async function() {
@@ -74,5 +81,22 @@ describe('Earmark DAO', function() {
         await earmarkDao.create(userId, earmark);
         assert.deepEqual(await earmarkDao.earmarks('someOtherUser'), []);
         assert.isUndefined(await earmarkDao.earmark('someOtherUser', earmark.id));
+    });
+
+    describe('Earmark Balances', function() {
+        beforeEach(async function() {
+            await earmarkDao.create(userId, {id: '1', name: 'Earmark 1'});
+            await accountsDao.create(userId, {id: 'account1', name: 'My Account', type: 'bank'});
+        });
+
+        it('should calculate net balance, savings and spent amount', false, async function() {
+            await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'income', amount: 5000}));
+            await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'income', amount: 300}));
+            await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'expense', amount: 4000, account: 'account1'}));
+            await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'expense', amount: 1000, account: 'account1'}));
+
+            const result = await earmarkDao.balances(userId, '1');
+            assert.deepEqual(result, { balance: 300, income: 5300, expense: 5000});
+        });
     });
 });
