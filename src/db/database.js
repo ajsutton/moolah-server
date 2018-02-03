@@ -2,6 +2,7 @@ const AccountDao = require('./accountDao');
 const TransactionDao = require('./transactionDao');
 const CategoryDao = require('./categoryDao');
 const AnalysisDao = require('./analysisDao');
+const EarmarkDao = require('./earmarkDao');
 
 const resolveOrReject = (resolve, reject) => (err, value) => {
     if (err) {
@@ -42,6 +43,7 @@ function makeDaos(connection) {
         transactions: new TransactionDao(query),
         categories: new CategoryDao(query),
         analysis: new AnalysisDao(query),
+        earmarks: new EarmarkDao(query),
     };
 }
 

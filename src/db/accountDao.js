@@ -1,18 +1,6 @@
+const stripNulls = require('./stripNulls');
+
 const DEFAULT_POSITION = 0;
-
-function asAccount(object) {
-    if (object === undefined) {
-        return object;
-    }
-    const account = {};
-    Object.entries(object).forEach(([key, value]) => {
-        if (value !== null) {
-            account[key] = value;
-        }
-    });
-    return account;
-}
-
 
 module.exports = class AccountsDao {
     constructor(query) {
@@ -26,7 +14,7 @@ module.exports = class AccountsDao {
             '   WHERE user_id = ? ' +
             'ORDER BY position, name',
             userId);
-        return accounts.map(asAccount);
+        return accounts.map(stripNulls);
     }
 
     async account(userId, id) {
@@ -36,7 +24,7 @@ module.exports = class AccountsDao {
             ' WHERE user_id = ? ' +
             '   AND id = ?',
             userId, id);
-        return asAccount(results[0]);
+        return stripNulls(results[0]);
     }
 
     create(userId, account) {

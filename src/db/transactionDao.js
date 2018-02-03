@@ -1,13 +1,10 @@
+const stripNulls = require('./stripNulls');
+
 function asTransaction(object) {
     if (object === undefined) {
         return object;
     }
-    const transaction = {};
-    Object.entries(object).forEach(([key, value]) => {
-        if (value !== null) {
-            transaction[key] = value;
-        }
-    });
+    const transaction = stripNulls(object);
     if (transaction.transferIn) {
         const actualAccountId = transaction.accountId;
         transaction.accountId = transaction.toAccountId;

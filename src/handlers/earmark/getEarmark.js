@@ -8,12 +8,12 @@ module.exports = {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
             await db.withTransaction(request, async daos => {
-                const account = await daos.accounts.account(userId, request.params.id);
-                if (account === undefined) {
-                    reply(Boom.notFound('Account not found'));
+                const earmark = await daos.earmarks.earmark(userId, request.params.id);
+                if (earmark === undefined) {
+                    reply(Boom.notFound('Earmark not found'));
                 } else {
-                    account.balance = await daos.transactions.balance(userId, {accountId: account.id});
-                    reply(account);
+                    earmark.balance = await daos.transactions.balance(userId, {earmarkId: earmark.id});
+                    reply(earmark);
                 }
             });
         },

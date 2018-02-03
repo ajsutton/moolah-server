@@ -29,7 +29,7 @@ describe('Put Account Handler', function() {
     it('should update existing account', async function() {
         const modifiedAccount = {id: 123, name: 'Updated account', type: 'cc', balance: 50000};
         daos.accounts.account.withArgs(userId, '123').resolves({id: 123, name: 'Original account', type: 'bank', balance: 45000});
-        daos.transactions.balance.withArgs(userId, 123).resolves(50000);
+        daos.transactions.balance.withArgs(userId, {accountId: 123}).resolves(50000);
         const response = await makeRequest(123, {name: 'Updated account', type: 'cc'});
         assert.equal(response.statusCode, 200);
         sinon.assert.calledOnce(daos.accounts.store);
