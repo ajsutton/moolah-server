@@ -59,8 +59,9 @@ module.exports = {
         try {
             const daos = makeDaos(connection);
             await beginTransaction(connection);
-            await action(daos);
+            const result = await action(daos);
             await commit(connection);
+            return result;
         } catch (err) {
             rollback(connection);
             throw err;

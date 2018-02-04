@@ -22,21 +22,22 @@ module.exports = {
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
-            await db.withTransaction(request, async daos => {
+            const replyContent = await db.withTransaction(request, async daos => {
                 const currentCategory = await daos.categories.category(userId, request.params.id);
                 if (currentCategory === undefined) {
-                    reply(Boom.notFound('Category not found'));
+                    return Boom.notFound('Category not found');
                 } else {
                     const parentIdRejectionReason = await getParentIdRejectionReason(userId, daos, request.params.id, request.payload.parentId);
                     if (parentIdRejectionReason !== undefined) {
-                        reply(parentIdRejectionReason);
+                        return parentIdRejectionReason;
                     } else {
                         const modifiedCategory = Object.assign({}, currentCategory, request.payload);
                         await daos.categories.store(userId, modifiedCategory);
-                        reply(modifiedCategory);
+                        return modifiedCategory;
                     }
                 }
             });
+            reply(replyContent);
         },
     },
     validate: {
