@@ -42,7 +42,6 @@ module.exports = class EarmarksDao {
 
     async balances(userId, earmarkId) {
         const {query, args} = transactionQuery('SUM(t.amount) as balance, SUM(IF(t.type = \'income\', t.amount, 0)) as saved, SUM(IF(t.type = \'expense\', t.amount, 0)) as spent', userId, {earmarkId});
-        console.log(query);
         return (await this.query(query, ...args))[0];
     }
 };

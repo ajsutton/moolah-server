@@ -89,14 +89,14 @@ describe('Earmark DAO', function() {
             await accountsDao.create(userId, {id: 'account1', name: 'My Account', type: 'bank'});
         });
 
-        it('should calculate net balance, savings and spent amount', false, async function() {
+        it('should calculate net balance, savings and spent amount', async function() {
             await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'income', amount: 5000}));
-            await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'income', amount: 300}));
-            await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'expense', amount: 4000, account: 'account1'}));
-            await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'expense', amount: 1000, account: 'account1'}));
+            await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'income', amount: 300, accountId: 'account1'}));
+            await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'expense', amount: -4000, accountId: 'account1'}));
+            await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'expense', amount: -1000, accountId: 'account1'}));
 
             const result = await earmarkDao.balances(userId, '1');
-            assert.deepEqual(result, { balance: 300, income: 5300, expense: 5000});
+            assert.deepEqual(result, { balance: 300, saved: 5300, spent: -5000});
         });
     });
 });
