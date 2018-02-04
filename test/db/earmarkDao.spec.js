@@ -90,7 +90,7 @@ describe('Earmark DAO', function() {
         });
 
         it('should calculate net balance, savings and spent amount', async function() {
-            await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'income', amount: 5000}));
+            await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'income', amount: 5000, accountId: null}));
             await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'income', amount: 300, accountId: 'account1'}));
             await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'expense', amount: -4000, accountId: 'account1'}));
             await transactionDao.create(userId, makeTransaction({earmark: '1', type: 'expense', amount: -1000, accountId: 'account1'}));
