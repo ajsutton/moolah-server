@@ -3,6 +3,7 @@ const types = require('../types');
 const db = require('../../db/database');
 const idGenerator = require('../../utils/idGenerator');
 const session = require('../../auth/session');
+const loadEarmarkBalance = require('./loadEarmarkBalance');
 
 module.exports = {
     auth: 'session',
@@ -21,6 +22,7 @@ module.exports = {
                                 savingsStartDate: earmark.savingsStartDate,
                                 savingsEndDate: earmark.savingsEndDate,
                             });
+                        await loadEarmarkBalance(userId, earmark, daos);
                     });
                     delete earmark.date;
                     reply(earmark).code(201).header('Location', `/earmarks/${encodeURIComponent(earmark.id)}/`);
@@ -36,7 +38,9 @@ module.exports = {
     validate: {
         payload: Joi.object({
             name: types.name.required(),
-            balance: types.money.required(),
+            balance: types.money,
+            saved: types.money,
+            spent: types.money,
             position: types.position,
             date: types.date.default(null),
             savingsTarget: types.money.allow(null).default(undefined),

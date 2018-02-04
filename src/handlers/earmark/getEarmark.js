@@ -1,6 +1,7 @@
 const Boom = require('boom')
 const db = require('../../db/database');
 const session = require('../../auth/session');
+const loadEarmarkBalance = require('./loadEarmarkBalance');
 
 module.exports = {
     auth: 'session',
@@ -12,7 +13,7 @@ module.exports = {
                 if (earmark === undefined) {
                     reply(Boom.notFound('Earmark not found'));
                 } else {
-                    earmark.balance = await daos.transactions.balance(userId, {earmarkId: earmark.id});
+                    await loadEarmarkBalance(userId, earmark, daos);
                     reply(earmark);
                 }
             });

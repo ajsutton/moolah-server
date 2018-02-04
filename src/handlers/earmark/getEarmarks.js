@@ -1,5 +1,6 @@
 const session = require('../../auth/session');
 const db = require('../../db/database');
+const loadEarmarkBalance = require('./loadEarmarkBalance');
 
 module.exports = {
     auth: 'session',
@@ -9,9 +10,7 @@ module.exports = {
                 const userId = session.getUserId(request);
                 await db.withTransaction(request, async daos => {
                     const earmarks = await daos.earmarks.earmarks(userId);
-                    await Promise.all(earmarks.map(async earmark => {
-                        earmark.balance = await daos.transactions.balance(userId, {earmarkId: earmark.id});
-                    }));
+                    await Promise.all(earmarks.map(async earmark => loadEarmarkBalance(userId, earmark, daos)));
                     reply({earmarks: earmarks});
                 });
             } catch (err) {

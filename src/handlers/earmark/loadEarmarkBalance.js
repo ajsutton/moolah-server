@@ -1,6 +1,6 @@
 module.exports = async function loadEarmarkBalance(userId, earmark, daos) {
-    const [balance, expenses, income ] = await Promise.all([
-        await daos.transactions.balance(userId, {earmarkId: earmark.id}),
-        await daos.transactions.balance(userId, {earmarkId: earmark.id, type: 'income'})
-        ]);
+    const {balance, saved, spent } = await daos.earmarks.balances(userId, earmark.id);
+    earmark.balance = balance || 0;
+    earmark.saved = saved || 0;
+    earmark.spent = spent || 0;
 };
