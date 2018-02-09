@@ -21,6 +21,8 @@ module.exports = {
     async deleteData(userId, conn) {
         const connection = conn === undefined ? await this.createConnection() : conn;
         await doQuery(connection, 'DELETE FROM account WHERE user_id = ?', userId);
+        await doQuery(connection, 'DELETE FROM earmark WHERE user_id = ?', userId);
+        await doQuery(connection, 'DELETE FROM category WHERE user_id = ?', userId);
         await doQuery(connection, 'DELETE FROM transaction WHERE user_id = ?', userId);
         connection.destroy();
     },
