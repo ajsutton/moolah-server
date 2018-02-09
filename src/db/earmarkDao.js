@@ -1,7 +1,6 @@
 const stripNulls = require('./stripNulls');
 const DEFAULT_POSITION = 0;
 const transactionQuery = require('./transactionQuery');
-const selectBalance = require('./selectBalance');
 
 module.exports = class EarmarksDao {
     constructor(query) {

@@ -10,9 +10,9 @@ async function isInvalidToAccountId(daos, userId, accountId) {
     return toAccount === undefined || toAccount.type === 'earmark';
 }
 
-async function isInvalidEarmarktId(daos, userId, accountId) {
-    const toAccount = await daos.accounts.account(userId, accountId);
-    return toAccount === undefined || toAccount.type !== 'earmark';
+async function isInvalidEarmarkId(daos, userId, earmarkId) {
+    const toAccount = await daos.earmarks.earmark(userId, earmarkId);
+    return toAccount === undefined;
 }
 
 module.exports = {
@@ -31,13 +31,11 @@ module.exports = {
                     reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
                 } else if (transactionData.toAccountId === transactionData.accountId) {
                     reply(Boom.badRequest('Cannot transfer to own account'));
-                } else if (transactionData.type !== 'income' && account.type === 'earmark') {
-                    reply(Boom.badRequest('Only income transactions are allowed for earmark accounts'));
                 } else if (transactionData.type === 'transfer' && (transactionData.toAccountId === undefined || transactionData.toAccountId === null)) {
                     reply(Boom.badRequest('toAccountId is required when type is transfer'));
                 } else if (transactionData.type !== 'transfer' && (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null)) {
                     reply(Boom.badRequest('toAccountId invalid when type is not transfer'));
-                } else if (transactionData.earmark !== null && transactionData.earmark !== undefined && await isInvalidEarmarktId(daos, userId, transactionData.earmark)) {
+                } else if (transactionData.earmark !== null && transactionData.earmark !== undefined && await isInvalidEarmarkId(daos, userId, transactionData.earmark)) {
                     reply(Boom.badRequest('Invalid earmark'));
                 } else {
                     while (true) {

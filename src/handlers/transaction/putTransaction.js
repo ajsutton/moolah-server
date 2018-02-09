@@ -6,12 +6,11 @@ const session = require('../../auth/session');
 
 async function isInvalidToAccountId(transactionData, daos, userId) {
     const toAccount = await daos.accounts.account(userId, transactionData.toAccountId);
-    return toAccount === undefined || toAccount.type === 'earmark';
+    return toAccount === undefined;
 }
 
-async function isInvalidEarmarktId(daos, userId, accountId) {
-    const toAccount = await daos.accounts.account(userId, accountId);
-    return toAccount === undefined || toAccount.type !== 'earmark';
+async function isInvalidEarmarkId(daos, userId, earmarkId) {
+    return (await daos.earmarks.earmark(userId, earmarkId)) === undefined;
 }
 
 module.exports = {
@@ -43,10 +42,6 @@ module.exports = {
                     reply(Boom.badRequest('Cannot transfer to own account'));
                     return;
                 }
-                if (modifiedTransaction.type !== 'income' && account.type === 'earmark') {
-                    reply(Boom.badRequest('Only income transactions are allowed for earmark accounts'));
-                    return;
-                }
                 if (modifiedTransaction.type === 'transfer' && (modifiedTransaction.toAccountId === undefined || modifiedTransaction.toAccountId === null)) {
                     reply(Boom.badRequest('toAccountId is required when type is transfer'));
                     return;
@@ -55,7 +50,7 @@ module.exports = {
                     reply(Boom.badRequest('toAccountId invalid when type is not transfer'));
                     return;
                 }
-                if (modifiedTransaction.earmark !== undefined && modifiedTransaction.earmark !== null && await isInvalidEarmarktId(daos, userId, modifiedTransaction.earmark))
+                if (modifiedTransaction.earmark !== undefined && modifiedTransaction.earmark !== null && await isInvalidEarmarkId(daos, userId, modifiedTransaction.earmark))
                 {
                     reply(Boom.badRequest('Invalid earmark'));
                     return;

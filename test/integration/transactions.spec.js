@@ -291,36 +291,9 @@ describe('Transaction Management', function() {
         });
     });
 
-    describe('Earmark Account Transactions', function() {
-        beforeEach(async function() {
-            await dsl.accounts.createAccount({alias: 'earmark', type: 'earmark'});
-            await dsl.accounts.createAccount({alias: 'account2'});
-        });
-
-        it('should not allow transfers to earmark accounts via creation', async function() {
-            await dsl.transactions.createTransaction({alias: 'transaction', type: 'transfer', account: 'account1', toAccount: 'earmark', amount: -100, statusCode: 400});
-        });
-
-        it('should not allow transfers to earmark accounts via modification', async function() {
-            await dsl.transactions.createTransaction({alias: 'transaction', type: 'transfer', account: 'account1', toAccount: 'account2', amount: -100});
-            await dsl.transactions.modifyTransaction({alias: 'transaction', toAccount: 'earmark', statusCode: 400});
-        });
-
-        it('should only allow income transaction type in earmark accounts via creation', async function() {
-            await dsl.transactions.createTransaction({alias: 'transaction', type: 'transfer', account: 'earmark', toAccount: 'account2', amount: -100, statusCode: 400});
-            await dsl.transactions.createTransaction({alias: 'transaction', type: 'expense', account: 'earmark', amount: -100, statusCode: 400});
-        });
-
-        it('should only allow income transaction type in earmark accounts via modification', async function() {
-            await dsl.transactions.createTransaction({alias: 'transaction', type: 'income', account: 'earmark', amount: -100});
-            await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'transfer', toAccount: 'account2', statusCode: 400});
-            await dsl.transactions.modifyTransaction({alias: 'transaction', type: 'expense', statusCode: 400});
-        });
-    });
-
     describe('Earmark Spending', function() {
         beforeEach(async function() {
-            await dsl.accounts.createAccount({alias: 'earmark', type: 'earmark'});
+            await dsl.earmarks.createEarmark({alias: 'earmark'});
         });
 
         it('should allow adding earmark to new transaction', async function() {
@@ -356,7 +329,7 @@ describe('Transaction Management', function() {
 
         it('should find transactions with an earmark', async function() {
             await dsl.accounts.createAccount({alias: 'account2'});
-            await dsl.accounts.createAccount({alias: 'earmark2', type: 'earmark'});
+            await dsl.earmarks.createEarmark({alias: 'earmark2'});
             await dsl.transactions.createTransaction({alias: 'transaction1', type: 'expense', account: 'account1', amount: -100, date: '2017-06-01', earmark: 'earmark'});
             await dsl.transactions.createTransaction({alias: 'transaction2', type: 'expense', account: 'account2', amount: -500, date: '2017-06-02', earmark: 'earmark'});
             await dsl.transactions.createTransaction({alias: 'transaction3', type: 'expense', account: 'account2', amount: -500, date: '2017-06-03', earmark: 'earmark2'});

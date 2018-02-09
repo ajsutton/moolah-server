@@ -22,7 +22,7 @@ module.exports = {
         if (accountId !== undefined && await daos.accounts.account(userId, accountId) === undefined) {
             throw 'Account not found';
         }
-        if (earmarkId !== undefined && await daos.accounts.account(userId, earmarkId) === undefined) {
+        if (earmarkId !== undefined && await daos.earmarks.earmark(userId, earmarkId) === undefined) {
             throw 'Earmark not found';
         }
         const loadedCategories = await Promise.all(categories.map(async categoryId => ({

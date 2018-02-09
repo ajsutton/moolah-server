@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 exports.id = Joi.string().max(100);
 exports.name = Joi.string().max(255);
-exports.accountType = Joi.any().valid('bank', 'cc', 'asset', 'earmark');
+exports.accountType = Joi.any().valid('bank', 'cc', 'asset');
 exports.money = Joi.number().integer();
 exports.position = Joi.number().integer();
 exports.date = Joi.date().iso().raw();
