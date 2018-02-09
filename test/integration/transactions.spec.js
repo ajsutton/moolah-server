@@ -346,5 +346,32 @@ describe('Transaction Management', function() {
                 transactionCount: 2,
             });
         });
+
+        it('should allow adding income transaction to earmark without an account ID', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction1', type: 'income', amount: 100, date: '2017-06-01', earmark: 'earmark'});
+            await dsl.transactions.verifyTransactions({
+                earmark: 'earmark',
+                expectPriorBalance: 0,
+                expectHasMore: false,
+                expectTransactions: [
+                    'transaction1',
+                ],
+                transactionCount: 1,
+            });
+        });
+
+        it('should allow modifying income transaction for earmark without an account ID', async function() {
+            await dsl.transactions.createTransaction({alias: 'transaction1', type: 'income', amount: 100, date: '2017-06-01', earmark: 'earmark'});
+            await dsl.transactions.modifyTransaction({alias: 'transaction1', type: 'income', amount: 300, date: '2017-06-03', earmark: 'earmark'});
+            await dsl.transactions.verifyTransactions({
+                earmark: 'earmark',
+                expectPriorBalance: 0,
+                expectHasMore: false,
+                expectTransactions: [
+                    'transaction1',
+                ],
+                transactionCount: 1,
+            });
+        });
     });
 });

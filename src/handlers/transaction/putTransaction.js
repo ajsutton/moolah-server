@@ -25,9 +25,17 @@ module.exports = {
                     return;
                 }
                 const modifiedTransaction = Object.assign(transaction, request.payload);
-                const account = await daos.accounts.account(userId, modifiedTransaction.accountId);
-                if (account === undefined) {
+                const hasAccount = modifiedTransaction.accountId !== undefined;
+                if (hasAccount && (await daos.accounts.account(userId, modifiedTransaction.accountId)) === undefined) {
                     reply(Boom.badRequest('Invalid accountId'));
+                    return;
+                }
+                if (!hasAccount && modifiedTransaction.type !== 'income') {
+                    reply(Boom.badRequest('Earmarking funds must use income'));
+                    return;
+                }
+                if (!hasAccount && (modifiedTransaction.earmark === null || modifiedTransaction.earmark === undefined)) {
+                    reply(Boom.badRequest('accountId or earmark required'));
                     return;
                 }
                 if (modifiedTransaction.toAccountId !== undefined && modifiedTransaction.toAccountId !== null && await isInvalidToAccountId(modifiedTransaction, daos, userId)) {
@@ -38,7 +46,7 @@ module.exports = {
                     reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
                     return;
                 }
-                if (modifiedTransaction.accountId == modifiedTransaction.toAccountId) {
+                if (hasAccount && modifiedTransaction.accountId == modifiedTransaction.toAccountId) {
                     reply(Boom.badRequest('Cannot transfer to own account'));
                     return;
                 }
@@ -68,7 +76,7 @@ module.exports = {
             id: types.id,
             type: types.transactionType.required(),
             date: types.date.required(),
-            accountId: types.id.required(),
+            accountId: types.id,
             amount: types.money.required(),
             balance: types.money.default(null),
             payee: types.payee.default(null),

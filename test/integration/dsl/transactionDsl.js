@@ -12,7 +12,7 @@ module.exports = class TransactionsDsl {
     async createTransaction(args) {
         const options = Object.assign({
             alias: null,
-            account: null,
+            account: undefined,
             amount: 0,
             type: 'expense',
             date: '2017-06-03',

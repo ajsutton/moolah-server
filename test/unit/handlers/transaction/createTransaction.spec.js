@@ -100,7 +100,7 @@ describe('Create Transaction Handler', function() {
         assert.notEqual(daos.transactions.create.firstCall.args[1].id, daos.transactions.create.secondCall.args[1].id);
     });
 
-    ['type', 'date', 'accountId', 'amount'].forEach(requiredField => {
+    ['type', 'date', 'amount'].forEach(requiredField => {
         const validTransaction = {
             type: 'expense',
             date: '2017-06-04',

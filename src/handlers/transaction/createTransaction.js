@@ -22,14 +22,18 @@ module.exports = {
             const userId = session.getUserId(request);
             await db.withTransaction(request, async daos => {
                 const transactionData = request.payload;
-                const account = await daos.accounts.account(userId, transactionData.accountId);
-                if (account === undefined) {
+                const hasAccount = transactionData.accountId !== undefined;
+                if (hasAccount && (await daos.accounts.account(userId, transactionData.accountId)) === undefined) {
                     reply(Boom.badRequest('Invalid accountId'));
+                } else if (!hasAccount && transactionData.type !== 'income') {
+                    reply(Boom.badRequest('Earmarking funds must use income'));
+                } else if (!hasAccount && (transactionData.earmark === null || transactionData.earmark === undefined)) {
+                    reply(Boom.badRequest('accountId or earmark required'));
                 } else if (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null && await isInvalidToAccountId(daos, userId, transactionData.toAccountId)) {
                     reply(Boom.badRequest('Invalid toAccountId'));
                 } else if (transactionData.recurEvery !== undefined && transactionData.recurPeriod === undefined) {
                     reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
-                } else if (transactionData.toAccountId === transactionData.accountId) {
+                } else if (hasAccount && transactionData.toAccountId === transactionData.accountId) {
                     reply(Boom.badRequest('Cannot transfer to own account'));
                 } else if (transactionData.type === 'transfer' && (transactionData.toAccountId === undefined || transactionData.toAccountId === null)) {
                     reply(Boom.badRequest('toAccountId is required when type is transfer'));
@@ -58,7 +62,7 @@ module.exports = {
         payload: Joi.object({
             type: types.transactionType.required(),
             date: types.date.required(),
-            accountId: types.id.required(),
+            accountId: types.id,
             amount: types.money.required(),
             payee: types.payee,
             notes: types.notes,
