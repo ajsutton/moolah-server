@@ -20,7 +20,7 @@ module.exports = {
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
-            await db.withTransaction(request, async daos => {
+            const transaction = await db.withTransaction(request, async daos => {
                 const transactionData = request.payload;
                 const hasAccount = transactionData.accountId !== undefined;
                 if (hasAccount && (await daos.accounts.account(userId, transactionData.accountId)) === undefined) {
@@ -46,8 +46,7 @@ module.exports = {
                         try {
                             const transaction = Object.assign({id: idGenerator()}, request.payload);
                             await daos.transactions.create(userId, transaction);
-                            reply(transaction).code(201).header('Location', `/transactions/${encodeURIComponent(transaction.id)}/`);
-                            return;
+                            return transaction;
                         } catch (error) {
                             if (error.code !== 'ER_DUP_ENTRY') {
                                 throw error;
@@ -56,6 +55,9 @@ module.exports = {
                     }
                 }
             });
+            if (transaction !== undefined) {
+                reply(transaction).code(201).header('Location', `/transactions/${encodeURIComponent(transaction.id)}/`);
+            }
         },
     },
     validate: {
