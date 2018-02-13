@@ -32,9 +32,6 @@ module.exports = {
             type: types.accountType.required(),
             position: types.position,
             balance: types.money,
-            savingsTarget: types.money.allow(null).default(undefined),
-            savingsStartDate: types.date.default(undefined),
-            savingsEndDate: types.date.default(undefined),
         }),
         headers: Joi.object({
             'Content-Type': types.jsonContentType,

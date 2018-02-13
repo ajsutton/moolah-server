@@ -16,9 +16,6 @@ module.exports = class AccountsDsl {
             balance: 0,
             position: 0,
             date: undefined,
-            savingsTarget: undefined,
-            savingsStartDate: undefined,
-            savingsEndDate: undefined,
             statusCode: 201,
         }, args);
 
@@ -28,9 +25,6 @@ module.exports = class AccountsDsl {
             balance: options.balance,
             position: options.position,
             date: options.date,
-            savingsTarget: options.savingsTarget,
-            savingsStartDate: options.savingsStartDate,
-            savingsEndDate: options.savingsEndDate,
         }, options.statusCode);
         const account = JSON.parse(response.payload);
 
@@ -47,17 +41,11 @@ module.exports = class AccountsDsl {
             alias: null,
             balance: undefined,
             position: undefined,
-            savingsTarget: undefined,
-            savingsStartDate: undefined,
-            savingsEndDate: undefined,
             statusCode: 200,
         }, args);
         const account = dslUtils.override(this.accountsByAlias.get(options.alias), {
             balance: options.balance,
             position: options.position,
-            savingsTarget: options.savingsTarget,
-            savingsStartDate: options.savingsStartDate,
-            savingsEndDate: options.savingsEndDate,
         });
         const response = await this.server.get(`/api/accounts/${encodeURIComponent(account.id)}/`, options.statusCode);
         if (response.statusCode === 200) {
@@ -84,18 +72,12 @@ module.exports = class AccountsDsl {
             statusCode: 200,
             name: undefined,
             type: undefined,
-            savingsTarget: undefined,
-            savingsStartDate: undefined,
-            savingsEndDate: undefined,
         }, args);
         const currentAccount = this.accountsByAlias.get(options.alias);
         const modifiedAccount = Object.assign(currentAccount, {
             name: options.name,
             type: options.type,
             balance: options.balance,
-            savingsTarget: options.savingsTarget,
-            savingsStartDate: options.savingsStartDate,
-            savingsEndDate: options.savingsEndDate,
         });
         const response = await this.server.put('/api/accounts/' + encodeURIComponent(currentAccount.id) + '/', modifiedAccount, options.statusCode);
         if (options.statusCode === 200) {

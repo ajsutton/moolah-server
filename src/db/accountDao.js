@@ -9,7 +9,7 @@ module.exports = class AccountsDao {
 
     async accounts(userId) {
         const accounts = await this.query(
-            '  SELECT id, name, type, position, saving_target as savingsTarget, saving_start_date as savingsStartDate, saving_end_date as savingsEndDate ' +
+            '  SELECT id, name, type, position ' +
             '    FROM account ' +
             '   WHERE user_id = ? ' +
             'ORDER BY position, name',
@@ -19,7 +19,7 @@ module.exports = class AccountsDao {
 
     async account(userId, id) {
         const results = await this.query(
-            'SELECT id, name, type, position, saving_target as savingsTarget, saving_start_date as savingsStartDate, saving_end_date as savingsEndDate ' +
+            'SELECT id, name, type, position ' +
             '  FROM account ' +
             ' WHERE user_id = ? ' +
             '   AND id = ?',
@@ -29,13 +29,13 @@ module.exports = class AccountsDao {
 
     create(userId, account) {
         return this.query(
-            'INSERT INTO account (user_id, id, name, type, position, saving_target, saving_start_date, saving_end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            userId, account.id, account.name, account.type, account.position || DEFAULT_POSITION, account.savingsTarget, account.savingsStartDate, account.savingsEndDate);
+            'INSERT INTO account (user_id, id, name, type, position) VALUES (?, ?, ?, ?, ?)',
+            userId, account.id, account.name, account.type, account.position || DEFAULT_POSITION);
     }
 
     store(userId, account) {
         return this.query(
-            'UPDATE account SET name = ?, type = ?, position = ?, saving_target = ?, saving_start_date = ?, saving_end_date = ? WHERE user_id = ? AND id = ?',
-            account.name, account.type, account.position || DEFAULT_POSITION, account.savingsTarget, account.savingsStartDate, account.savingsEndDate, userId, account.id);
+            'UPDATE account SET name = ?, type = ?, position = ? WHERE user_id = ? AND id = ?',
+            account.name, account.type, account.position || DEFAULT_POSITION, userId, account.id);
     }
 };

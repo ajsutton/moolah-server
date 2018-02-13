@@ -18,9 +18,6 @@ module.exports = {
                                 id: account.id,
                                 name: account.name,
                                 type: account.type,
-                                savingsTarget: account.savingsTarget,
-                                savingsStartDate: account.savingsStartDate,
-                                savingsEndDate: account.savingsEndDate,
                             });
                         await daos.transactions.create(userId,
                             {
@@ -49,9 +46,6 @@ module.exports = {
             balance: types.money.required(),
             position: types.position,
             date: types.date.default(null),
-            savingsTarget: types.money.allow(null).default(undefined),
-            savingsStartDate: types.date.default(undefined),
-            savingsEndDate: types.date.default(undefined),
         }),
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
