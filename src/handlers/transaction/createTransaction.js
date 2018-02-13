@@ -4,6 +4,7 @@ const db = require('../../db/database');
 const idGenerator = require('../../utils/idGenerator');
 const Boom = require('boom');
 const session = require('../../auth/session');
+const validateTransaction = require('./validateTransaction');
 
 async function isInvalidToAccountId(daos, userId, accountId) {
     const toAccount = await daos.accounts.account(userId, accountId);
@@ -22,26 +23,8 @@ module.exports = {
             const userId = session.getUserId(request);
             const transaction = await db.withTransaction(request, async daos => {
                 const transactionData = request.payload;
-                const hasAccount = transactionData.accountId !== undefined;
-                if (hasAccount && (await daos.accounts.account(userId, transactionData.accountId)) === undefined) {
-                    reply(Boom.badRequest('Invalid accountId'));
-                } else if (!hasAccount && transactionData.type !== 'income') {
-                    reply(Boom.badRequest('Earmarking funds must use income'));
-                } else if (!hasAccount && (transactionData.earmark === null || transactionData.earmark === undefined)) {
-                    reply(Boom.badRequest('accountId or earmark required'));
-                } else if (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null && await isInvalidToAccountId(daos, userId, transactionData.toAccountId)) {
-                    reply(Boom.badRequest('Invalid toAccountId'));
-                } else if (transactionData.recurEvery !== undefined && transactionData.recurPeriod === undefined) {
-                    reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
-                } else if (hasAccount && transactionData.toAccountId === transactionData.accountId) {
-                    reply(Boom.badRequest('Cannot transfer to own account'));
-                } else if (transactionData.type === 'transfer' && (transactionData.toAccountId === undefined || transactionData.toAccountId === null)) {
-                    reply(Boom.badRequest('toAccountId is required when type is transfer'));
-                } else if (transactionData.type !== 'transfer' && (transactionData.toAccountId !== undefined && transactionData.toAccountId !== null)) {
-                    reply(Boom.badRequest('toAccountId invalid when type is not transfer'));
-                } else if (transactionData.earmark !== null && transactionData.earmark !== undefined && await isInvalidEarmarkId(daos, userId, transactionData.earmark)) {
-                    reply(Boom.badRequest('Invalid earmark'));
-                } else {
+                const validationError = await validateTransaction(transactionData, daos, userId);
+                if (validationError === null) {
                     while (true) {
                         try {
                             const transaction = Object.assign({id: idGenerator()}, request.payload);
@@ -53,6 +36,8 @@ module.exports = {
                             }
                         }
                     }
+                } else {
+                    reply(validationError);
                 }
             });
             if (transaction !== undefined) {

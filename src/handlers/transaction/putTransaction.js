@@ -3,69 +3,33 @@ const types = require('../types');
 const db = require('../../db/database');
 const Boom = require('boom');
 const session = require('../../auth/session');
+const validateTransaction = require('./validateTransaction');
 
-async function isInvalidToAccountId(transactionData, daos, userId) {
-    const toAccount = await daos.accounts.account(userId, transactionData.toAccountId);
-    return toAccount === undefined;
-}
-
-async function isInvalidEarmarkId(daos, userId, earmarkId) {
-    return (await daos.earmarks.earmark(userId, earmarkId)) === undefined;
-}
 
 module.exports = {
     auth: 'session',
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
-            await db.withTransaction(request, async daos => {
+            const modifiedTransaction = await db.withTransaction(request, async daos => {
                 const transaction = await daos.transactions.transaction(userId, request.params.id);
                 if (transaction === undefined) {
                     reply(Boom.notFound('Transaction not found'));
                     return;
                 }
                 const modifiedTransaction = Object.assign(transaction, request.payload);
-                const hasAccount = modifiedTransaction.accountId !== undefined;
-                if (hasAccount && (await daos.accounts.account(userId, modifiedTransaction.accountId)) === undefined) {
-                    reply(Boom.badRequest('Invalid accountId'));
-                    return;
+                const validationError = await validateTransaction(modifiedTransaction, daos, userId);
+                if (validationError === null) {
+                    await daos.transactions.store(userId, modifiedTransaction);
+                    return modifiedTransaction;
+                } else {
+                    reply(validationError);
+                    return undefined;
                 }
-                if (!hasAccount && modifiedTransaction.type !== 'income') {
-                    reply(Boom.badRequest('Earmarking funds must use income'));
-                    return;
-                }
-                if (!hasAccount && (modifiedTransaction.earmark === null || modifiedTransaction.earmark === undefined)) {
-                    reply(Boom.badRequest('accountId or earmark required'));
-                    return;
-                }
-                if (modifiedTransaction.toAccountId !== undefined && modifiedTransaction.toAccountId !== null && await isInvalidToAccountId(modifiedTransaction, daos, userId)) {
-                    reply(Boom.badRequest('Invalid toAccountId'));
-                    return;
-                }
-                if (modifiedTransaction.recurEvery !== undefined && modifiedTransaction.recurPeriod === undefined) {
-                    reply(Boom.badRequest('recurEvery is only applicable when recurPeriod is set'));
-                    return;
-                }
-                if (hasAccount && modifiedTransaction.accountId == modifiedTransaction.toAccountId) {
-                    reply(Boom.badRequest('Cannot transfer to own account'));
-                    return;
-                }
-                if (modifiedTransaction.type === 'transfer' && (modifiedTransaction.toAccountId === undefined || modifiedTransaction.toAccountId === null)) {
-                    reply(Boom.badRequest('toAccountId is required when type is transfer'));
-                    return;
-                }
-                if (modifiedTransaction.type !== 'transfer' && (modifiedTransaction.toAccountId !== undefined && modifiedTransaction.toAccountId !== null)) {
-                    reply(Boom.badRequest('toAccountId invalid when type is not transfer'));
-                    return;
-                }
-                if (modifiedTransaction.earmark !== undefined && modifiedTransaction.earmark !== null && await isInvalidEarmarkId(daos, userId, modifiedTransaction.earmark))
-                {
-                    reply(Boom.badRequest('Invalid earmark'));
-                    return;
-                }
-                await daos.transactions.store(userId, modifiedTransaction);
-                reply(modifiedTransaction);
             });
+            if (modifiedTransaction !== undefined) {
+                reply(modifiedTransaction);
+            }
         },
     },
     validate: {
