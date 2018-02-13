@@ -21,6 +21,8 @@ module.exports = class TransactionsDsl {
             category: undefined,
             toAccount: undefined,
             earmark: undefined,
+            recurPeriod: undefined,
+            recurEvery: undefined,
             statusCode: 201,
         }, args);
 
@@ -33,6 +35,8 @@ module.exports = class TransactionsDsl {
             notes: options.notes,
             categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias),
             toAccountId: dslUtils.lookupId(options.toAccount, this.accountsByAlias),
+            recurPeriod: options.recurPeriod,
+            recurEvery: options.recurEvery,
             earmark: dslUtils.lookupId(options.earmark, this.accountsByAlias),
         });
         const response = await this.server.post('/api/transactions/', createTransactionRequest, options.statusCode);
@@ -55,6 +59,8 @@ module.exports = class TransactionsDsl {
             category: undefined,
             toAccount: undefined,
             earmark: undefined,
+            recurPeriod: undefined,
+            recurEvery: undefined,
             statusCode: 200,
         }, args);
 
@@ -66,6 +72,8 @@ module.exports = class TransactionsDsl {
             date: options.date,
             payee: options.payee,
             notes: options.payee,
+            recurPeriod: options.recurPeriod,
+            recurEvery: options.recurEvery,
             accountId: dslUtils.lookupId(options.account, this.accountsByAlias),
             toAccountId: dslUtils.lookupId(options.toAccount, this.accountsByAlias),
             categoryId: dslUtils.lookupId(options.category, this.categoriesByAlias),

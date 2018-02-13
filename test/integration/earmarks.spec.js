@@ -88,4 +88,11 @@ describe('Earmark Management', function() {
             await dsl.earmarks.verifyEarmarks({earmarks: ['earmark1']});
         });
     });
+
+    describe('Scheduled Earmark Transactions', function() {
+        it('should allow scheduled transaction with earmark but no account', async function() {
+            await dsl.earmarks.createEarmark({alias: 'earmark1'});
+            await dsl.transactions.createTransaction({alias: 'scheduled', earmark: 'earmark1', type: 'income', amount: 500, recurPeriod: 'WEEK', recurEvery: 2});
+        });
+    });
 });
