@@ -6,16 +6,6 @@ const Boom = require('boom');
 const session = require('../../auth/session');
 const validateTransaction = require('./validateTransaction');
 
-async function isInvalidToAccountId(daos, userId, accountId) {
-    const toAccount = await daos.accounts.account(userId, accountId);
-    return toAccount === undefined || toAccount.type === 'earmark';
-}
-
-async function isInvalidEarmarkId(daos, userId, earmarkId) {
-    const toAccount = await daos.earmarks.earmark(userId, earmarkId);
-    return toAccount === undefined;
-}
-
 module.exports = {
     auth: 'session',
     handler: {
