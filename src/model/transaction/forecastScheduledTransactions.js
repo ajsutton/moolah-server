@@ -34,7 +34,7 @@ module.exports = {
         let availableFunds = currentNetWorth - currentEarmarks;
         transactions.forEach(transaction => {
             balance += transaction.amount;
-            if (!transaction.earmarkId) {
+            if (!transaction.earmark) {
                 availableFunds += transaction.amount;
             }
             balances[transaction.date] = {balance, availableFunds};

@@ -74,7 +74,7 @@ describe('Forecast Scheduled Transactions', function() {
         it('should calculate balances after scheduled transactions that occur on different days', function() {
             const balances = forecastScheduledTransactions.forecastBalances([
                 {date: '2017-01-01', recurPeriod: 'MONTH', amount: 200, recurEvery: 2},
-                {date: '2017-01-05', recurPeriod: 'MONTH', amount: -50, recurEvery: 1, earmarkId: 'earmark'},
+                {date: '2017-01-05', recurPeriod: 'MONTH', amount: -50, recurEvery: 1, earmark: 'earmark'},
             ], 1000, 500, '2017-06-01');
             assert.deepEqual(balances, [
                 {date: '2017-01-01', balance: 1200, availableFunds: 700},
@@ -89,7 +89,7 @@ describe('Forecast Scheduled Transactions', function() {
         });
         it('should calculate balances after scheduled transactions that occur on the same day', function() {
             const balances = forecastScheduledTransactions.forecastBalances([
-                {date: '2017-01-01', recurPeriod: 'MONTH', amount: 200, recurEvery: 2, earmarkId: 'earmark'},
+                {date: '2017-01-01', recurPeriod: 'MONTH', amount: 200, recurEvery: 2, earmark: 'earmark'},
                 {date: '2017-02-01', recurPeriod: 'MONTH', amount: -50, recurEvery: 1},
             ], 1000, 500, '2017-06-01');
             assert.deepEqual(balances, [
