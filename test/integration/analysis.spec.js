@@ -14,10 +14,12 @@ describe('Analysis', function() {
         return dsl.tearDown();
     });
 
-    describe('Stuff?', function() {
+    describe('Income/Expense and Daily Balances', function() {
         beforeEach(async function() {
+            await dsl.earmarks.createEarmark({alias: 'earmark1'});
+            await dsl.earmarks.createEarmark({alias: 'earmark2'});
             await dsl.transactions.createTransaction({account: 'account1', date: '2017-05-31', type: 'transfer', toAccount: 'account2', amount: 1234});
-            await dsl.transactions.createTransaction({account: 'account1', date: '2017-05-31', type: 'income', amount: 1000});
+            await dsl.transactions.createTransaction({account: 'account1', date: '2017-05-31', type: 'income', amount: 1000, earmark: 'earmark2'});
             await dsl.transactions.createTransaction({account: 'account1', date: '2017-05-31', type: 'expense', amount: -5000});
 
             await dsl.transactions.createTransaction({account: 'account1', date: '2017-06-03', type: 'income', amount: -10});
@@ -26,11 +28,11 @@ describe('Analysis', function() {
             await dsl.transactions.createTransaction({account: 'account1', date: '2017-06-30', type: 'expense', amount: -50});
 
             await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-01', type: 'openingBalance', amount: 500});
-            await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-01', type: 'income', amount: 500});
-            await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-01', type: 'expense', amount: -250});
+            await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-01', type: 'income', amount: 500, earmark: 'earmark1'});
+            await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-01', type: 'expense', amount: -250, earmark: 'earmark2'});
             await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-15', type: 'expense', amount: -600});
             await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-31', type: 'expense', amount: -700});
-            await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-31', type: 'income', amount: 300});
+            await dsl.transactions.createTransaction({account: 'account1', date: '2017-07-31', type: 'income', amount: 300, earmark: 'earmark1'});
             await dsl.transactions.createTransaction({account: 'account1', date: '2017-08-15', type: 'transfer', toAccount: 'account2', amount: 9000});
         });
 
@@ -49,12 +51,13 @@ describe('Analysis', function() {
         it('should get daily balances', async function() {
             await dsl.analysis.verifyDailyBalances({
                 expected: [
-                    {date: '2017-05-31', balance: -4000, bestFit: -3853.92},
-                    {date: '2017-06-03', balance: -4000 + -10, bestFit: -3855.27},
-                    {date: '2017-06-30', balance: -4000 + -10 + 100 + -50, bestFit: -3867.42},
-                    {date: '2017-07-01', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250, bestFit: -3867.87},
-                    {date: '2017-07-15', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600, bestFit: -3874.17},
-                    {date: '2017-07-31', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600 + -700 + 300, bestFit: -3881.37},
+                    {date: '2017-05-31', balance: -4000, availableFunds: -5000, bestFit: -3853.92},
+                    {date: '2017-06-03', balance: -4000 + -10, availableFunds: -5000 + -10, bestFit: -3855.27},
+                    {date: '2017-06-30', balance: -4000 + -10 + 100 + -50, availableFunds: -5000 + -10 + 100 + -50, bestFit: -3867.42},
+                    {date: '2017-07-01', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250, availableFunds: -5000 + -10 + 100 + -50 + 500, bestFit: -3867.87},
+                    {date: '2017-07-15', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600, availableFunds: -5000 + -10 + 100 + -50 + 500 + -600, bestFit: -3874.17},
+                    {date: '2017-07-31', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600 + -700 + 300,
+                        availableFunds: -5000 + -10 + 100 + -50 + 500 + -600 + -700, bestFit: -3881.37},
                 ],
             });
         });
@@ -63,11 +66,12 @@ describe('Analysis', function() {
             await dsl.analysis.verifyDailyBalances({
                 after: '2017-05-31',
                 expected: [
-                    {date: '2017-06-03', balance: -4000 + -10, bestFit: -3742.04},
-                    {date: '2017-06-30', balance: -4000 + -10 + 100 + -50, bestFit: -3827.36},
-                    {date: '2017-07-01', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250, bestFit: -3830.52},
-                    {date: '2017-07-15', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600, bestFit: -3874.76},
-                    {date: '2017-07-31', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600 + -700 + 300, bestFit: -3925.32},
+                    {date: '2017-06-03', balance: -4000 + -10, availableFunds: -5000 + -10, bestFit: -3742.04},
+                    {date: '2017-06-30', balance: -4000 + -10 + 100 + -50, availableFunds: -5000 + -10 + 100 + -50, bestFit: -3827.36},
+                    {date: '2017-07-01', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250, availableFunds: -5000 + -10 + 100 + -50 + 500, bestFit: -3830.52},
+                    {date: '2017-07-15', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600, availableFunds: -5000 + -10 + 100 + -50 + 500 + -600, bestFit: -3874.76},
+                    {date: '2017-07-31', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600 + -700 + 300,
+                        availableFunds: -5000 + -10 + 100 + -50 + 500 + -600 + -700, bestFit: -3925.32},
                 ],
             });
         });
