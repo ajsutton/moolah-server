@@ -29,7 +29,7 @@ module.exports = {
                 let scheduledBalances = undefined;
                 if (request.query.forecastUntil !== null) {
                     const scheduledTransactions = await daos.transactions.transactions(userId, {scheduled: true, pageSize: undefined});
-                    scheduledBalances = forecastScheduledTransactions.forecastBalances(scheduledTransactions, currentBalance, request.query.forecastUntil);
+                    scheduledBalances = forecastScheduledTransactions.forecastBalances(scheduledTransactions, currentBalance, currentEarmarks, request.query.forecastUntil);
                 }
                 const balancesByTimestamp = balances.map(({date, balance}) => [dateToNumber(date), balance]);
 

@@ -26,15 +26,19 @@ function extrapolateScheduledTransactions(scheduledTransactions, forecastUntil) 
 
 module.exports = {
     extrapolateScheduledTransactions,
-    forecastBalances(scheduledTransactions, currentNetWorth, until) {
+    forecastBalances(scheduledTransactions, currentNetWorth, currentEarmarks, until) {
         const forecastUntil = parseDate(until);
         const transactions = extrapolateScheduledTransactions(scheduledTransactions.filter(transaction => transaction.type !== 'transfer'), forecastUntil);
         const balances = {};
         let balance = currentNetWorth;
+        let availableFunds = currentNetWorth - currentEarmarks;
         transactions.forEach(transaction => {
             balance += transaction.amount;
-            balances[transaction.date] = balance;
+            if (!transaction.earmarkId) {
+                availableFunds += transaction.amount;
+            }
+            balances[transaction.date] = {balance, availableFunds};
         });
-        return Object.entries(balances).map(([date, balance]) => ({date, balance}));
+        return Object.entries(balances).map(([date, data]) => ({date, balance: data.balance, availableFunds: data.availableFunds}));
     },
 };

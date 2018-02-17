@@ -74,31 +74,31 @@ describe('Forecast Scheduled Transactions', function() {
         it('should calculate balances after scheduled transactions that occur on different days', function() {
             const balances = forecastScheduledTransactions.forecastBalances([
                 {date: '2017-01-01', recurPeriod: 'MONTH', amount: 200, recurEvery: 2},
-                {date: '2017-01-05', recurPeriod: 'MONTH', amount: -50, recurEvery: 1},
-            ], 1000, '2017-06-01');
+                {date: '2017-01-05', recurPeriod: 'MONTH', amount: -50, recurEvery: 1, earmarkId: 'earmark'},
+            ], 1000, 500, '2017-06-01');
             assert.deepEqual(balances, [
-                {date: '2017-01-01', balance: 1200},
-                {date: '2017-01-05', balance: 1150},
-                {date: '2017-02-05', balance: 1100},
-                {date: '2017-03-01', balance: 1300},
-                {date: '2017-03-05', balance: 1250},
-                {date: '2017-04-05', balance: 1200},
-                {date: '2017-05-01', balance: 1400},
-                {date: '2017-05-05', balance: 1350},
+                {date: '2017-01-01', balance: 1200, availableFunds: 700},
+                {date: '2017-01-05', balance: 1150, availableFunds: 700},
+                {date: '2017-02-05', balance: 1100, availableFunds: 700},
+                {date: '2017-03-01', balance: 1300, availableFunds: 900},
+                {date: '2017-03-05', balance: 1250, availableFunds: 900},
+                {date: '2017-04-05', balance: 1200, availableFunds: 900},
+                {date: '2017-05-01', balance: 1400, availableFunds: 1100},
+                {date: '2017-05-05', balance: 1350, availableFunds: 1100},
             ]);
         });
         it('should calculate balances after scheduled transactions that occur on the same day', function() {
             const balances = forecastScheduledTransactions.forecastBalances([
-                {date: '2017-01-01', recurPeriod: 'MONTH', amount: 200, recurEvery: 2},
+                {date: '2017-01-01', recurPeriod: 'MONTH', amount: 200, recurEvery: 2, earmarkId: 'earmark'},
                 {date: '2017-02-01', recurPeriod: 'MONTH', amount: -50, recurEvery: 1},
-            ], 1000, '2017-06-01');
+            ], 1000, 500, '2017-06-01');
             assert.deepEqual(balances, [
-                {date: '2017-01-01', balance: 1200},
-                {date: '2017-02-01', balance: 1150},
-                {date: '2017-03-01', balance: 1300},
-                {date: '2017-04-01', balance: 1250},
-                {date: '2017-05-01', balance: 1400},
-                {date: '2017-06-01', balance: 1350},
+                {date: '2017-01-01', balance: 1200, availableFunds: 500},
+                {date: '2017-02-01', balance: 1150, availableFunds: 450},
+                {date: '2017-03-01', balance: 1300, availableFunds: 400},
+                {date: '2017-04-01', balance: 1250, availableFunds: 350},
+                {date: '2017-05-01', balance: 1400, availableFunds: 300},
+                {date: '2017-06-01', balance: 1350, availableFunds: 250},
             ]);
         });
     });
