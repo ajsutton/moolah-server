@@ -1,14 +1,11 @@
 module.exports = function transactionQuery(fields, userId, opts) {
     let query = `SELECT ${fields} 
                    FROM transaction t
-              LEFT JOIN account a ON t.account_id = a.id 
                   WHERE t.user_id = ?`;
     const args = [userId];
     if (opts.accountId !== undefined) {
         query += ` AND (t.account_id = ? OR t.to_account_id = ?) `;
         args.push(opts.accountId, opts.accountId);
-    } else {
-        query += ` AND (a.type != 'earmark' OR a.type IS NULL) `;
     }
     if (opts.scheduled) {
         query += ' AND t.recur_period IS NOT NULL ';

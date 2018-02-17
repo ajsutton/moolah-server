@@ -28,7 +28,6 @@ describe('Analysis DAO', function() {
         accountsDao = new AccountsDao(dbTestUtils.queryFunction(connection));
 
         await accountsDao.create(userId, {id: 'account-id', name: 'Account 1', type: 'bank', position: 7});
-        await accountsDao.create(userId, {id: 'earmark', name: 'Account 1', type: 'earmark', position: 7});
     });
 
     afterEach(async function() {
@@ -96,15 +95,6 @@ describe('Analysis DAO', function() {
 
         it('should exclude scheduled transactions from daily profit and loss', async function() {
             await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'income', amount: 500, recurEvery: 1, recurPeriod: 'MONTH'}));
-            assert.deepEqual(await analysisDao.dailyProfitAndLoss(userId, '2017-06-01'), [
-                {date: '2017-06-03', profit: -10 + 100 + -50},
-                {date: '2017-07-01', profit: 500 + 500 + -250},
-                {date: '2017-07-31', profit: -700 + 300},
-            ]);
-        });
-
-        it('should exclude transactions in earmark accounts from daily profit and loss', async function() {
-            await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'income', amount: 500, accountId: 'earmark'}));
             assert.deepEqual(await analysisDao.dailyProfitAndLoss(userId, '2017-06-01'), [
                 {date: '2017-06-03', profit: -10 + 100 + -50},
                 {date: '2017-07-01', profit: 500 + 500 + -250},

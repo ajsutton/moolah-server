@@ -12,11 +12,9 @@ module.exports = class TransactionDao {
                              SUM(IF(t.type = 'expense', amount, 0)) AS expense, 
                              SUM(t.amount) AS profit 
                         FROM transaction t
-                        JOIN account a ON t.account_id = a.id
                        WHERE t.recur_period IS NULL 
                          AND t.user_id = ?
-                         AND t.type IN ('income', 'expense') 
-                         AND a.type != 'earmark' `;
+                         AND t.type IN ('income', 'expense')`;
         if (afterDate) {
             query += 'AND date > ? ';
             args.push(afterDate);
@@ -28,9 +26,8 @@ module.exports = class TransactionDao {
 
     dailyProfitAndLoss(userId, afterDate) {
         const args = [userId];
-        let query = ` SELECT date, SUM(IF(a.type != 'earmark', amount, 0)) AS profit 
+        let query = ` SELECT date, SUM(amount) AS profit 
                         FROM transaction t
-                        JOIN account a ON t.account_id = a.id
                        WHERE recur_period IS NULL 
                          AND t.user_id = ?
                          AND t.type != 'transfer' `;
