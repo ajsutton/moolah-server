@@ -9,11 +9,12 @@ module.exports = {
     handler: {
         async: async function(request, reply) {
             const userId = session.getUserId(request);
-            await db.withTransaction(request, async daos => {
+            const success = await db.withTransaction(request, async daos => {
                 const categoryId = request.params.id;
                 const currentCategory = await daos.categories.category(userId, categoryId);
                 if (currentCategory === undefined) {
                     reply(Boom.notFound('Category not found'));
+                    return false;
                 } else {
                     daos.categories.remove(userId, categoryId);
                     const replacementCategoryId = request.query.replaceWith === undefined ? null : request.query.replaceWith;
@@ -21,12 +22,16 @@ module.exports = {
                         const replacementCategory = await daos.categories.category(userId, replacementCategoryId);
                         if (replacementCategory === undefined) {
                             reply(Boom.badRequest('Replacement category not found'));
+                            return false;
                         }
                     }
                     await daos.transactions.removeCategory(userId, categoryId, replacementCategoryId);
-                    reply().code(204);
+                    return true;
                 }
             });
+            if (success) {
+                reply().code(204);
+            }
         },
     },
     validate: {
