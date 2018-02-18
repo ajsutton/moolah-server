@@ -13,6 +13,7 @@ module.exports = class TransactionDao {
                              SUM(t.amount) AS profit 
                         FROM transaction t
                        WHERE t.recur_period IS NULL 
+                         AND t.account_id IS NOT NULL
                          AND t.user_id = ?
                          AND t.type IN ('income', 'expense')`;
         if (afterDate) {

@@ -27,6 +27,8 @@ module.exports = function transactionQuery(fields, userId, opts) {
     if (opts.earmarkId) {
         query += ' AND t.earmark = ? ';
         args.push(opts.earmarkId);
+    } else {
+        query += ' AND t.account_id IS NOT NULL ';
     }
     if (opts.hasEarmark) {
         query += ' AND t.earmark IS NOT NULL ';
