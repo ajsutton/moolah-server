@@ -20,15 +20,12 @@ module.exports = {
                 const after = request.query.after;
                 let currentBalance = after === null ? 0 : await daos.transactions.balance(userId, {}, {date: formatDate(addDays(after, 1), 'YYYY-MM-DD'), id: null});
                 let currentEarmarks = after === null ? 0 : await daos.transactions.balance(userId, {hasEarmark: true}, {date: formatDate(addDays(after, 1), 'YYYY-MM-DD'), id: null});
-                console.log("Starting balance: " + currentBalance, "Starting earmark: " + currentEarmarks);
                 const results = await daos.analysis.dailyProfitAndLoss(userId, after);
                 const balances = results.map(dailyProfit => {
                     currentBalance += dailyProfit.profit;
                     currentEarmarks += dailyProfit.earmarked;
-                    console.log(dailyProfit.date, " balance: " + currentBalance, "earmark: " + currentEarmarks);
                     return {date: dailyProfit.date, balance: currentBalance, availableFunds: currentBalance - currentEarmarks}
                 });
-                console.log("Final balance: " + currentBalance, "Final earmark: " + currentEarmarks);
                 let scheduledBalances = undefined;
                 if (request.query.forecastUntil !== null) {
                     const scheduledTransactions = await daos.transactions.transactions(userId, {scheduled: true, pageSize: undefined});
