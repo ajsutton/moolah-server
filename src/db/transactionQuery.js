@@ -33,5 +33,9 @@ module.exports = function transactionQuery(fields, userId, opts) {
     if (opts.hasEarmark) {
         query += ' AND t.earmark IS NOT NULL ';
     }
+    if (opts.transactionType) {
+        query += ' AND t.type = ? ';
+        args.push(opts.transactionType);
+    }
     return {query, args};
 };
