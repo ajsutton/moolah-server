@@ -20,6 +20,7 @@ describe('Analysis', function() {
             await dsl.earmarks.createEarmark({alias: 'earmark2'});
             await dsl.transactions.createTransaction({account: 'account1', date: '2017-05-31', type: 'transfer', toAccount: 'account2', amount: 1234});
             await dsl.transactions.createTransaction({account: 'account1', date: '2017-05-31', type: 'income', amount: 1000, earmark: 'earmark2'});
+            await dsl.transactions.createTransaction({date: '2017-05-31', type: 'income', amount: 2000, earmark: 'earmark2'});
             await dsl.transactions.createTransaction({account: 'account1', date: '2017-05-31', type: 'expense', amount: -5000});
 
             await dsl.transactions.createTransaction({account: 'account1', date: '2017-06-03', type: 'income', amount: -10});
@@ -41,7 +42,7 @@ describe('Analysis', function() {
                 after: '2017-05-01',
                 monthEnd: 15,
                 expected: [
-                    {start: '2017-05-31', end: '2017-06-03', month: 201706, income: 990, expense: -5000, profit: -4010, earmarkedIncome: 1000, earmarkedExpense: 0, earmarkedProfit: 1000},
+                    {start: '2017-05-31', end: '2017-06-03', month: 201706, income: 990, expense: -5000, profit: -4010, earmarkedIncome: 3000, earmarkedExpense: 0, earmarkedProfit: 3000},
                     {start: '2017-06-30', end: '2017-07-15', month: 201707, income: 600, expense: -900, profit: -300, earmarkedIncome: 500, earmarkedExpense: -250, earmarkedProfit: 250},
                     {start: '2017-07-31', end: '2017-07-31', month: 201708, income: 300, expense: -700, profit: -400, earmarkedIncome: 300, earmarkedExpense: 0, earmarkedProfit: 300},
                 ],
@@ -51,13 +52,13 @@ describe('Analysis', function() {
         it('should get daily balances', async function() {
             await dsl.analysis.verifyDailyBalances({
                 expected: [
-                    {date: '2017-05-31', balance: -4000, availableFunds: -5000, bestFit: -3853.92},
-                    {date: '2017-06-03', balance: -4000 + -10, availableFunds: -5000 + -10, bestFit: -3855.27},
-                    {date: '2017-06-30', balance: -4000 + -10 + 100 + -50, availableFunds: -5000 + -10 + 100 + -50, bestFit: -3867.42},
-                    {date: '2017-07-01', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250, availableFunds: -5000 + -10 + 100 + -50 + 500, bestFit: -3867.87},
-                    {date: '2017-07-15', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600, availableFunds: -5000 + -10 + 100 + -50 + 500 + -600, bestFit: -3874.17},
+                    {date: '2017-05-31', balance: -4000, availableFunds: -7000, bestFit: -3853.92},
+                    {date: '2017-06-03', balance: -4000 + -10, availableFunds: -7000 + -10, bestFit: -3855.27},
+                    {date: '2017-06-30', balance: -4000 + -10 + 100 + -50, availableFunds: -7000 + -10 + 100 + -50, bestFit: -3867.42},
+                    {date: '2017-07-01', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250, availableFunds: -7000 + -10 + 100 + -50 + 500, bestFit: -3867.87},
+                    {date: '2017-07-15', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600, availableFunds: -7000 + -10 + 100 + -50 + 500 + -600, bestFit: -3874.17},
                     {date: '2017-07-31', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600 + -700 + 300,
-                        availableFunds: -5000 + -10 + 100 + -50 + 500 + -600 + -700, bestFit: -3881.37},
+                        availableFunds: -7000 + -10 + 100 + -50 + 500 + -600 + -700, bestFit: -3881.37},
                 ],
             });
         });
