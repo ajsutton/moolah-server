@@ -41,9 +41,9 @@ describe('Analysis', function() {
                 after: '2017-05-01',
                 monthEnd: 15,
                 expected: [
-                    {start: '2017-05-31', end: '2017-06-03', month: 201706, income: 990, expense: -5000, profit: -4010},
-                    {start: '2017-06-30', end: '2017-07-15', month: 201707, income: 600, expense: -900, profit: -300},
-                    {start: '2017-07-31', end: '2017-07-31', month: 201708, income: 300, expense: -700, profit: -400},
+                    {start: '2017-05-31', end: '2017-06-03', month: 201706, income: 990, expense: -5000, profit: -4010, earmarkedIncome: 1000, earmarkedExpense: 0, earmarkedProfit: 1000},
+                    {start: '2017-06-30', end: '2017-07-15', month: 201707, income: 600, expense: -900, profit: -300, earmarkedIncome: 500, earmarkedExpense: -250, earmarkedProfit: 250},
+                    {start: '2017-07-31', end: '2017-07-31', month: 201708, income: 300, expense: -700, profit: -400, earmarkedIncome: 300, earmarkedExpense: 0, earmarkedProfit: 300},
                 ],
             });
         });

@@ -41,30 +41,30 @@ describe('Analysis DAO', function() {
             await transactionDao.create(userId, makeTransaction({date: '2017-05-31', type: 'expense', amount: -5000}));
 
             await transactionDao.create(userId, makeTransaction({date: '2017-06-03', type: 'income', amount: -10}));
-            await transactionDao.create(userId, makeTransaction({date: '2017-06-30', type: 'income', amount: 100}));
-            await transactionDao.create(userId, makeTransaction({date: '2017-06-30', type: 'expense', amount: -50}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-06-30', type: 'income', earmark: 'earmark1', amount: 100}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-06-30', type: 'expense', earmark: 'earmark1', amount: -50}));
 
             await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'openingBalance', amount: 500}));
             await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'income', amount: 500}));
             await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'expense', amount: -250}));
-            await transactionDao.create(userId, makeTransaction({date: '2017-07-15', type: 'expense', amount: -600}));
+            await transactionDao.create(userId, makeTransaction({date: '2017-07-15', type: 'expense', earmark: 'earmark2', amount: -600}));
             await transactionDao.create(userId, makeTransaction({date: '2017-07-31', type: 'expense', amount: -700}));
             await transactionDao.create(userId, makeTransaction({date: '2017-07-31', type: 'income', amount: 300}));
         });
 
         it('should get income and expense grouped by month', async function() {
             assert.deepEqual(await analysisDao.incomeAndExpense(userId, 31, '2017-01-01'), [
-                {start: '2017-05-31', end: '2017-05-31', month: 201705, income: 1000, expense: -5000, profit: -4000},
-                {start: '2017-06-03', end: '2017-06-30', month: 201706, income: 90, expense: -50, profit: 40},
-                {start: '2017-07-01', end: '2017-07-31', month: 201707, income: 800, expense: -1550, profit: -750},
+                {start: '2017-05-31', end: '2017-05-31', month: 201705, income: 1000, expense: -5000, profit: -4000, earmarkedIncome: 0, earmarkedExpense: 0, earmarkedProfit: 0},
+                {start: '2017-06-03', end: '2017-06-30', month: 201706, income: 90, expense: -50, profit: 40, earmarkedIncome: 100, earmarkedExpense: -50, earmarkedProfit: 50},
+                {start: '2017-07-01', end: '2017-07-31', month: 201707, income: 800, expense: -1550, profit: -750, earmarkedIncome: 0, earmarkedExpense: -600, earmarkedProfit: -600},
             ]);
         });
 
         it('should get income and expense grouped by month using arbitrary month start offset', async function() {
             assert.deepEqual(await analysisDao.incomeAndExpense(userId, 15, '2017-01-01'), [
-                {start: '2017-05-31', end: '2017-06-03', month: 201706, income: 990, expense: -5000, profit: -4010},
-                {start: '2017-06-30', end: '2017-07-15', month: 201707, income: 600, expense: -900, profit: -300},
-                {start: '2017-07-31', end: '2017-07-31', month: 201708, income: 300, expense: -700, profit: -400},
+                {start: '2017-05-31', end: '2017-06-03', month: 201706, income: 990, expense: -5000, profit: -4010, earmarkedIncome: 0, earmarkedExpense: 0, earmarkedProfit: 0},
+                {start: '2017-06-30', end: '2017-07-15', month: 201707, income: 600, expense: -900, profit: -300, earmarkedIncome: 100, earmarkedExpense: -650, earmarkedProfit: -550},
+                {start: '2017-07-31', end: '2017-07-31', month: 201708, income: 300, expense: -700, profit: -400, earmarkedIncome: 0, earmarkedExpense: 0, earmarkedProfit: 0},
             ]);
         });
     });
