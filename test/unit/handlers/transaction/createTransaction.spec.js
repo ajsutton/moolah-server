@@ -124,18 +124,13 @@ describe('Create Transaction Handler', function() {
     });
 
     function makeRequest(payload) {
-        return new Promise((resolve) => {
-            server.inject({
-                    url: `/api/transactions/`,
-                    method: 'POST',
-                    payload: payload,
-                    credentials: {
-                        userId,
-                    },
-                },
-                function(response) {
-                    resolve(response);
-                });
+        return server.inject({
+            url: `/api/transactions/`,
+            method: 'POST',
+            payload: payload,
+            credentials: {
+                userId,
+            },
         });
     }
 });

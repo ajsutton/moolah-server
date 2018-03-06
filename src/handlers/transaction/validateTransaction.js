@@ -39,4 +39,4 @@ module.exports = async function validateTransaction(transaction, daos, userId) {
         return Boom.badRequest('Invalid earmark');
     }
     return null;
-}
+};

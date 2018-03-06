@@ -18,3 +18,7 @@ exports.recurPeriod = Joi.any().valid('ONCE', 'DAY', 'WEEK', 'MONTH', 'YEAR');
 exports.monthEnd = Joi.number().integer().min(1).max(31);
 
 exports.arrayOf = (itemType) => Joi.array().items(itemType).single();
+
+exports.failAction = (request, h, err) => {
+    throw err;
+};

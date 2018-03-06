@@ -3,8 +3,8 @@ module.exports = {
         strategy: 'session',
         mode: 'try',
     },
-    handler: function(request, reply) {
+    handler: function(request) {
         request.cookieAuth.clear();
-        reply({loggedIn: false});
+        return {loggedIn: false};
     },
 };

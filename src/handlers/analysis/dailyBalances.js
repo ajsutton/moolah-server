@@ -13,39 +13,38 @@ function dateToNumber(date) {
 
 module.exports = {
     auth: 'session',
-    handler: {
-        async: async function(request, reply) {
-            const userId = session.getUserId(request);
-            await db.withTransaction(request, async daos => {
-                const after = request.query.after;
-                let currentBalance = after === null ? 0 : await daos.transactions.balance(userId, {}, {date: formatDate(addDays(after, 1), 'YYYY-MM-DD'), id: null});
-                let currentEarmarks = after === null ? 0 : await daos.transactions.balance(userId, {hasEarmark: true}, {date: formatDate(addDays(after, 1), 'YYYY-MM-DD'), id: null});
-                const results = await daos.analysis.dailyProfitAndLoss(userId, after);
-                const balances = results.map(dailyProfit => {
-                    currentBalance += dailyProfit.profit;
-                    currentEarmarks += dailyProfit.earmarked;
-                    return {date: dailyProfit.date, balance: currentBalance, availableFunds: currentBalance - currentEarmarks}
-                });
-                let scheduledBalances = undefined;
-                if (request.query.forecastUntil !== null) {
-                    const scheduledTransactions = await daos.transactions.transactions(userId, {scheduled: true, pageSize: undefined});
-                    scheduledBalances = forecastScheduledTransactions.forecastBalances(scheduledTransactions, currentBalance, currentEarmarks, request.query.forecastUntil);
-                }
-                const balancesByTimestamp = balances.map(({date, balance}) => [dateToNumber(date), balance]);
-
-                const bestFit = regression.linear(balancesByTimestamp);
-                balances.forEach(balanceEntry => balanceEntry.bestFit = bestFit.predict(dateToNumber(balanceEntry.date))[1]);
-                if (scheduledBalances) {
-                    scheduledBalances.forEach(balanceEntry => balanceEntry.bestFit = bestFit.predict(dateToNumber(balanceEntry.date))[1]);
-                }
-                reply({dailyBalances: balances, scheduledBalances});
+    handler: async function(request) {
+        const userId = session.getUserId(request);
+        return await db.withTransaction(request, async daos => {
+            const after = request.query.after;
+            let currentBalance = after === null ? 0 : await daos.transactions.balance(userId, {}, {date: formatDate(addDays(after, 1), 'YYYY-MM-DD'), id: null});
+            let currentEarmarks = after === null ? 0 : await daos.transactions.balance(userId, {hasEarmark: true}, {date: formatDate(addDays(after, 1), 'YYYY-MM-DD'), id: null});
+            const results = await daos.analysis.dailyProfitAndLoss(userId, after);
+            const balances = results.map(dailyProfit => {
+                currentBalance += dailyProfit.profit;
+                currentEarmarks += dailyProfit.earmarked;
+                return {date: dailyProfit.date, balance: currentBalance, availableFunds: currentBalance - currentEarmarks};
             });
-        },
+            let scheduledBalances = undefined;
+            if (request.query.forecastUntil !== null) {
+                const scheduledTransactions = await daos.transactions.transactions(userId, {scheduled: true, pageSize: undefined});
+                scheduledBalances = forecastScheduledTransactions.forecastBalances(scheduledTransactions, currentBalance, currentEarmarks, request.query.forecastUntil);
+            }
+            const balancesByTimestamp = balances.map(({date, balance}) => [dateToNumber(date), balance]);
+
+            const bestFit = regression.linear(balancesByTimestamp);
+            balances.forEach(balanceEntry => balanceEntry.bestFit = bestFit.predict(dateToNumber(balanceEntry.date))[1]);
+            if (scheduledBalances) {
+                scheduledBalances.forEach(balanceEntry => balanceEntry.bestFit = bestFit.predict(dateToNumber(balanceEntry.date))[1]);
+            }
+            return {dailyBalances: balances, scheduledBalances};
+        });
     },
     validate: {
         query: {
             after: types.date.default(null),
             forecastUntil: types.date.default(null),
         },
+        failAction: types.failAction,
     },
 };

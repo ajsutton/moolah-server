@@ -31,7 +31,7 @@ module.exports = server => {
     }
 
     return {
-        register: Good,
+        plugin: Good,
         options: {
             reporters,
         },

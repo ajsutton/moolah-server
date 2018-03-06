@@ -4,9 +4,9 @@ module.exports = {
         strategy: 'google',
         mode: 'try',
     },
-    handler: function(request, reply) {
+    handler: function(request, h) {
         if (!request.auth.isAuthenticated) {
-            return reply(Boom.unauthorized('Authentication failed: ' + request.auth.error.message));
+            throw Boom.unauthorized('Authentication failed: ' + request.auth.error.message);
         }
         const profile = request.auth.credentials.profile;
         const session = {
@@ -17,6 +17,6 @@ module.exports = {
             picture: profile.raw.picture,
         };
         request.cookieAuth.set(session);
-        reply.redirect('/');
+        return h.redirect('/');
     },
 };

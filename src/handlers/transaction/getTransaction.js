@@ -5,23 +5,22 @@ const session = require('../../auth/session');
 
 module.exports = {
     auth: 'session',
-    handler: {
-        async: async function(request, reply) {
-            const userId = session.getUserId(request);
-            await db.withTransaction(request, async daos => {
-                const transactionId = request.params.id;
-                const transaction = await daos.transactions.transaction(userId, transactionId);
-                if (transaction === undefined) {
-                    reply(Boom.notFound('Transaction not found'));
-                } else {
-                    reply(transaction);
-                }
-            });
-        },
+    handler: async function(request, h) {
+        const userId = session.getUserId(request);
+        return await db.withTransaction(request, async daos => {
+            const transactionId = request.params.id;
+            const transaction = await daos.transactions.transaction(userId, transactionId);
+            if (transaction === undefined) {
+                throw Boom.notFound('Transaction not found');
+            } else {
+                return transaction;
+            }
+        });
     },
     validate: {
         params: {
             id: types.id.required(),
         },
+        failAction: types.failAction,
     },
 };

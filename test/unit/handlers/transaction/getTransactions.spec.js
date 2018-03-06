@@ -50,15 +50,12 @@ describe('Get Transactions Handler', function() {
     });
 
     function makeRequest(accountId) {
-        return new Promise((resolve) => {
-            server.inject({
-                    url: `/api/transactions/?account=${encodeURIComponent(accountId)}`,
-                    method: 'GET',
-                    credentials: {
-                        userId,
-                    },
-                },
-                resolve);
+        return server.inject({
+            url: `/api/transactions/?account=${encodeURIComponent(accountId)}`,
+            method: 'GET',
+            credentials: {
+                userId,
+            },
         });
     }
 });

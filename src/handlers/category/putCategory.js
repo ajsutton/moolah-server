@@ -19,26 +19,23 @@ async function getParentIdRejectionReason(userId, daos, categoryId, parentId) {
 
 module.exports = {
     auth: 'session',
-    handler: {
-        async: async function(request, reply) {
-            const userId = session.getUserId(request);
-            const replyContent = await db.withTransaction(request, async daos => {
-                const currentCategory = await daos.categories.category(userId, request.params.id);
-                if (currentCategory === undefined) {
-                    return Boom.notFound('Category not found');
+    handler: async function(request, reply) {
+        const userId = session.getUserId(request);
+        return await db.withTransaction(request, async daos => {
+            const currentCategory = await daos.categories.category(userId, request.params.id);
+            if (currentCategory === undefined) {
+                throw Boom.notFound('Category not found');
+            } else {
+                const parentIdRejectionReason = await getParentIdRejectionReason(userId, daos, request.params.id, request.payload.parentId);
+                if (parentIdRejectionReason !== undefined) {
+                    throw parentIdRejectionReason;
                 } else {
-                    const parentIdRejectionReason = await getParentIdRejectionReason(userId, daos, request.params.id, request.payload.parentId);
-                    if (parentIdRejectionReason !== undefined) {
-                        return parentIdRejectionReason;
-                    } else {
-                        const modifiedCategory = Object.assign({}, currentCategory, request.payload);
-                        await daos.categories.store(userId, modifiedCategory);
-                        return modifiedCategory;
-                    }
+                    const modifiedCategory = Object.assign({}, currentCategory, request.payload);
+                    await daos.categories.store(userId, modifiedCategory);
+                    return modifiedCategory;
                 }
-            });
-            reply(replyContent);
-        },
+            }
+        });
     },
     validate: {
         params: {
@@ -52,5 +49,6 @@ module.exports = {
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
         }).unknown(true),
+        failAction: types.failAction,
     },
 };

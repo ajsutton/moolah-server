@@ -6,21 +6,19 @@ const session = require('../../auth/session');
 
 module.exports = {
     auth: 'session',
-    handler: {
-        async: async function(request, reply) {
-            const userId = session.getUserId(request);
-            await db.withTransaction(request, async daos => {
-                const account = await daos.accounts.account(userId, request.params.id);
-                if (account === undefined) {
-                    reply(Boom.notFound('Account not found'));
-                } else {
-                    const modifiedAccount = Object.assign(account, request.payload);
-                    modifiedAccount.balance = await daos.transactions.balance(userId, {accountId: account.id});
-                    await daos.accounts.store(userId, modifiedAccount);
-                    reply(modifiedAccount);
-                }
-            });
-        },
+    handler: async function(request) {
+        const userId = session.getUserId(request);
+        return await db.withTransaction(request, async daos => {
+            const account = await daos.accounts.account(userId, request.params.id);
+            if (account === undefined) {
+                throw Boom.notFound('Account not found');
+            } else {
+                const modifiedAccount = Object.assign(account, request.payload);
+                modifiedAccount.balance = await daos.transactions.balance(userId, {accountId: account.id});
+                await daos.accounts.store(userId, modifiedAccount);
+                return modifiedAccount;
+            }
+        });
     },
     validate: {
         params: {
@@ -36,5 +34,6 @@ module.exports = {
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
         }).unknown(true),
+        failAction: types.failAction
     },
 };

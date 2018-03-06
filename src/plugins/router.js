@@ -1,5 +1,5 @@
 module.exports = {
-    register: require('hapi-router'),
+    plugin: require('hapi-router'),
     options: {
         routes: 'src/routes/**/*.js',
     },

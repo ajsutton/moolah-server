@@ -2,38 +2,32 @@ const Joi = require('joi');
 const types = require('../types');
 const db = require('../../db/database');
 const idGenerator = require('../../utils/idGenerator');
-const Boom = require('boom');
 const session = require('../../auth/session');
 const validateTransaction = require('./validateTransaction');
 
 module.exports = {
     auth: 'session',
-    handler: {
-        async: async function(request, reply) {
-            const userId = session.getUserId(request);
-            const transaction = await db.withTransaction(request, async daos => {
-                const transactionData = request.payload;
-                const validationError = await validateTransaction(transactionData, daos, userId);
-                if (validationError === null) {
-                    while (true) {
-                        try {
-                            const transaction = Object.assign({id: idGenerator()}, request.payload);
-                            await daos.transactions.create(userId, transaction);
-                            return transaction;
-                        } catch (error) {
-                            if (error.code !== 'ER_DUP_ENTRY') {
-                                throw error;
-                            }
+    handler: async function(request, h) {
+        const userId = session.getUserId(request);
+        return await db.withTransaction(request, async daos => {
+            const transactionData = request.payload;
+            const validationError = await validateTransaction(transactionData, daos, userId);
+            if (validationError === null) {
+                while (true) {
+                    try {
+                        const transaction = Object.assign({id: idGenerator()}, request.payload);
+                        await daos.transactions.create(userId, transaction);
+                        return h.response(transaction).created(`/transactions/${encodeURIComponent(transaction.id)}/`);
+                    } catch (error) {
+                        if (error.code !== 'ER_DUP_ENTRY') {
+                            throw error;
                         }
                     }
-                } else {
-                    reply(validationError);
                 }
-            });
-            if (transaction !== undefined) {
-                reply(transaction).code(201).header('Location', `/transactions/${encodeURIComponent(transaction.id)}/`);
+            } else {
+                throw validationError;
             }
-        },
+        });
     },
     validate: {
         payload: Joi.object({
@@ -52,5 +46,6 @@ module.exports = {
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
         }).unknown(true),
+        failAction: types.failAction,
     },
 };

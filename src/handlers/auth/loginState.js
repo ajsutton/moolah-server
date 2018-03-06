@@ -3,12 +3,12 @@ module.exports = {
         strategy: 'session',
         mode: 'try',
     },
-    handler: function(req, reply) {
+    handler: function(req) {
         if (!req.auth.isAuthenticated) {
-            reply({loggedIn: false});
+            return {loggedIn: false};
         } else {
             const profile = req.auth.credentials;
-            reply({loggedIn: true, profile});
+            return {loggedIn: true, profile};
         }
     },
 };

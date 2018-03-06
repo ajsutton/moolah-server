@@ -64,15 +64,11 @@ describe('Create Account Handler', function() {
     });
 
     function makeRequest(payload) {
-        return new Promise((resolve, reject) => {
-            server.inject(Object.assign({}, options, {
-                payload: payload,
-                credentials: {
-                    userId,
-                },
-            }), function(response) {
-                resolve(response);
-            });
-        });
+        return server.inject(Object.assign({}, options, {
+            payload: payload,
+            credentials: {
+                userId,
+            },
+        }));
     }
 });

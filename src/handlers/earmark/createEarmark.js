@@ -7,8 +7,7 @@ const loadEarmarkBalance = require('./loadEarmarkBalance');
 
 module.exports = {
     auth: 'session',
-    handler: {
-        async: async function(request, reply) {
+    handler: async function(request, h) {
             while (true) {
                 try {
                     const earmark = Object.assign({id: idGenerator()}, request.payload);
@@ -25,15 +24,13 @@ module.exports = {
                         await loadEarmarkBalance(userId, earmark, daos);
                     });
                     delete earmark.date;
-                    reply(earmark).code(201).header('Location', `/earmarks/${encodeURIComponent(earmark.id)}/`);
-                    return;
+                    return h.response(earmark).created(`/earmarks/${encodeURIComponent(earmark.id)}/`);
                 } catch (error) {
                     if (error.code !== 'ER_DUP_ENTRY') {
                         throw error;
                     }
                 }
             }
-        },
     },
     validate: {
         payload: Joi.object({
@@ -50,5 +47,6 @@ module.exports = {
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
         }).unknown(true),
+        failAction: types.failAction,
     },
 };

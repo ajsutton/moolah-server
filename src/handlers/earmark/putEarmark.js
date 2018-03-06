@@ -7,21 +7,19 @@ const loadEarmarkBalance = require('./loadEarmarkBalance');
 
 module.exports = {
     auth: 'session',
-    handler: {
-        async: async function(request, reply) {
-            const userId = session.getUserId(request);
-            await db.withTransaction(request, async daos => {
-                const earmark = await daos.earmarks.earmark(userId, request.params.id);
-                if (earmark === undefined) {
-                    reply(Boom.notFound('Earmark not found'));
-                } else {
-                    const modifiedEarmark = Object.assign(earmark, request.payload);
-                    await daos.earmarks.store(userId, modifiedEarmark);
-                    await loadEarmarkBalance(userId, modifiedEarmark, daos);
-                    reply(modifiedEarmark);
-                }
-            });
-        },
+    handler: async function(request) {
+        const userId = session.getUserId(request);
+        return await db.withTransaction(request, async daos => {
+            const earmark = await daos.earmarks.earmark(userId, request.params.id);
+            if (earmark === undefined) {
+                throw Boom.notFound('Earmark not found');
+            } else {
+                const modifiedEarmark = Object.assign(earmark, request.payload);
+                await daos.earmarks.store(userId, modifiedEarmark);
+                await loadEarmarkBalance(userId, modifiedEarmark, daos);
+                return modifiedEarmark;
+            }
+        });
     },
     validate: {
         params: {
@@ -41,5 +39,6 @@ module.exports = {
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
         }).unknown(true),
+        failAction: types.failAction,
     },
 };

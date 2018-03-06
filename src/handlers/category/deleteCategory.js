@@ -6,33 +6,26 @@ const session = require('../../auth/session');
 
 module.exports = {
     auth: 'session',
-    handler: {
-        async: async function(request, reply) {
-            const userId = session.getUserId(request);
-            const success = await db.withTransaction(request, async daos => {
-                const categoryId = request.params.id;
-                const currentCategory = await daos.categories.category(userId, categoryId);
-                if (currentCategory === undefined) {
-                    reply(Boom.notFound('Category not found'));
-                    return false;
-                } else {
-                    daos.categories.remove(userId, categoryId);
-                    const replacementCategoryId = request.query.replaceWith === undefined ? null : request.query.replaceWith;
-                    if (replacementCategoryId !== null) {
-                        const replacementCategory = await daos.categories.category(userId, replacementCategoryId);
-                        if (replacementCategory === undefined) {
-                            reply(Boom.badRequest('Replacement category not found'));
-                            return false;
-                        }
+    handler: async function(request, h) {
+        const userId = session.getUserId(request);
+        return await db.withTransaction(request, async daos => {
+            const categoryId = request.params.id;
+            const currentCategory = await daos.categories.category(userId, categoryId);
+            if (currentCategory === undefined) {
+                throw Boom.notFound('Category not found');
+            } else {
+                daos.categories.remove(userId, categoryId);
+                const replacementCategoryId = request.query.replaceWith === undefined ? null : request.query.replaceWith;
+                if (replacementCategoryId !== null) {
+                    const replacementCategory = await daos.categories.category(userId, replacementCategoryId);
+                    if (replacementCategory === undefined) {
+                        throw Boom.badRequest('Replacement category not found');
                     }
-                    await daos.transactions.removeCategory(userId, categoryId, replacementCategoryId);
-                    return true;
                 }
-            });
-            if (success) {
-                reply().code(204);
+                await daos.transactions.removeCategory(userId, categoryId, replacementCategoryId);
+                return h.response().code(204);
             }
-        },
+        });
     },
     validate: {
         params: {
@@ -44,5 +37,6 @@ module.exports = {
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
         }).unknown(true),
+        failAction: types.failAction,
     },
 };

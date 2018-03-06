@@ -4,19 +4,16 @@ const loadEarmarkBalance = require('./loadEarmarkBalance');
 
 module.exports = {
     auth: 'session',
-    handler: {
-        async: async function(request, reply) {
-            try {
-                const userId = session.getUserId(request);
-                await db.withTransaction(request, async daos => {
-                    const earmarks = await daos.earmarks.earmarks(userId);
-                    await Promise.all(earmarks.map(async earmark => loadEarmarkBalance(userId, earmark, daos)));
-                    reply({earmarks: earmarks});
-                });
-            } catch (err) {
-                console.error('Error while accessing earmarks', err);
-                reply(err, 500);
-            }
-        },
+    handler: async function(request) {
+        try {
+            const userId = session.getUserId(request);
+            return await db.withTransaction(request, async daos => {
+                const earmarks = await daos.earmarks.earmarks(userId);
+                await Promise.all(earmarks.map(async earmark => loadEarmarkBalance(userId, earmark, daos)));
+                return {earmarks: earmarks};
+            });
+        } catch (err) {
+            throw Boom.internal('Error while accessing earmarks', err);
+        }
     },
 };

@@ -7,28 +7,24 @@ const Boom = require('boom');
 
 module.exports = {
     auth: 'session',
-    handler: {
-        async: async function(request, reply) {
+    handler: async function(request, h) {
             while (true) {
                 try {
                     const category = Object.assign({id: idGenerator()}, request.payload);
                     const userId = session.getUserId(request);
-                    await db.withTransaction(request, async daos => {
+                    return await db.withTransaction(request, async daos => {
                         if (category.parentId !== undefined && await daos.categories.category(userId, category.parentId) === undefined) {
-                            reply(Boom.badRequest('Unknown parent category', category.parentId));
-                            return;
+                            throw Boom.badRequest('Unknown parent category', category.parentId);
                         }
                         await daos.categories.create(userId, category);
-                        reply(category).code(201).header('Location', `/categories/${encodeURIComponent(category.id)}/`);
+                        return h.response(category).created(`/categories/${encodeURIComponent(category.id)}/`);
                     });
-                    return;
                 } catch (error) {
                     if (error.code !== 'ER_DUP_ENTRY') {
                         throw error;
                     }
                 }
             }
-        },
     },
     validate: {
         payload: Joi.object({
@@ -38,5 +34,6 @@ module.exports = {
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
         }).unknown(true),
+        failAction: types.failAction,
     },
 };

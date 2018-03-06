@@ -38,18 +38,13 @@ describe('Put Account Handler', function() {
 
 
     function makeRequest(accountId, payload) {
-        return new Promise((resolve, reject) => {
-            server.inject({
-                    url: `/api/accounts/${encodeURIComponent(accountId)}/`,
-                    method: 'PUT',
-                    payload: payload,
-                    credentials: {
-                        userId,
-                    },
-                },
-                function(response) {
-                    resolve(response);
-                });
+        return server.inject({
+            url: `/api/accounts/${encodeURIComponent(accountId)}/`,
+            method: 'PUT',
+            payload: payload,
+            credentials: {
+                userId,
+            },
         });
     }
 });

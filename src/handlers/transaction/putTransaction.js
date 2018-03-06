@@ -8,29 +8,23 @@ const validateTransaction = require('./validateTransaction');
 
 module.exports = {
     auth: 'session',
-    handler: {
-        async: async function(request, reply) {
-            const userId = session.getUserId(request);
-            const modifiedTransaction = await db.withTransaction(request, async daos => {
-                const transaction = await daos.transactions.transaction(userId, request.params.id);
-                if (transaction === undefined) {
-                    reply(Boom.notFound('Transaction not found'));
-                    return;
-                }
-                const modifiedTransaction = Object.assign(transaction, request.payload);
-                const validationError = await validateTransaction(modifiedTransaction, daos, userId);
-                if (validationError === null) {
-                    await daos.transactions.store(userId, modifiedTransaction);
-                    return modifiedTransaction;
-                } else {
-                    reply(validationError);
-                    return undefined;
-                }
-            });
-            if (modifiedTransaction !== undefined) {
-                reply(modifiedTransaction);
+    handler: async function(request, reply) {
+        const userId = session.getUserId(request);
+        return await db.withTransaction(request, async daos => {
+            const transaction = await daos.transactions.transaction(userId, request.params.id);
+            if (transaction === undefined) {
+                reply(Boom.notFound('Transaction not found'));
+                return;
             }
-        },
+            const modifiedTransaction = Object.assign(transaction, request.payload);
+            const validationError = await validateTransaction(modifiedTransaction, daos, userId);
+            if (validationError === null) {
+                await daos.transactions.store(userId, modifiedTransaction);
+                return modifiedTransaction;
+            } else {
+                throw validationError;
+            }
+        });
     },
     validate: {
         params: {
@@ -54,5 +48,6 @@ module.exports = {
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
         }).unknown(true),
+        failAction: types.failAction,
     },
 };

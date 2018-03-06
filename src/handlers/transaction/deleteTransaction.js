@@ -6,20 +6,18 @@ const session = require('../../auth/session');
 
 module.exports = {
     auth: 'session',
-    handler: {
-        async: async function(request, reply) {
-            const userId = session.getUserId(request);
-            await db.withTransaction(request, async daos => {
-                const transactionId = request.params.id;
-                const transaction = await daos.transactions.transaction(userId, transactionId);
-                if (transaction === undefined) {
-                    reply(Boom.notFound('Transaction not found'));
-                } else {
-                    await daos.transactions.delete(userId, transactionId);
-                    reply().code(204);
-                }
-            });
-        },
+    handler: async function(request, h) {
+        const userId = session.getUserId(request);
+        return await db.withTransaction(request, async daos => {
+            const transactionId = request.params.id;
+            const transaction = await daos.transactions.transaction(userId, transactionId);
+            if (transaction === undefined) {
+                throw Boom.notFound('Transaction not found');
+            } else {
+                await daos.transactions.delete(userId, transactionId);
+                return h.response().code(204);
+            }
+        });
     },
     validate: {
         params: {
@@ -28,5 +26,6 @@ module.exports = {
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
         }).unknown(true),
+        failAction: types.failAction,
     },
 };

@@ -4,36 +4,32 @@ const CategoryDao = require('./categoryDao');
 const AnalysisDao = require('./analysisDao');
 const EarmarkDao = require('./earmarkDao');
 
-const resolveOrReject = (resolve, reject) => (err, value) => {
-    if (err) {
-        reject(err);
-    } else {
-        resolve(value);
+const typeCastRealNumbers = (field, next) => {
+    if (field.type === 'NEWDECIMAL') {
+        return parseFloat(field.string());
     }
+    return next();
 };
 
-function doQuery(connection, sql, ...args) {
-    return new Promise((resolve, reject) => {
-        connection.query(sql, args, resolveOrReject(resolve, reject));
+async function doQuery(connection, sql, ...args) {
+    const [rows] = await connection.query({
+        sql,
+        typeCast: typeCastRealNumbers,
+        values: args,
     });
+    return rows;
 }
 
 function beginTransaction(connection) {
-    return new Promise((resolve, reject) => {
-        connection.beginTransaction(resolveOrReject(resolve, reject));
-    });
+    return connection.beginTransaction();
 }
 
 function commit(connection) {
-    return new Promise((resolve, reject) => {
-        connection.commit(resolveOrReject(resolve, reject));
-    });
+    return connection.commit();
 }
 
 function rollback(connection) {
-    return new Promise((resolve, reject) => {
-        connection.rollback(resolveOrReject(resolve, reject));
-    });
+    return connection.rollback();
 }
 
 function makeDaos(connection) {
@@ -47,15 +43,9 @@ function makeDaos(connection) {
     };
 }
 
-function getConnection(pool) {
-    return new Promise((resolve, reject) => {
-        pool.getConnection(resolveOrReject(resolve, reject));
-    });
-}
-
 module.exports = {
     async withTransaction(request, action) {
-        const connection = await getConnection(request.server.plugins['hapi-mysql2'].pool);
+        const connection = await request.server.mysql.pool.getConnection();
         try {
             const daos = makeDaos(connection);
             await beginTransaction(connection);
