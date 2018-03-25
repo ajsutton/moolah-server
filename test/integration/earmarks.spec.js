@@ -95,4 +95,21 @@ describe('Earmark Management', function() {
             await dsl.transactions.createTransaction({alias: 'scheduled', earmark: 'earmark1', type: 'income', amount: 500, recurPeriod: 'WEEK', recurEvery: 2});
         });
     });
+
+    describe('Hidden Earmarks', function() {
+        it('should mark earmark as hidden', async function() {
+            await dsl.earmarks.createEarmark({alias: 'earmark1'});
+            await dsl.earmarks.verifyEarmark({alias: 'earmark1', hidden: false});
+
+            await dsl.earmarks.modifyEarmark({alias: 'earmark1', hidden: true});
+            await dsl.earmarks.verifyEarmark({alias: 'earmark1', hidden: true});
+        });
+
+        it('should still include hidden earmarks in earmarks list', async function() {
+            await dsl.earmarks.createEarmark({alias: 'earmark1'});
+
+            await dsl.earmarks.modifyEarmark({alias: 'earmark1', hidden: true});
+            await dsl.earmarks.verifyEarmarks({accounts: ['earmark1']});
+        });
+    });
 });

@@ -48,6 +48,7 @@ module.exports = class EarmarksDsl {
             saved: undefined,
             spent: undefined,
             position: undefined,
+            hidden: undefined,
             savingsTarget: undefined,
             savingsStartDate: undefined,
             savingsEndDate: undefined,
@@ -58,6 +59,7 @@ module.exports = class EarmarksDsl {
             saved: options.saved,
             spent: options.spent,
             position: options.position,
+            hidden: options.hidden,
             savingsTarget: options.savingsTarget,
             savingsStartDate: options.savingsStartDate,
             savingsEndDate: options.savingsEndDate,
@@ -86,13 +88,15 @@ module.exports = class EarmarksDsl {
             alias: null,
             statusCode: 200,
             name: undefined,
+            hidden: undefined,
             savingsTarget: undefined,
             savingsStartDate: undefined,
             savingsEndDate: undefined,
         }, args);
         const currentEarmark = this.earmarksByAlias.get(options.alias);
-        const modifiedEarmark = Object.assign(currentEarmark, {
+        const modifiedEarmark = dslUtils.override(currentEarmark, {
             name: options.name,
+            hidden: options.hidden,
             balance: options.balance,
             saved: options.saved,
             spent: options.spent,

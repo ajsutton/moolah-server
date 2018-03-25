@@ -28,15 +28,15 @@ describe('Earmark DAO', function() {
     });
 
     it('should round trip earmark', async function() {
-        const earmark = {id: '1', name: 'Earmark 1', position: 7};
+        const earmark = {id: '1', name: 'Earmark 1', position: 7, hidden: false};
         await earmarkDao.create(userId, earmark);
         const earmarks = await earmarkDao.earmarks(userId);
         assert.deepEqual(earmarks, [earmark]);
     });
 
     it('should update existing earmarks', async function() {
-        const earmark = {id: '1', name: 'Earmark 1', position: 3};
-        const modifiedEarmark = {id: '1', name: 'New Earmark Name', position: 5};
+        const earmark = {id: '1', name: 'Earmark 1', position: 3, hidden: false};
+        const modifiedEarmark = {id: '1', name: 'New Earmark Name', position: 5, hidden: true};
         await earmarkDao.create(userId, earmark);
         await earmarkDao.store(userId, modifiedEarmark);
         const earmarks = await earmarkDao.earmarks(userId);
@@ -44,7 +44,7 @@ describe('Earmark DAO', function() {
     });
 
     it('should get an earmark by id', async function() {
-        const earmark = {id: '1', name: 'Earmark 1', position: 5};
+        const earmark = {id: '1', name: 'Earmark 1', position: 5, hidden: false};
         await earmarkDao.create(userId, earmark);
         const result = await earmarkDao.earmark(userId, earmark.id);
         assert.deepEqual(result, earmark);
@@ -53,14 +53,14 @@ describe('Earmark DAO', function() {
     it('should default position to 0', async function() {
         await earmarkDao.create(userId, {id: '1', name: 'Earmark 1'});
         const result = await earmarkDao.earmark(userId, '1');
-        assert.deepEqual(result, {id: '1', name: 'Earmark 1', position: 0});
+        assert.deepEqual(result, {id: '1', name: 'Earmark 1', position: 0, hidden: false});
     });
 
     it('should sort earmarks by position then name', async function() {
-        const earmark1 = {id: '1', name: 'Earmark 1', position: 3};
-        const earmark2 = {id: '2', name: 'Earmark 2', position: 1};
-        const earmark3 = {id: '3', name: 'B Earmark', position: 5};
-        const earmark4 = {id: '4', name: 'A Earmark', position: 5};
+        const earmark1 = {id: '1', name: 'Earmark 1', position: 3, hidden: false};
+        const earmark2 = {id: '2', name: 'Earmark 2', position: 1, hidden: false};
+        const earmark3 = {id: '3', name: 'B Earmark', position: 5, hidden: false};
+        const earmark4 = {id: '4', name: 'A Earmark', position: 5, hidden: false};
         await Promise.all([
             earmarkDao.create(userId, earmark1),
             earmarkDao.create(userId, earmark2),

@@ -2,6 +2,15 @@ const stripNulls = require('./stripNulls');
 const DEFAULT_POSITION = 0;
 const transactionQuery = require('./transactionQuery');
 
+const makeEarmark = data => {
+    if (data === undefined) {
+        return undefined;
+    }
+    const earmark = stripNulls(data);
+    earmark.hidden = earmark.hidden === 1;
+    return earmark;
+};
+
 module.exports = class EarmarksDao {
     constructor(query) {
         this.query = query;
@@ -9,34 +18,34 @@ module.exports = class EarmarksDao {
 
     async earmarks(userId) {
         const earmarks = await this.query(
-            '  SELECT id, name, position, saving_target as savingsTarget, saving_start_date as savingsStartDate, saving_end_date as savingsEndDate ' +
+            '  SELECT id, name, position, hidden, saving_target as savingsTarget, saving_start_date as savingsStartDate, saving_end_date as savingsEndDate ' +
             '    FROM earmark ' +
             '   WHERE user_id = ? ' +
             'ORDER BY position, name',
             userId);
-        return earmarks.map(stripNulls);
+        return earmarks.map(makeEarmark);
     }
 
     async earmark(userId, id) {
         const results = await this.query(
-            'SELECT id, name, position, saving_target as savingsTarget, saving_start_date as savingsStartDate, saving_end_date as savingsEndDate ' +
+            'SELECT id, name, position, hidden, saving_target as savingsTarget, saving_start_date as savingsStartDate, saving_end_date as savingsEndDate ' +
             '  FROM earmark ' +
             ' WHERE user_id = ? ' +
             '   AND id = ?',
             userId, id);
-        return stripNulls(results[0]);
+        return makeEarmark(results[0]);
     }
 
     create(userId, earmark) {
         return this.query(
-            'INSERT INTO earmark (user_id, id, name, position, saving_target, saving_start_date, saving_end_date) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            userId, earmark.id, earmark.name, earmark.position || DEFAULT_POSITION, earmark.savingsTarget, earmark.savingsStartDate, earmark.savingsEndDate);
+            'INSERT INTO earmark (user_id, id, name, position, hidden, saving_target, saving_start_date, saving_end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            userId, earmark.id, earmark.name, earmark.position || DEFAULT_POSITION, false, earmark.savingsTarget, earmark.savingsStartDate, earmark.savingsEndDate);
     }
 
     store(userId, earmark) {
         return this.query(
-            'UPDATE earmark SET name = ?, position = ?, saving_target = ?, saving_start_date = ?, saving_end_date = ? WHERE user_id = ? AND id = ?',
-            earmark.name, earmark.position || DEFAULT_POSITION, earmark.savingsTarget, earmark.savingsStartDate, earmark.savingsEndDate, userId, earmark.id);
+            'UPDATE earmark SET name = ?, position = ?, hidden = ?, saving_target = ?, saving_start_date = ?, saving_end_date = ? WHERE user_id = ? AND id = ?',
+            earmark.name, earmark.position || DEFAULT_POSITION, earmark.hidden, earmark.savingsTarget, earmark.savingsStartDate, earmark.savingsEndDate, userId, earmark.id);
     }
 
     async balances(userId, earmarkId) {

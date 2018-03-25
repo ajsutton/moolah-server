@@ -10,7 +10,7 @@ module.exports = {
     handler: async function(request, h) {
             while (true) {
                 try {
-                    const earmark = Object.assign({id: idGenerator()}, request.payload);
+                    const earmark = Object.assign({id: idGenerator()}, request.payload, {hidden: false});
                     const userId = session.getUserId(request);
                     await db.withTransaction(request, async daos => {
                         await daos.earmarks.create(userId,

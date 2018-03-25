@@ -57,7 +57,7 @@ describe('Account Management', function() {
         await dsl.accounts.verifyAccount({alias: 'account1', position: 0});
     });
 
-    describe('Hidden accounts', function() {
+    describe('Hidden Accounts', function() {
         it('should mark account as hidden', async function() {
             await dsl.accounts.createAccount({alias: 'account1'});
             await dsl.accounts.verifyAccount({alias: 'account1', hidden: false});

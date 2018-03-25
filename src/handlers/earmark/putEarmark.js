@@ -29,6 +29,7 @@ module.exports = {
             id: types.id,
             name: types.name.required(),
             position: types.position,
+            hidden: types.boolean,
             balance: types.money,
             saved: types.money,
             spent: types.money,
