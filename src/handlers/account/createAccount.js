@@ -9,7 +9,7 @@ module.exports = {
     handler: async function(request, h) {
         while (true) {
             try {
-                const account = Object.assign({id: idGenerator()}, request.payload);
+                const account = Object.assign({id: idGenerator()}, request.payload, {hidden: false});
                 const userId = session.getUserId(request);
                 await db.withTransaction(request, async daos => {
                     await daos.accounts.create(userId,

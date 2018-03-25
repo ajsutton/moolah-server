@@ -41,11 +41,13 @@ module.exports = class AccountsDsl {
             alias: null,
             balance: undefined,
             position: undefined,
+            hidden: undefined,
             statusCode: 200,
         }, args);
         const account = dslUtils.override(this.accountsByAlias.get(options.alias), {
             balance: options.balance,
             position: options.position,
+            hidden: options.hidden
         });
         const response = await this.server.get(`/api/accounts/${encodeURIComponent(account.id)}/`, options.statusCode);
         if (response.statusCode === 200) {
@@ -72,12 +74,14 @@ module.exports = class AccountsDsl {
             statusCode: 200,
             name: undefined,
             type: undefined,
+            hidden: undefined,
         }, args);
         const currentAccount = this.accountsByAlias.get(options.alias);
-        const modifiedAccount = Object.assign(currentAccount, {
+        const modifiedAccount = dslUtils.override(currentAccount, {
             name: options.name,
             type: options.type,
             balance: options.balance,
+            hidden: options.hidden,
         });
         const response = await this.server.put('/api/accounts/' + encodeURIComponent(currentAccount.id) + '/', modifiedAccount, options.statusCode);
         if (options.statusCode === 200) {

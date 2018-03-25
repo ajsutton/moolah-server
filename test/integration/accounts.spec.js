@@ -56,4 +56,21 @@ describe('Account Management', function() {
         await dsl.accounts.createAccount({alias: 'account1', position: undefined});
         await dsl.accounts.verifyAccount({alias: 'account1', position: 0});
     });
+
+    describe('Hidden accounts', function() {
+        it('should mark account as hidden', async function() {
+            await dsl.accounts.createAccount({alias: 'account1'});
+            await dsl.accounts.verifyAccount({alias: 'account1', hidden: false});
+
+            await dsl.accounts.modifyAccount({alias: 'account1', hidden: true});
+            await dsl.accounts.verifyAccount({alias: 'account1', hidden: true});
+        });
+
+        it('should still include hidden accounts in accounts list', async function() {
+            await dsl.accounts.createAccount({alias: 'account1'});
+
+            await dsl.accounts.modifyAccount({alias: 'account1', hidden: true});
+            await dsl.accounts.verifyAccounts({accounts: ['account1']});
+        });
+    });
 });

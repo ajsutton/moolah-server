@@ -1,5 +1,14 @@
 const stripNulls = require('./stripNulls');
 
+const makeAccount = data => {
+    if (data === undefined) {
+        return undefined;
+    }
+    const account = stripNulls(data);
+    account.hidden = account.hidden === 1;
+    return account;
+};
+
 const DEFAULT_POSITION = 0;
 
 module.exports = class AccountsDao {
@@ -9,22 +18,22 @@ module.exports = class AccountsDao {
 
     async accounts(userId) {
         const accounts = await this.query(
-            '  SELECT id, name, type, position ' +
+            '  SELECT id, name, type, position, hidden ' +
             '    FROM account ' +
             '   WHERE user_id = ? ' +
             'ORDER BY position, name',
             userId);
-        return accounts.map(stripNulls);
+        return accounts.map(makeAccount);
     }
 
     async account(userId, id) {
         const results = await this.query(
-            'SELECT id, name, type, position ' +
+            'SELECT id, name, type, position, hidden ' +
             '  FROM account ' +
             ' WHERE user_id = ? ' +
             '   AND id = ?',
             userId, id);
-        return stripNulls(results[0]);
+        return makeAccount(results[0]);
     }
 
     create(userId, account) {
@@ -35,7 +44,7 @@ module.exports = class AccountsDao {
 
     store(userId, account) {
         return this.query(
-            'UPDATE account SET name = ?, type = ?, position = ? WHERE user_id = ? AND id = ?',
-            account.name, account.type, account.position || DEFAULT_POSITION, userId, account.id);
+            'UPDATE account SET name = ?, type = ?, position = ?, hidden = ? WHERE user_id = ? AND id = ?',
+            account.name, account.type, account.position || DEFAULT_POSITION, account.hidden, userId, account.id);
     }
 };
