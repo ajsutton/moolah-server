@@ -67,12 +67,12 @@ describe('Analysis', function() {
             await dsl.analysis.verifyDailyBalances({
                 after: '2017-05-31',
                 expected: [
-                    {date: '2017-06-03', balance: -4000 + -10, availableFunds: -5000 + -10, bestFit: -3742.04},
-                    {date: '2017-06-30', balance: -4000 + -10 + 100 + -50, availableFunds: -5000 + -10 + 100 + -50, bestFit: -3827.36},
-                    {date: '2017-07-01', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250, availableFunds: -5000 + -10 + 100 + -50 + 500, bestFit: -3830.52},
-                    {date: '2017-07-15', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600, availableFunds: -5000 + -10 + 100 + -50 + 500 + -600, bestFit: -3874.76},
+                    {date: '2017-06-03', balance: -4000 + -10, availableFunds: -7000 + -10, bestFit: -3742.04},
+                    {date: '2017-06-30', balance: -4000 + -10 + 100 + -50, availableFunds: -7000 + -10 + 100 + -50, bestFit: -3827.36},
+                    {date: '2017-07-01', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250, availableFunds: -7000 + -10 + 100 + -50 + 500, bestFit: -3830.52},
+                    {date: '2017-07-15', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600, availableFunds: -7000 + -10 + 100 + -50 + 500 + -600, bestFit: -3874.76},
                     {date: '2017-07-31', balance: -4000 + -10 + 100 + -50 + 500 + 500 + -250 + -600 + -700 + 300,
-                        availableFunds: -5000 + -10 + 100 + -50 + 500 + -600 + -700, bestFit: -3925.32},
+                        availableFunds: -7000 + -10 + 100 + -50 + 500 + -600 + -700, bestFit: -3925.32},
                 ],
             });
         });

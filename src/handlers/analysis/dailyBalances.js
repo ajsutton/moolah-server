@@ -17,7 +17,7 @@ module.exports = {
         const userId = session.getUserId(request);
         return await db.withTransaction(request, async daos => {
             const after = request.query.after;
-            let currentBalance = after === null ? 0 : await daos.transactions.balance(userId, {}, {date: formatDate(addDays(after, 1), 'YYYY-MM-DD'), id: null});
+            let currentBalance = after === null ? 0 : await daos.transactions.balance(userId, {hasAccount: true}, {date: formatDate(addDays(after, 1), 'YYYY-MM-DD'), id: null});
             let currentEarmarks = after === null ? 0 : await daos.transactions.balance(userId, {hasEarmark: true}, {date: formatDate(addDays(after, 1), 'YYYY-MM-DD'), id: null});
             const results = await daos.analysis.dailyProfitAndLoss(userId, after);
             const balances = results.map(dailyProfit => {
