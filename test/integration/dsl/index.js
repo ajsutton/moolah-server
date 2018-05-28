@@ -1,6 +1,7 @@
 const serverFactory = require('../../../src/server');
 const AccountsDsl = require('./accountDsl');
 const EarmarksDsl = require('./earmarkDsl');
+const BudgetsDsl = require('./budgetsDsl');
 const TransactionsDsl = require('./transactionDsl');
 const AnalysisDsl = require('./analysisDsl');
 const CategoriesDsl = require('./categoryDsl');
@@ -75,6 +76,7 @@ class Dsl {
         const categoriesByAlias = new Map();
         this.accounts = new AccountsDsl(server, accountsByAlias, transactionsByAlias);
         this.earmarks = new EarmarksDsl(server, accountsByAlias, transactionsByAlias);
+        this.budgets = new BudgetsDsl(server, accountsByAlias, categoriesByAlias);
         this.transactions = new TransactionsDsl(server, accountsByAlias, transactionsByAlias, categoriesByAlias);
         this.analysis = new AnalysisDsl(server, accountsByAlias, categoriesByAlias);
         this.categories = new CategoriesDsl(server, categoriesByAlias);
