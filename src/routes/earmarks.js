@@ -30,4 +30,9 @@ module.exports = [
         path: '/api/earmarks/{earmarkId}/budget/{categoryId}/',
         config: require('../handlers/earmark/budget/getBudget'),
     },
+    {
+        method: 'GET',
+        path: '/api/earmarks/{earmarkId}/budget/',
+        config: require('../handlers/earmark/budget/getBudgets'),
+    }
 ];

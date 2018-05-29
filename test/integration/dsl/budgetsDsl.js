@@ -37,4 +37,18 @@ module.exports = class BudgetsDsl {
         const response = await this.server.get(`/api/earmarks/${earmarkId}/budget/${categoryId}/`, options.statusCode);
         assert.deepEqual(JSON.parse(response.payload), {amount: options.amount}, 'Did not match budget');
     }
+
+    async verifyBudgets(args) {
+        const options = Object.assign({
+            earmark: null,
+            budgets: {},
+            statusCode: 200,
+        }, args);
+
+        const earmarkId = dslUtils.lookupId(options.earmark, this.accountsByAlias);
+        const response = await this.server.get(`/api/earmarks/${earmarkId}/budget/`, options.statusCode);
+        const expected = {};
+        Object.entries(options.budgets).forEach(([categoryAlias, amount]) => expected[dslUtils.lookupId(categoryAlias, this.categoriesByAlias)] = amount);
+        assert.deepEqual(JSON.parse(response.payload), expected);
+    }
 }
