@@ -23,6 +23,7 @@ module.exports = {
                     }
                 }
                 await daos.transactions.removeCategory(userId, categoryId, replacementCategoryId);
+                await daos.budget.removeCategory(userId, categoryId, replacementCategoryId);
                 return h.response().code(204);
             }
         });

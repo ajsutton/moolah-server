@@ -16,4 +16,9 @@ module.exports = class BudgetsDao {
             userId, earmarkId, categoryId);
         return results.length > 0 ? results[0].amount : 0;
     }
+
+    async removeCategory(userId, categoryId, replacementCategoryId = null) {
+        await this.query('UPDATE IGNORE budget SET category_id = ? WHERE user_id = ? AND category_id = ?', replacementCategoryId, userId, categoryId);
+        await this.query('DELETE FROM budget WHERE user_id = ? AND category_id = ?', userId, categoryId);
+    }
 }
