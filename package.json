@@ -25,7 +25,7 @@
     "chai": "^4.0.2",
     "mocha": "^5.0.0",
     "nodemon": "^1.11.0",
-    "sinon": "^5.0.0"
+    "sinon": "^6.0.0"
   },
   "dependencies": {
     "bell": "^9.1.0",
@@ -39,7 +39,7 @@
     "good-squeeze": "^5.0.2",
     "hapi": "^17.0.0",
     "hapi-async-handler": "^1.0.3",
-    "hapi-auth-cookie": "^8.0.0",
+    "hapi-auth-cookie": "^9.0.0",
     "hapi-mysql2": "^2.0.0",
     "hapi-router": "^4.0.0",
     "joi": "^13.0.0",
