@@ -22,7 +22,8 @@ module.exports = class TransactionDao {
             query += 'AND date > ? ';
             args.push(afterDate);
         }
-        query += `GROUP BY IF(DAYOFMONTH(date) > ?, EXTRACT(YEAR_MONTH FROM DATE_ADD(date, INTERVAL 1 MONTH)), EXTRACT(YEAR_MONTH FROM date));`;
+        query += `GROUP BY IF(DAYOFMONTH(date) > ?, EXTRACT(YEAR_MONTH FROM DATE_ADD(date, INTERVAL 1 MONTH)), EXTRACT(YEAR_MONTH FROM date))
+                  ORDER BY start;`;
         args.push(currentDayOfMonth);
         return this.query(query, ...args);
     }
@@ -56,7 +57,8 @@ module.exports = class TransactionDao {
             query += ' AND date > ? ';
             args.push(afterDate);
         }
-        query += `GROUP BY category_id, IF(DAYOFMONTH(date) > ?, EXTRACT(YEAR_MONTH FROM DATE_ADD(date, INTERVAL 1 MONTH)), EXTRACT(YEAR_MONTH FROM date));`;
+        query += `GROUP BY category_id, IF(DAYOFMONTH(date) > ?, EXTRACT(YEAR_MONTH FROM DATE_ADD(date, INTERVAL 1 MONTH)), EXTRACT(YEAR_MONTH FROM date))
+                  ORDER BY category_id, month;`;
         args.push(currentDayOfMonth);
         return this.query(query, ...args);
     }
