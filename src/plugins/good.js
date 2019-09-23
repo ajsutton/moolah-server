@@ -11,7 +11,7 @@ module.exports = server => {
                 args: [config.console.levels],
             },
             {
-                module: 'good-console',
+                module: '@hapi/good-console',
             },
             'stdout',
         ];
