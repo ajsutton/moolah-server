@@ -886,23 +886,23 @@ function execute_migration(file, callback, down) {
             eval(data);
             var migration = eval(variable);
 
-            sys.puts("======================================");
+            console.log("======================================");
 
             if (!down) {
                 migration.up();
-                sys.puts("Executing " + file);
+                console.log("Executing " + file);
             }
             else {
                 migration.down();
-                sys.puts("Rolling back " + file);
+                console.log("Rolling back " + file);
             }
 
-            sys.puts(migration);
+            console.log(migration);
 
             multi_query(
                 migration.toString(),
                 function(result) {
-                    sys.puts("Success!");
+                    console.log("Success!");
                     callback();
                 },
                 function(error) {
@@ -961,7 +961,7 @@ function rollback() {
                 }
             }
 
-            sys.puts(migration_index-1);
+            console.log(migration_index-1);
 
             roll(migration_index-1, function() {
                 exit("Schema rolled back by " + m + " migration" + ((m > 1) ? 's' : '') + '.');
@@ -1004,7 +1004,7 @@ var Connect = {
             }
 
             // If not found then create it!
-            sys.puts("Creating migration table.");
+            console.log("Creating migration table.");
             client.query("create table schema_migrations (version BIGINT);");
             return main();
         });
@@ -1022,7 +1022,7 @@ var Connect = {
                 if(row) {
                     return main();
                 }
-                sys.puts("Creating migration table.");
+                console.log("Creating migration table.");
                 client.run("create table schema_migrations(version BIGINT);", function(err) {
                     if(err) {
                         return exit(err);
@@ -1047,7 +1047,7 @@ if (process.argv[1].split('/').pop() == "migrate.js") {
             mysql: configue.get('database')
         };
         if (!Encoders[config.dbms])
-            sys.puts("Invalid dbms set in configuration file.");
+            console.log("Invalid dbms set in configuration file.");
         encoder = Encoders[config.dbms];
 
         // Attempt to connect to the DB
