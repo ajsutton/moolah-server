@@ -780,7 +780,7 @@ var migration_template = [
  */
 function exit(msg) {
     if (msg)
-        sys.puts(msg);
+        console.log(msg);
     if (client)
         client.end();
 }
