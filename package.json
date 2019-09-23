@@ -43,7 +43,7 @@
     "hapi-auth-cookie": "^9.0.0",
     "hapi-mysql2": "^2.0.0",
     "hapi-router": "^4.0.0",
-    "mysql": "mysqljs/mysql",
+    "mysql": "^2.17.1",
     "regression": "^2.0.0",
     "uuid": "^3.1.0"
   }
