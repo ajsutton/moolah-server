@@ -1,18 +1,20 @@
 const parseDate = require('date-fns/parse');
-const isAfter = require('date-fns/is_after');
+const isAfter = require('date-fns/isAfter');
 const dateFormat = require('date-fns/format');
 const dueDateTools = require('./nextDueDate');
+const parseISO = require('date-fns/parseISO');
 const transactionComparator = require('./transactionComparator');
 
 function extrapolateScheduledTransaction(transaction, forecastUntil) {
+    forecastUntil = typeof forecastUntil == 'string' ? parseISO(forecastUntil) : forecastUntil;
     if (transaction.recurPeriod === 'ONCE') {
-        return isAfter(transaction.date, forecastUntil) ? [] : [transaction];
+        return isAfter(parseISO(transaction.date), forecastUntil) ? [] : [transaction];
     }
     const instances = [];
     const dateStepFunction = dueDateTools.dateStepFunction(transaction.recurPeriod);
-    let date = transaction.date;
+    let date = parseISO(transaction.date);
     while (!isAfter(date, forecastUntil)) {
-        instances.push(Object.assign({}, transaction, {date: dateFormat(date, 'YYYY-MM-DD')}));
+        instances.push(Object.assign({}, transaction, {date: dateFormat(date, 'yyyy-MM-dd')}));
         date = dateStepFunction(date, transaction.recurEvery);
     }
     return instances;
@@ -27,7 +29,7 @@ function extrapolateScheduledTransactions(scheduledTransactions, forecastUntil) 
 module.exports = {
     extrapolateScheduledTransactions,
     forecastBalances(scheduledTransactions, currentNetWorth, currentEarmarks, until) {
-        const forecastUntil = parseDate(until);
+        const forecastUntil = parseISO(until);
         const transactions = extrapolateScheduledTransactions(scheduledTransactions.filter(transaction => transaction.type !== 'transfer'), forecastUntil);
         const balances = {};
         let balance = currentNetWorth;
