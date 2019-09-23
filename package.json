@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@hapi/good-console": "^8.0.0",
+    "@hapi/joi": "^16.0.0",
     "bell": "^10.0.0",
     "boom": "^7.0.0",
     "configue": "^1.0.0",
@@ -42,7 +43,6 @@
     "hapi-auth-cookie": "^9.0.0",
     "hapi-mysql2": "^2.0.0",
     "hapi-router": "^4.0.0",
-    "joi": "^13.0.0",
     "mysql": "mysqljs/mysql",
     "regression": "^2.0.0",
     "uuid": "^3.1.0"
