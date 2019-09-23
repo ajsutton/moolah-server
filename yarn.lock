@@ -17,7 +17,7 @@
   resolved "https://registry.yarnpkg.com/@hapi/formula/-/formula-1.2.0.tgz#994649c7fea1a90b91a0a1e6d983523f680e10cd"
   integrity sha512-UFbtbGPjstz0eWHb+ga/GM3Z9EzqKXFWIbSOFURU0A/Gku0Bky4bCk9/h//K2Xr3IrCfjFNhMm4jyZ5dbCewGA==
 
-"@hapi/good-console@^8.1.2":
+"@hapi/good-console@^8.0.0":
   version "8.1.2"
   resolved "https://registry.yarnpkg.com/@hapi/good-console/-/good-console-8.1.2.tgz#ce415ac42ae315c3fdafca995a902390e29438e5"
   integrity sha512-35Uxe7+EsPsbhjQXrhCGB5Ul0W51CxYBBjN7JC95RZnFiB2DAt52pXLZ6aagUPk8yA/DM2OmIsmWJBr+N28hLw==
