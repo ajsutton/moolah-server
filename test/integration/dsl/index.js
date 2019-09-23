@@ -30,7 +30,7 @@ class Server {
                 url: url,
                 method: 'POST',
                 payload: payload,
-                credentials: this.profile,
+                auth: this.profile,
             },
             expectedStatusCode);
     }
@@ -39,7 +39,7 @@ class Server {
         return this.request({
                 url: url,
                 method: 'GET',
-                credentials: this.profile,
+                auth: this.profile,
             },
             expectedStatusCode);
     }
@@ -49,7 +49,7 @@ class Server {
                 url,
                 method: 'PUT',
                 payload,
-                credentials: this.profile,
+                auth: this.profile,
             },
             expectedStatusCode);
     }
@@ -58,7 +58,7 @@ class Server {
         return this.request({
                 url: url,
                 method: 'DELETE',
-                credentials: this.profile,
+                auth: this.profile,
             },
             expectedStatusCode);
     }
@@ -86,11 +86,14 @@ class Dsl {
     login(args = {}) {
         const userId = idGenerator();
         this.userIds.push(userId);
-        this.server.profile = Object.assign({
-            userId: userId,
-            givenName: 'Jane',
-            familyName: 'Doe',
-        }, args);
+        this.server.profile = {
+            strategy: 'cookie', 
+            credentials: Object.assign({
+                userId: userId,
+                givenName: 'Jane',
+                familyName: 'Doe',
+            }, args),
+        };
     }
 
     logout() {

@@ -66,8 +66,11 @@ describe('Create Account Handler', function() {
     function makeRequest(payload) {
         return server.inject(Object.assign({}, options, {
             payload: payload,
-            credentials: {
-                userId,
+            auth: {
+                strategy: 'cookie',
+                credentials: {
+                    userId,
+                },
             },
         }));
     }

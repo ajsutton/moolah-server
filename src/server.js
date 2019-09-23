@@ -1,4 +1,4 @@
-const Hapi = require('hapi');
+const Hapi = require('@hapi/hapi');
 const configue = require('./config');
 
 exports.create = async function() {
@@ -10,7 +10,7 @@ exports.create = async function() {
     await server.register([
         require('./plugins/good')(server),
         require('./plugins/database')(server),
-        require('hapi-auth-cookie'),
+        require('@hapi/cookie'),
         require('bell'),
     ]);
 
@@ -24,8 +24,10 @@ exports.create = async function() {
     });
 
     server.auth.strategy('session', 'cookie', {
-        password: authConfig.secureToken,
-        isSecure: server.configue('https'),
+        cookie: {
+            password: authConfig.secureToken,
+            isSecure: server.configue('https')
+        }
     });
     server.auth.strategy('google', 'bell', {
         provider: 'google',

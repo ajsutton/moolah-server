@@ -128,8 +128,11 @@ describe('Create Transaction Handler', function() {
             url: `/api/transactions/`,
             method: 'POST',
             payload: payload,
-            credentials: {
-                userId,
+            auth: {
+                strategy: 'cookie',
+                credentials: {
+                    userId,
+                },
             },
         });
     }

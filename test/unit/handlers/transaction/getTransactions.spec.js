@@ -53,8 +53,11 @@ describe('Get Transactions Handler', function() {
         return server.inject({
             url: `/api/transactions/?account=${encodeURIComponent(accountId)}`,
             method: 'GET',
-            credentials: {
-                userId,
+            auth: {
+                strategy: 'cookie',
+                credentials: { 
+                    userId 
+                },
             },
         });
     }

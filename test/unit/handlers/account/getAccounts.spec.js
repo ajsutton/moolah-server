@@ -31,8 +31,11 @@ describe('Get Accounts Handler', function() {
         return server.inject({
             url: `/api/accounts/`,
             method: 'GET',
-            credentials: {
-                userId,
+            auth: {
+                strategy: 'cookie',
+                credentials: {
+                    userId,
+                },
             },
         });
     }

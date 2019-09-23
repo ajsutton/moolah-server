@@ -42,8 +42,11 @@ describe('Put Account Handler', function() {
             url: `/api/accounts/${encodeURIComponent(accountId)}/`,
             method: 'PUT',
             payload: payload,
-            credentials: {
-                userId,
+            auth: {
+                strategy: 'cookie',
+                credentials: {
+                    userId,
+                },
             },
         });
     }
