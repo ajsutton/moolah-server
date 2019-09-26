@@ -11,7 +11,7 @@ exports.create = async function() {
         require('./plugins/good')(server),
         require('./plugins/database')(server),
         require('@hapi/cookie'),
-        require('bell'),
+        require('@hapi/bell'),
     ]);
 
     // Work around for https://github.com/midnightcodr/hapi-mysql2/pull/1 until it gets merged and a new version published

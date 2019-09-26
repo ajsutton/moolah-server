@@ -29,6 +29,18 @@
   dependencies:
     "@hapi/hoek" "8.x.x"
 
+"@hapi/bell@^11.1.0":
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/@hapi/bell/-/bell-11.1.0.tgz#5a6d6c0b38a13ccb5a505a36b4868a619c8f48b2"
+  integrity sha512-tfW/OlLZFlaemMcmxzbQjMjy56eveg5XCfHoY4Zi9ErDCqp52d7ek2hiFIgPmTIbxI7Vfp3RS+RQ6e5T8dOorA==
+  dependencies:
+    "@hapi/boom" "7.x.x"
+    "@hapi/bounce" "1.x.x"
+    "@hapi/cryptiles" "4.x.x"
+    "@hapi/hoek" "8.x.x"
+    "@hapi/joi" "16.x.x"
+    "@hapi/wreck" "15.x.x"
+
 "@hapi/boom@7.x.x":
   version "7.4.10"
   resolved "https://registry.yarnpkg.com/@hapi/boom/-/boom-7.4.10.tgz#fae360a8f6a52fbb5bfbe179982d74351ee1df1d"
@@ -468,18 +480,6 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
-bell@^10.0.0:
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/bell/-/bell-10.0.0.tgz#1178747b0d3fd0077e73becfe666368e9afe57d0"
-  integrity sha512-Ed3Uty1RaEuh7vEllhGkXL5g74lpsIbt8J6kOdpO0gC92YkzwjqtUCBbfu6DJLUOiHD4LRgpfzX4K29seXmdVw==
-  dependencies:
-    boom "7.x.x"
-    bounce "1.x.x"
-    cryptiles "4.x.x"
-    hoek "6.x.x"
-    joi "14.x.x"
-    wreck "14.x.x"
-
 bignumber.js@7.2.1:
   version "7.2.1"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-7.2.1.tgz#80c048759d826800807c4bfd521e50edbba57a5f"
@@ -495,25 +495,12 @@ bluebird@^3.5.1:
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.5.tgz#a8d0afd73251effbbd5fe384a77d73003c17a71f"
   integrity sha512-5am6HnnfN+urzt4yfg7IgTbotDjIT/u8AJpEt0sIU9FtXfVeezXAPKswrG+xKUCOYAINpSdgZVDU6QFh+cuH3w==
 
-boom@7.x.x, boom@^7.0.0:
+boom@^7.0.0:
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/boom/-/boom-7.3.0.tgz#733a6d956d33b0b1999da3fe6c12996950d017b9"
   integrity sha512-Swpoyi2t5+GhOEGw8rEsKvTxFLIDiiKoUc2gsoV6Lyr43LHBIzch3k2MvYUs8RTROrIkVJ3Al0TkaOGjnb+B6A==
   dependencies:
     hoek "6.x.x"
-
-bounce@1.x.x:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/bounce/-/bounce-1.2.3.tgz#2b286d36eb21d5f08fe672dd8cd37a109baad121"
-  integrity sha512-3G7B8CyBnip5EahCZJjnvQ1HLyArC6P5e+xcolo13BVI9ogFaDOsNMAE7FIWliHtIkYI8/nTRCvCY9tZa3Mu4g==
-  dependencies:
-    boom "7.x.x"
-    hoek "6.x.x"
-
-bourne@1.x.x:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/bourne/-/bourne-1.1.2.tgz#e290b5bd7166635632eaf8ef12b006b2d4a75b83"
-  integrity sha512-b2dgVkTZhkQirNMohgC00rWfpVqEi9y5tKM1k3JvoNx05ODtfQoPPd4js9CYFQoY0IM8LAmnJulEuWv74zjUOg==
 
 boxen@^1.2.1:
   version "1.3.0"
@@ -796,13 +783,6 @@ cross-spawn@^6.0.0:
     semver "^5.5.0"
     shebang-command "^1.2.0"
     which "^1.2.9"
-
-cryptiles@4.x.x:
-  version "4.1.3"
-  resolved "https://registry.yarnpkg.com/cryptiles/-/cryptiles-4.1.3.tgz#2461d3390ea0b82c643a6ba79f0ed491b0934c25"
-  integrity sha512-gT9nyTMSUC1JnziQpPbxKGBbUg8VL7Zn2NB4E1cJYvuXdElHrwxrV9bmltZGDzet45zSDGyYceueke1TjynGzw==
-  dependencies:
-    boom "7.x.x"
 
 crypto-random-string@^1.0.0:
   version "1.0.0"
@@ -3094,15 +3074,6 @@ wrappy@1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
-
-wreck@14.x.x:
-  version "14.2.0"
-  resolved "https://registry.yarnpkg.com/wreck/-/wreck-14.2.0.tgz#0064a5b930fc675f57830c1fd28342da1a70b0fc"
-  integrity sha512-NFFft3SMgqrJbXEVfYifh+QDWFxni+98/I7ut7rLbz3F0XOypluHsdo3mdEYssGSirMobM3fGlqhyikbWKDn2Q==
-  dependencies:
-    boom "7.x.x"
-    bourne "1.x.x"
-    hoek "6.x.x"
 
 write-file-atomic@^2.0.0:
   version "2.4.3"
