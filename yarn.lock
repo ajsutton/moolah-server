@@ -131,6 +131,24 @@
     json-stringify-safe "5.x.x"
     moment "2.x.x"
 
+"@hapi/good-squeeze@^5.2.1":
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/@hapi/good-squeeze/-/good-squeeze-5.2.1.tgz#a7ed3f344c9602348af8f059beda663610ab8a4c"
+  integrity sha512-ZBiRgEDMtI5XowD0i4jgYD3wntN2JneY5EA1lUbSk9YoVIV9rWc77+6S0oqwfG0nj4xU/FjrXHvAahNEvRc6tg==
+  dependencies:
+    "@hapi/hoek" "8.x.x"
+    fast-safe-stringify "2.x.x"
+
+"@hapi/good@^8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@hapi/good/-/good-8.2.3.tgz#26b9c2c986fc96c1b8260bd8262c34de69cf3f2e"
+  integrity sha512-cdTeXCzbBQr6OnUss6I0n4S+T7J/5BeX8qtV7hrpzy2oL++xw6uoJAwUMfv4zA6aPUee+J9Ui1FUeYxYQc9x4A==
+  dependencies:
+    "@hapi/hoek" "8.x.x"
+    "@hapi/joi" "16.x.x"
+    "@hapi/oppsy" "2.x.x"
+    pumpify "1.x.x"
+
 "@hapi/hapi@^18.4.0":
   version "18.4.0"
   resolved "https://registry.yarnpkg.com/@hapi/hapi/-/hapi-18.4.0.tgz#607c33e31741bacba107011e2e24eaf431d8cc7a"
@@ -216,6 +234,13 @@
   dependencies:
     "@hapi/hoek" "8.x.x"
     "@hapi/vise" "3.x.x"
+
+"@hapi/oppsy@2.x.x":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@hapi/oppsy/-/oppsy-2.1.2.tgz#357a509694e9d26b5d21ca2361a47871101ce4e7"
+  integrity sha512-V/KNuFemyA//sowFFpeMRY4zE6szuy8vh6v2vWDPDhZFowOIwB7kqdFvmnBogk+aHHR+iKgKCU/SuUiv/xZyzg==
+  dependencies:
+    "@hapi/hoek" "8.x.x"
 
 "@hapi/pez@4.x.x":
   version "4.1.1"
@@ -884,7 +909,7 @@ duplexer3@^0.1.4:
   resolved "https://registry.yarnpkg.com/duplexer3/-/duplexer3-0.1.4.tgz#ee01dd1cac0ed3cbc7fdbea37dc0a8f1ce002ce2"
   integrity sha1-7gHdHKwO08vH/b6jfcCo8c4ALOI=
 
-duplexify@^3.5.3:
+duplexify@^3.6.0:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/duplexify/-/duplexify-3.7.1.tgz#2a4df5317f6ccfd91f86d6fd25d8d8a103b88309"
   integrity sha512-07z8uv2wMyS51kKhD1KsdXJg5WQ6t93RneqRxUHnskXVtlYYkLqM0gqStQZ3pj073g687jPCHrqNfCzawLYh5g==
@@ -1009,7 +1034,7 @@ extglob@^2.0.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-fast-safe-stringify@2.0.x:
+fast-safe-stringify@2.x.x:
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.0.7.tgz#124aa885899261f68aedb42a7c080de9da608743"
   integrity sha512-Utm6CdzT+6xsDk2m8S6uL8VHxNwI6Jub+e9NYTcAms28T84pTa25GJQV9j0CY0N1rM8hK4x6grpF2BQf+2qwVA==
@@ -1210,24 +1235,6 @@ good-file@^6.0.1:
   dependencies:
     fs-extra "0.26.7"
 
-good-squeeze@^5.0.2:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/good-squeeze/-/good-squeeze-5.1.0.tgz#265f3e8be6081aa44c55d484d1af375e166752b9"
-  integrity sha1-Jl8+i+YIGqRMVdSE0a83XhZnUrk=
-  dependencies:
-    fast-safe-stringify "2.0.x"
-    hoek "4.2.x"
-
-good@^8.0.0-rc1:
-  version "8.1.2"
-  resolved "https://registry.yarnpkg.com/good/-/good-8.1.2.tgz#de601cf25202a486b9ef5475c218bc178414e8eb"
-  integrity sha512-yQ/OE+b8pY+Uc79zrv7PpzWSORI+scyeItIgkOx6PhYKkdnwhtXPGCOhZVv5rbcuVrLeh73HcjkwcOQbYMTJkw==
-  dependencies:
-    hoek "6.x.x"
-    joi "14.x.x"
-    oppsy "2.x.x"
-    pumpify "1.3.x"
-
 got@^6.7.1:
   version "6.7.1"
   resolved "https://registry.yarnpkg.com/got/-/got-6.7.1.tgz#240cd05785a9a18e561dc1b44b41c763ef1e8db0"
@@ -1334,15 +1341,10 @@ he@1.2.0:
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
 
-hoek@4.2.x, hoek@4.x.x:
+hoek@4.x.x:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-4.2.1.tgz#9634502aa12c445dd5a7c5734b572bb8738aacbb"
   integrity sha512-QLg82fGkfnJ/4iy1xZ81/9SIJiq1NGFUMGs6ParyjBZr6jW2Ufj/snDqTHixNlHdPNwN2RLVD0Pi3igeK9+JfA==
-
-hoek@6.x.x:
-  version "6.1.3"
-  resolved "https://registry.yarnpkg.com/hoek/-/hoek-6.1.3.tgz#73b7d33952e01fe27a38b0457294b79dd8da242c"
-  integrity sha512-YXXAAhmF9zpQbC7LEcREFtXfGq5K1fmd+4PHkBq8NUqmzW3G+Dq10bI/i0KucLRwss3YYFQ0fSfoxBZYiGUqtQ==
 
 iconv-lite@^0.4.4:
   version "0.4.24"
@@ -1642,15 +1644,6 @@ isobject@^3.0.0, isobject@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
-
-joi@14.x.x:
-  version "14.3.1"
-  resolved "https://registry.yarnpkg.com/joi/-/joi-14.3.1.tgz#164a262ec0b855466e0c35eea2a885ae8b6c703c"
-  integrity sha512-LQDdM+pkOrpAn4Lp+neNIFV3axv1Vna3j38bisbQhETPMANYRbFJFUyOZcOClYvM/hppMhGWuKSFEK9vjrB+bQ==
-  dependencies:
-    hoek "6.x.x"
-    isemail "3.x.x"
-    topo "3.x.x"
 
 joi@^12.0.0:
   version "12.0.0"
@@ -2250,13 +2243,6 @@ once@^1.3.0, once@^1.3.1, once@^1.4.0:
   dependencies:
     wrappy "1"
 
-oppsy@2.x.x:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/oppsy/-/oppsy-2.0.1.tgz#91da3b4cc5cc6527dae3f04d67c7db87e4e4448c"
-  integrity sha512-6cIrRlZiQE4q+PadDP08N6RLQgQr2KmAbDvRFET3aL5A4bZnecNmSxa9ENe+TAE29XRX+KgaxaqC+B2+Lc51Yw==
-  dependencies:
-    hoek "6.x.x"
-
 os-homedir@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/os-homedir/-/os-homedir-1.0.2.tgz#ffbc4988336e0e833de0c168c7ef152121aa7fb3"
@@ -2456,12 +2442,12 @@ pump@^3.0.0:
     end-of-stream "^1.1.0"
     once "^1.3.1"
 
-pumpify@1.3.x:
-  version "1.3.6"
-  resolved "https://registry.yarnpkg.com/pumpify/-/pumpify-1.3.6.tgz#00d40e5ded0a3bf1e0788b1c0cf426a42882ab64"
-  integrity sha512-BurGAcvezsINL5US9T9wGHHcLNrG6MCp//ECtxron3vcR+Rfx5Anqq7HbZXNJvFQli8FGVsWCAvywEJFV5Hx/Q==
+pumpify@1.x.x:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/pumpify/-/pumpify-1.5.1.tgz#36513be246ab27570b1a374a5ce278bfd74370ce"
+  integrity sha512-oClZI37HvuUJJxSKKrC17bZ9Cu0ZYhEAGPsPUy9KlMUmv9dKX2o77RUmq7f3XjIxbwyGwYzbzQ1L2Ks8sIradQ==
   dependencies:
-    duplexify "^3.5.3"
+    duplexify "^3.6.0"
     inherits "^2.0.3"
     pump "^2.0.0"
 
@@ -2919,13 +2905,6 @@ topo@2.x.x:
   integrity sha1-zVYVdSU5BXwNwEkaYhw7xvvh0YI=
   dependencies:
     hoek "4.x.x"
-
-topo@3.x.x:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/topo/-/topo-3.0.3.tgz#d5a67fb2e69307ebeeb08402ec2a2a6f5f7ad95c"
-  integrity sha512-IgpPtvD4kjrJ7CRA3ov2FhWQADwv+Tdqbsf1ZnPUSAtCJ9e1Z44MmoSGDXGk4IppoZA7jd/QRkNddlLJWlUZsQ==
-  dependencies:
-    hoek "6.x.x"
 
 touch@^3.1.0:
   version "3.1.0"

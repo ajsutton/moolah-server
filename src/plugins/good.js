@@ -1,4 +1,4 @@
-const Good = require('good');
+const Good = require('@hapi/good');
 
 module.exports = server => {
     const config = server.configue('logging');
@@ -6,7 +6,7 @@ module.exports = server => {
     if (config.console.enabled) {
         reporters.console = [
             {
-                module: 'good-squeeze',
+                module: '@hapi/good-squeeze',
                 name: 'Squeeze',
                 args: [config.console.levels],
             },
@@ -18,11 +18,11 @@ module.exports = server => {
     }
     if (config.file.enabled) {
         reporters.file = [{
-            module: 'good-squeeze',
+            module: '@hapi/good-squeeze',
             name: 'Squeeze',
             args: [config.file.levels],
         }, {
-            module: 'good-squeeze',
+            module: '@hapi/good-squeeze',
             name: 'SafeJson',
         }, {
             module: 'good-file',
