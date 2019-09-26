@@ -1,4 +1,4 @@
-const Boom = require('boom');
+const Boom = require('@hapi/boom');
 
 function makeBoomOutput(boomMethod) {
     return message => JSON.stringify(Boom[boomMethod](message).output.payload);

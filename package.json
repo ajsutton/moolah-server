@@ -29,11 +29,11 @@
   },
   "dependencies": {
     "@hapi/bell": "^11.1.0",
+    "@hapi/boom": "^7.4.10",
     "@hapi/cookie": "^10.1.2",
     "@hapi/good-console": "^8.0.0",
     "@hapi/hapi": "^18.4.0",
     "@hapi/joi": "^16.0.0",
-    "boom": "^7.0.0",
     "configue": "^1.0.0",
     "date-fns": "^2.0.0",
     "get-env": "^0.5.10",

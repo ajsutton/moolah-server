@@ -3,7 +3,7 @@ const types = require('../types');
 const db = require('../../db/database');
 const idGenerator = require('../../utils/idGenerator');
 const session = require('../../auth/session');
-const Boom = require('boom');
+const Boom = require('@hapi/boom');
 
 module.exports = {
     auth: 'session',

@@ -1,6 +1,6 @@
 const types = require('../types');
 const db = require('../../db/database');
-const Boom = require('boom');
+const Boom = require('@hapi/boom');
 const session = require('../../auth/session');
 
 module.exports = {

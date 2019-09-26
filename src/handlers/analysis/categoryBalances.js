@@ -1,7 +1,7 @@
 const db = require('../../db/database');
 const session = require('../../auth/session');
 const transactionSearchOptions = require('../transactionSearchOptions');
-const Boom = require('boom');
+const Boom = require('@hapi/boom');
 const types = require('../types');
 
 module.exports = {
