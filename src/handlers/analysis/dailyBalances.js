@@ -7,7 +7,6 @@ const formatDate = require('date-fns/format');
 const parseISO = require('date-fns/parseISO');
 const forecastScheduledTransactions = require('../../model/transaction/forecastScheduledTransactions');
 const regression = require('regression');
-const Joi = require('joi');
 
 function dateToNumber(date) {
     return differenceInDays(parseISO('1970-01-01'), parseISO(date));
@@ -43,10 +42,10 @@ module.exports = {
         });
     },
     validate: {
-        query: Joi.object({
+        query: {
             after: types.date.default(null),
             forecastUntil: types.date.default(null),
-        }),
+        },
         failAction: types.failAction,
     },
 };
