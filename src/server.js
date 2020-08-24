@@ -13,7 +13,6 @@ exports.create = async function() {
         require('@hapi/cookie'),
         require('@hapi/bell'),
     ]);
-    server.validator(require('joi'));
 
     // Work around for https://github.com/midnightcodr/hapi-mysql2/pull/1 until it gets merged and a new version published
     server.events.on('stop', () => {
