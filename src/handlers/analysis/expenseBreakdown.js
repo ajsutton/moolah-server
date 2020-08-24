@@ -1,7 +1,6 @@
 const types = require('../types');
 const db = require('../../db/database');
 const session = require('../../auth/session');
-const Joi = require('joi');
 
 module.exports = {
     auth: 'session',
@@ -12,10 +11,10 @@ module.exports = {
         });
     },
     validate: {
-        query: Joi.object({
+        query: {
             after: types.date.default(null),
             monthEnd: types.monthEnd.required(),
-        }),
+        },
         failAction: types.failAction,
     },
 };

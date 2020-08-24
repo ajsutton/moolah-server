@@ -27,9 +27,9 @@ module.exports = {
         });
     },
     validate: {
-        params: Joi.object({
+        params: {
             id: types.id.required(),
-        }),
+        },
         payload: Joi.object({
             id: types.id,
             type: types.transactionType.required(),
