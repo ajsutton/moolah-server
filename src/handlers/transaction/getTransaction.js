@@ -2,6 +2,7 @@ const types = require('../types');
 const db = require('../../db/database');
 const Boom = require('@hapi/boom');
 const session = require('../../auth/session');
+const Joi = require('joi');
 
 module.exports = {
     auth: 'session',
@@ -18,9 +19,9 @@ module.exports = {
         });
     },
     validate: {
-        params: {
+        params: Joi.object({
             id: types.id.required(),
-        },
+        }),
         failAction: types.failAction,
     },
 };

@@ -3,6 +3,7 @@ const transactionSearchOptions = require('../transactionSearchOptions');
 const db = require('../../db/database');
 const session = require('../../auth/session');
 const Boom = require('@hapi/boom');
+const Joi = require('joi');
 
 module.exports = {
     auth: 'session',
@@ -39,10 +40,10 @@ module.exports = {
         });
     },
     validate: {
-        query: Object.assign(transactionSearchOptions.queryValidation, {
+        query: Joi.object(Object.assign(transactionSearchOptions.queryValidation, {
             pageSize: types.pageSize,
             offset: types.offset,
-        }),
+        })),
         failAction: types.failAction,
     },
 };

@@ -29,12 +29,12 @@ module.exports = {
         });
     },
     validate: {
-        params: {
+        params: Joi.object({
             id: types.id.required(),
-        },
-        query: {
+        }),
+        query: Joi.object({
             replaceWith: types.id,
-        },
+        }),
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
         }).unknown(true),
