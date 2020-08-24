@@ -14,9 +14,4 @@ module.exports = [
         path: '/api/googleauth',
         config: require('../handlers/auth/googleLogin'),
     },
-    {
-        method: '*',
-        path: '/api/facebookauth',
-        config: require('../handlers/auth/facebookLogin'),
-    },
 ];

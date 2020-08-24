@@ -38,17 +38,6 @@ exports.create = async function() {
         location: authConfig.baseUrl,
         scope: ['profile'],
     });
-    server.auth.strategy('facebook', 'bell', {
-        provider: 'facebook',
-        password: authConfig.secureToken,
-        isSecure: server.configue('https'),
-        clientId: authConfig.facebookClientId,
-        clientSecret: authConfig.facebookClientSecret,
-        location: authConfig.baseUrl,
-        config: {
-            fields: 'id,name,first_name,last_name,picture',
-        },
-    });
 
     await server.register([require('./plugins/router')]);
 

@@ -11,8 +11,6 @@ module.exports = Configue({
             secureToken: uuidv4(),
             googleClientId: 'invalid',
             clientSecret: 'invalid',
-            facebookClientId: 'invalid',
-            facebookClientSecret: 'invalid',
         },
         database: {
             user: 'root',

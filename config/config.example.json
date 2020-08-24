@@ -4,9 +4,7 @@
     "baseUrl": "http://localhost:8080",
     "googleClientId": "clientId",
     "clientSecret": "clientSecret",
-    "secureToken": "very-long-random-token",
-    "facebookClientId": "facebookClientId",
-    "facebookClientSecret": "facebookClientSecret"
+    "secureToken": "very-long-random-token"
   },
   "database": {
     "user": "root",
