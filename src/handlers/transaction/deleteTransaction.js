@@ -20,9 +20,9 @@ module.exports = {
         });
     },
     validate: {
-        params: {
+        params: Joi.object({
             id: types.id.required(),
-        },
+        }),
         headers: Joi.object({
             'Content-Type': types.jsonContentType,
         }).unknown(true),
