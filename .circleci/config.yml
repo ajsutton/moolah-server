@@ -10,7 +10,8 @@ executors:
                 MYSQL_USER: moolah
                 MYSQL_PASSWORD: moolah
         working_directory: ~/project
-
+orbs:
+    slack: circleci/slack@4.0
 jobs:
     build:
         executor: default
@@ -57,6 +58,13 @@ jobs:
             - run:
                   name: Deploy
                   command: ./deploy.sh
+            - slack/notify:
+                event: fail
+                template: basic_fail_1
+                mentions: "@ajsutton"
+            - slack/notify:
+                event: pass
+                template: success_tagged_deploy_1
 workflows:
     build:
         jobs:
