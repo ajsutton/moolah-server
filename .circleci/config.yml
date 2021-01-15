@@ -3,7 +3,7 @@ executors:
     default:
         docker:
             - image: cimg/node:15.5.1
-            - image: circleci/mysql:latest
+            - image: circleci/mariadb:latest
               environment:
                 MYSQL_ROOT_PASSWORD: rootpw
                 MYSQL_DATABASE: moolah
@@ -40,12 +40,9 @@ jobs:
                       sleep 1
                     done
                     echo Failed waiting for MySQL && exit 1
-            # - run: 
-            #       name: Instlal MySQL CLI
-            #       command: sudo apt-get install default-mysql-client
             - run:
                   name: Test
-                  command: yarn test
+                  command: cp config/config.ci.json config/config.json && yarn test
             # - add_ssh_keys:
             #       fingerprints:
             #           - '5b:ea:d0:98:40:17:7b:c8:0a:fa:44:7a:84:a9:85:0d'
