@@ -114,14 +114,14 @@
     "@hapi/boom" "9.x.x"
 
 "@hapi/cookie@^11.0.1":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@hapi/cookie/-/cookie-11.0.1.tgz#ad5eb9dafde0317ab104aa62190d73b0ba5a3be0"
-  integrity sha512-rUW+emK6TgVr0lQF7SOdc2VzPOMPxyci3lRfDsicHUZTAbPDo5hbadAFoavt/YOS2y04FSNPvT4iG6EkyRfrKw==
+  version "11.0.2"
+  resolved "https://registry.yarnpkg.com/@hapi/cookie/-/cookie-11.0.2.tgz#7169c060157a3541146b976e5f0ca9b3f7577d7f"
+  integrity sha512-LRpSuHC53urzml83c5eUHSPPt7YtK1CaaPZU9KmnhZlacVVojrWJzOUIcwOADDvCZjDxowCO3zPMaOqzEm9kgg==
   dependencies:
     "@hapi/boom" "9.x.x"
     "@hapi/bounce" "2.x.x"
     "@hapi/hoek" "9.x.x"
-    "@hapi/joi" "17.x.x"
+    "@hapi/validate" "1.x.x"
 
 "@hapi/cryptiles@5.x.x", "@hapi/cryptiles@^5.1.0":
   version "5.1.0"
