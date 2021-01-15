@@ -1,0 +1,69 @@
+version: 2.1
+executors:
+    default:
+        docker:
+            - image: cimg/node:15.5.1-browsers
+            - image: circleci/mysql:latest
+              environment:
+                MYSQL_ROOT_PASSWORD: rootpw
+                MYSQL_DATABASE: moolah
+                MYSQL_USER: moolah
+                MYSQL_PASSWORD: moolah
+        working_directory: ~/project
+
+jobs:
+    build:
+        executor: default
+        steps:
+            - checkout
+            - restore_cache:
+                  name: Restore Yarn Package Cache
+                  keys:
+                      - yarn-packages-{{ checksum "yarn.lock" }}
+            - run:
+                  name: Install Dependencies
+                  command:
+                      yarn install --frozen-lockfile --cache-folder
+                      ~/.cache/yarn
+            - save_cache:
+                  name: Save Yarn Package Cache
+                  key: yarn-packages-{{ checksum "yarn.lock" }}
+                  paths:
+                      - ~/.cache/yarn
+            - run:
+                  name: Build
+                  command: yarn build
+            - run: 
+                  name: Wait for MySQL to be ready
+                  command: |
+                    for i in `seq 1 10`;
+                    do
+                      nc -z 127.0.0.1 3306 && echo Success && exit 0
+                      echo -n .
+                      sleep 1
+                    done
+                    echo Failed waiting for MySQL && exit 1
+            # - run: 
+            #       name: Instlal MySQL CLI
+            #       command: sudo apt-get install default-mysql-client
+            - run:
+                  name: Test
+                  command: yarn test
+            # - add_ssh_keys:
+            #       fingerprints:
+            #           - '5b:ea:d0:98:40:17:7b:c8:0a:fa:44:7a:84:a9:85:0d'
+            # - run:
+            #       name: Add Known Host
+            #       command:
+            #           mkdir -p ~/.ssh && echo "${REMOTE_HOSTKEY}" >>
+            #           ~/.ssh/known_hosts
+            # - run:
+            #       name: Install rsync
+            #       command: sudo apt-get update && sudo apt-get install rsync
+            # - run:
+            #       name: Deploy
+            #       command: ./deploy.sh
+workflows:
+    build:
+        jobs:
+            - build
