@@ -2,7 +2,7 @@ version: 2.1
 executors:
     default:
         docker:
-            - image: cimg/node:15.5.1-browsers
+            - image: cimg/node:15.5.1
             - image: circleci/mysql:latest
               environment:
                 MYSQL_ROOT_PASSWORD: rootpw
@@ -30,9 +30,6 @@ jobs:
                   key: yarn-packages-{{ checksum "yarn.lock" }}
                   paths:
                       - ~/.cache/yarn
-            - run:
-                  name: Build
-                  command: yarn build
             - run: 
                   name: Wait for MySQL to be ready
                   command: |
