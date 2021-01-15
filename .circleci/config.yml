@@ -11,7 +11,7 @@ executors:
                 MYSQL_PASSWORD: moolah
         working_directory: ~/project
 orbs:
-    slack: circleci/slack@4.0
+    slack: circleci/slack@4.2.0
 jobs:
     build:
         executor: default
@@ -62,9 +62,12 @@ jobs:
                 event: fail
                 template: basic_fail_1
                 mentions: "@ajsutton"
+                tag_pattern: ".*"
             - slack/notify:
+                channel: circleci
                 event: pass
                 template: success_tagged_deploy_1
+                tag_pattern: ".*"
 workflows:
     build:
         jobs:
