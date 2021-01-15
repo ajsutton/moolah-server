@@ -59,6 +59,7 @@ jobs:
                   name: Deploy
                   command: ./deploy.sh
             - slack/notify:
+                channel: circleci
                 event: fail
                 template: basic_fail_1
                 mentions: "@ajsutton"
