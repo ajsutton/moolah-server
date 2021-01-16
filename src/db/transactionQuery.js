@@ -1,7 +1,10 @@
 module.exports = function transactionQuery(fields, userId, opts) {
     let query = `SELECT ${fields} 
-                   FROM transaction t
-                  WHERE t.user_id = ?`;
+                   FROM transaction t`;
+    if (opts.hasEarmark) {
+        query += ' LEFT JOIN account a ON t.account_id = a.id'
+    }
+    query += ` WHERE t.user_id = ?`;
     const args = [userId];
     if (opts.accountId !== undefined) {
         query += ` AND (t.account_id = ? OR t.to_account_id = ?) `;
@@ -32,7 +35,7 @@ module.exports = function transactionQuery(fields, userId, opts) {
         query += ' AND t.account_id IS NOT NULL ';
     }
     if (opts.hasEarmark) {
-        query += ' AND t.earmark IS NOT NULL ';
+        query += ' AND (t.earmark IS NOT NULL OR a.type = "investment") ';
     }
     if (opts.transactionType) {
         query += ' AND t.type = ? ';

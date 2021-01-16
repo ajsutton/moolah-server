@@ -30,8 +30,10 @@ module.exports = class TransactionDao {
 
     dailyProfitAndLoss(userId, afterDate) {
         const args = [userId];
-        let query = ` SELECT date, SUM(IF(account_id IS NOT NULL, amount, 0)) AS profit, SUM(IF(earmark IS NOT NULL, amount, 0)) AS earmarked 
+        let query = ` SELECT date, SUM(IF(account_id IS NOT NULL, amount, 0)) AS profit, 
+                                   SUM(IF(earmark IS NOT NULL OR a.type = 'investment', amount, 0)) AS earmarked 
                         FROM transaction t
+                   LEFT JOIN account a ON t.account_id = a.id
                        WHERE recur_period IS NULL 
                          AND t.user_id = ?
                          AND t.type != 'transfer' `;
