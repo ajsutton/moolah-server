@@ -19,6 +19,11 @@ describe('Account Management', function() {
         await dsl.accounts.verifyAccounts({accounts: ['account1', 'account2']});
     });
 
+    it('should create investment acounts', async function() {
+        await dsl.accounts.createAccount({alias: 'account1', name: 'Account 1', type: 'investment', balance: 0});
+        await dsl.accounts.verifyAccounts({accounts: ['account1']});
+    });
+
     it('should modify an account', async function() {
         await dsl.accounts.createAccount({alias: 'account1', name: 'Account 1', type: 'cc', balance: 0});
         await dsl.accounts.modifyAccount({alias: 'account1', name: 'Modified Account', type: 'bank'});
