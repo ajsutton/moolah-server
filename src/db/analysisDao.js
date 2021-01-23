@@ -29,8 +29,9 @@ module.exports = class TransactionDao {
                         FROM transaction t
                    LEFT JOIN account af ON t.account_id = af.id
                    LEFT JOIN account at ON t.to_account_id = at.id
-                       WHERE t.recur_period IS NULL 
-                         AND t.user_id = ?`;
+                       WHERE t.recur_period IS NULL
+                         AND (t.type IN ('income', 'expense') OR (t.type = 'transfer' AND at.type = 'investment' OR af.type = 'investment'))
+                         AND t.user_id = ? `;
         if (afterDate) {
             query += 'AND date > ? ';
             args.push(afterDate);
@@ -57,7 +58,7 @@ module.exports = class TransactionDao {
             query += ' AND DATE > ? ';
             args.push(afterDate);
         }
-        query += `GROUP BY date `;
+        query += `GROUP BY date ORDER BY date`;
         return this.query(query, ...args);
     }
 
