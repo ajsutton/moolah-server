@@ -10,14 +10,27 @@ module.exports = class TransactionDao {
                              IF(DAYOFMONTH(t.date) > ?, EXTRACT(YEAR_MONTH FROM DATE_ADD(t.date, INTERVAL 1 MONTH)), EXTRACT(YEAR_MONTH FROM t.date)) as month,
                              SUM(IF(t.type = 'income' AND t.account_id IS NOT NULL, amount, 0)) AS income, 
                              SUM(IF(t.type = 'expense' AND t.account_id IS NOT NULL, amount, 0)) AS expense, 
-                             SUM(IF(t.account_id IS NOT NULL, t.amount, 0)) AS profit, 
-                             SUM(IF(t.type = 'income' AND t.earmark IS NOT NULL, amount, 0)) AS earmarkedIncome, 
-                             SUM(IF(t.type = 'expense' AND t.earmark IS NOT NULL, amount, 0)) AS earmarkedExpense, 
-                             SUM(IF(t.earmark IS NOT NULL, t.amount, 0)) AS earmarkedProfit 
+
+
+
+                             SUM(IF(t.account_id IS NOT NULL AND t.type IN ('income', 'expense'), t.amount, 0)) AS profit, 
+
+                            SUM(IF(t.type = 'income' AND t.earmark IS NOT NULL, amount, 0)) +
+                                    SUM(IF(t.type = 'transfer' AND af.type = 'investment' AND amount < 0, amount, 0)) +
+                                    SUM(IF(t.type = 'transfer' AND at.type = 'investment' AND amount > 0, -amount, 0)) AS earmarkedIncome, 
+
+                             SUM(IF(t.type = 'expense' AND t.earmark IS NOT NULL, amount, 0)) +
+                                SUM(IF(t.type = 'transfer' AND at.type = 'investment' AND amount < 0, -amount, 0)) +
+                                SUM(IF(t.type = 'transfer' AND af.type = 'investment' AND amount > 0, amount, 0)) AS earmarkedExpense, 
+
+                             SUM(IF(t.earmark IS NOT NULL AND t.type IN ('income', 'expense'), t.amount, 0)) +
+                                    SUM(IF(t.type = 'transfer' AND af.type = 'investment', amount, 0)) +
+                                    SUM(IF(t.type = 'transfer' AND at.type = 'investment', -amount, 0)) AS earmarkedProfit 
                         FROM transaction t
+                   LEFT JOIN account af ON t.account_id = af.id
+                   LEFT JOIN account at ON t.to_account_id = at.id
                        WHERE t.recur_period IS NULL 
-                         AND t.user_id = ?
-                         AND t.type IN ('income', 'expense')`;
+                         AND t.user_id = ?`;
         if (afterDate) {
             query += 'AND date > ? ';
             args.push(afterDate);
