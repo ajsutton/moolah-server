@@ -28,7 +28,7 @@
     "sinon": "11"
   },
   "dependencies": {
-    "@hapi/bell": "^12.1.0",
+    "@hapi/bell": "^12.2.0",
     "@hapi/boom": "^9.1.0",
     "@hapi/cookie": "^11.0.1",
     "@hapi/good": "^9.0.0",
