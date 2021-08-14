@@ -48,14 +48,7 @@
     "@hapi/joi" "17.x.x"
     "@hapi/wreck" "17.x.x"
 
-"@hapi/boom@9.x.x":
-  version "9.1.2"
-  resolved "https://registry.yarnpkg.com/@hapi/boom/-/boom-9.1.2.tgz#48bd41d67437164a2d636e3b5bc954f8c8dc5e38"
-  integrity sha512-uJEJtiNHzKw80JpngDGBCGAmWjBtzxDCz17A9NO2zCi8LLBlb5Frpq4pXwyN+2JQMod4pKz5BALwyneCgDg89Q==
-  dependencies:
-    "@hapi/hoek" "9.x.x"
-
-"@hapi/boom@^9.1.0":
+"@hapi/boom@9.x.x", "@hapi/boom@^9.1.0":
   version "9.1.3"
   resolved "https://registry.yarnpkg.com/@hapi/boom/-/boom-9.1.3.tgz#22cad56e39b7a4819161a99b1db19eaaa9b6cc6e"
   integrity sha512-RlrGyZ603hE/eRTZtTltocRm50HHmrmL3kGOP0SQ9MasazlW1mt/fkv4C5P/6rnpFXjwld/POFX1C8tMZE3ldg==
@@ -168,9 +161,9 @@
     pumpify "2.x.x"
 
 "@hapi/hapi@^20.0.0":
-  version "20.1.3"
-  resolved "https://registry.yarnpkg.com/@hapi/hapi/-/hapi-20.1.3.tgz#f4d000e429769d61df59c39cc66dfa252192eff6"
-  integrity sha512-ImOkrixD1kPUuvmSklwytPQ0sG8AtqydwU0JzvITLE6Z7wPMVf9i9LIMWywKPxHTNhCZ6W3oKP9yRjqM/IkHMQ==
+  version "20.1.5"
+  resolved "https://registry.yarnpkg.com/@hapi/hapi/-/hapi-20.1.5.tgz#235dbc6bcc72960724696028c5145c0ecfe6962d"
+  integrity sha512-BhJ5XFR9uWPUBj/z5pPqXSk8OnvQQU/EbQjwpmjZy0ymNEiq7kIhXkAmzXcntbBHta9o7zpW8XMeXnfV4wudXw==
   dependencies:
     "@hapi/accept" "^5.0.1"
     "@hapi/ammo" "^5.0.1"
@@ -345,9 +338,9 @@
     "@hapi/hoek" "^8.3.0"
 
 "@hapi/topo@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@hapi/topo/-/topo-5.0.0.tgz#c19af8577fa393a06e9c77b60995af959be721e7"
-  integrity sha512-tFJlT47db0kMqVm3H4nQYgn6Pwg10GTZHb1pwmSiv1K4ks6drQOtfEF5ZnPjkvC+y4/bUPHK+bc87QvLcL+WMw==
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@hapi/topo/-/topo-5.1.0.tgz#dc448e332c6c6e37a4dc02fd84ba8d44b9afb012"
+  integrity sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
@@ -1481,9 +1474,9 @@ micromatch@^4.0.4:
     picomatch "^2.2.3"
 
 mime-db@1.x.x:
-  version "1.47.0"
-  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.47.0.tgz#8cb313e59965d3c05cfbf898915a267af46a335c"
-  integrity sha512-QBmA/G2y+IfeS4oktet3qRZ+P5kPhCKRXxXnQEudYqUaEioAU1/Lq2us3D/t1Jfo4hE9REQPrbB7K5sOczJVIw==
+  version "1.49.0"
+  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.49.0.tgz#f3dfde60c99e9cf3bc9701d687778f537001cbed"
+  integrity sha512-CIc8j9URtOVApSFCQIF+VBkX1RwXp/oMMOrqdyXSBXq5RWNEsRfyj1kiRnQgmNXmHxPoFIxOroKA3zcU9P+nAA==
 
 mimic-response@^1.0.0, mimic-response@^1.0.1:
   version "1.0.1"
