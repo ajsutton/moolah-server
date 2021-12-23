@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@hapi/bell": "^12.1.0",
-    "@hapi/boom": "^9.1.0",
+    "@hapi/boom": "^9.1.4",
     "@hapi/cookie": "^11.0.1",
     "@hapi/good": "^9.0.0",
     "@hapi/good-console": "^9.0.0",
