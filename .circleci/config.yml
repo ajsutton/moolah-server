@@ -3,7 +3,7 @@ executors:
     default:
         docker:
             - image: cimg/node:15.5.1
-            - image: cimg/mariadb:latest
+            - image: cimg/mariadb:10.6.4
               environment:
                 MYSQL_ROOT_PASSWORD: rootpw
                 MYSQL_DATABASE: moolah
