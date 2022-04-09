@@ -3,7 +3,7 @@ executors:
     default:
         docker:
             - image: cimg/node:15.5.1
-            - image: circleci/mariadb:latest
+            - image: cimg/mariadb:latest
               environment:
                 MYSQL_ROOT_PASSWORD: rootpw
                 MYSQL_DATABASE: moolah
@@ -73,3 +73,7 @@ workflows:
     build:
         jobs:
             - build
+                filters:
+                  branches:
+                    only:
+                      - master
