@@ -40,9 +40,9 @@ module.exports = {
             spent: types.money,
             position: types.position,
             date: types.date.default(null),
-            savingsTarget: types.money.allow(null).default(undefined),
-            savingsStartDate: types.date.default(undefined),
-            savingsEndDate: types.date.default(undefined),
+            savingsTarget: types.money.allow(null).default(() => undefined),
+            savingsStartDate: types.date.default(() => undefined),
+            savingsEndDate: types.date.default(() => undefined),
         }),
         headers: Joi.object({
             'Content-Type': types.jsonContentType,

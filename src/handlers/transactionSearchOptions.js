@@ -3,13 +3,13 @@ const session = require('../auth/session');
 
 module.exports = {
     queryValidation: {
-        account: types.id.default(undefined),
-        from: types.date.default(undefined),
-        to: types.date.default(undefined),
-        earmark: types.id.default(undefined),
+        account: types.id.default(() => undefined),
+        from: types.date.default(() => undefined),
+        to: types.date.default(() => undefined),
+        earmark: types.id.default(() => undefined),
         category: types.arrayOf(types.id).default([]),
         scheduled: types.boolean.default(false),
-        transactionType: types.transactionType.default(undefined),
+        transactionType: types.transactionType.default(() => undefined),
     },
     async parseOptions(request, daos) {
         const userId = session.getUserId(request);

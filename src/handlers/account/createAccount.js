@@ -11,6 +11,8 @@ module.exports = {
             try {
                 const account = Object.assign({id: idGenerator()}, request.payload, {hidden: false});
                 const userId = session.getUserId(request);
+                console.log(request.payload);
+                console.log(account.date);
                 await db.withTransaction(request, async daos => {
                     await daos.accounts.create(userId,
                         {
@@ -23,7 +25,7 @@ module.exports = {
                             id: account.id,
                             accountId: account.id,
                             type: 'openingBalance',
-                            date: account.date !== null ? account.date : new Date(),
+                            date: account.date !== undefined && account.date !== null ? account.date : new Date(),
                             amount: account.balance,
                         });
                 });

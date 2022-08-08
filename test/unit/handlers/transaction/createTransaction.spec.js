@@ -117,7 +117,7 @@ describe('Create Transaction Handler', function() {
             assert.deepEqual(JSON.parse(response.payload), {
                 statusCode: 400,
                 error: 'Bad Request',
-                message: `child "${requiredField}" fails because ["${requiredField}" is required]`,
+                message: `"${requiredField}" is required`,
                 validation: {source: 'payload', keys: [requiredField]},
             });
         });
