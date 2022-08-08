@@ -8,7 +8,6 @@ exports.create = async function() {
 
     const authConfig = server.configue('authentication');
     await server.register([
-        require('./plugins/good')(server),
         require('./plugins/database')(server),
         require('@hapi/cookie'),
         require('@hapi/bell'),
