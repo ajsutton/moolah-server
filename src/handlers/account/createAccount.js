@@ -11,8 +11,6 @@ module.exports = {
             try {
                 const account = Object.assign({id: idGenerator()}, request.payload, {hidden: false});
                 const userId = session.getUserId(request);
-                console.log(request.payload);
-                console.log(account.date);
                 await db.withTransaction(request, async daos => {
                     await daos.accounts.create(userId,
                         {

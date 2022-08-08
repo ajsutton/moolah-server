@@ -8,9 +8,17 @@ exports.create = async function() {
 
     const authConfig = server.configue('authentication');
     await server.register([
+        
         require('./plugins/database')(server),
         require('@hapi/cookie'),
         require('@hapi/bell'),
+        {
+            plugin: require('hapi-pino'),
+            options: {
+            // Redact Authorization headers, see https://getpino.io/#/docs/redaction
+            redact: ['req.headers.authorization', 'req.headers.cookie']
+            }
+        }
     ]);
     server.validator(require('joi'));
 
