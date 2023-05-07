@@ -24,6 +24,51 @@ describe('Account Management', function() {
         await dsl.accounts.verifyAccounts({accounts: ['account1']});
     });
 
+    describe('Investment Account Values', function() {
+        it('should list investment values', async function() {
+            await dsl.accounts.createAccount({alias: 'account1', name: 'Account 1', type: 'investment', balance: 100});
+            await dsl.accounts.verifyAccounts({accounts: ['account1']});
+            await dsl.accounts.setValue({account: 'account1', date: '2022-06-30', value: 18000});
+            await dsl.accounts.setValue({account: 'account1', date: '2022-07-30', value: 40000});
+            await dsl.accounts.verifyValues({
+                account: 'account1', 
+                from: '2022-01-01',
+                to: '2022-12-31',
+                expectValues: [
+                    {date: '2022-07-30', value: 40000},
+                    {date: '2022-06-30', value: 18000},
+                ]
+            });
+        });
+
+        it('should include latest value in account listing', async function() {
+            await dsl.accounts.createAccount({alias: 'account1', name: 'Account 1', type: 'investment', balance: 100});
+            await dsl.accounts.verifyAccounts({accounts: ['account1']});
+            await dsl.accounts.setValue({account: 'account1', date: '2022-07-30', value: 40000});
+            await dsl.accounts.setValue({account: 'account1', date: '2022-06-30', value: 18000});
+            await dsl.accounts.verifyAccounts({accounts: ['account1'], latestValues: {'account1': 40000}});
+        });
+
+        it('should remove a value', async function() {
+            await dsl.accounts.createAccount({alias: 'account1', name: 'Account 1', type: 'investment', balance: 100});
+            await dsl.accounts.verifyAccounts({accounts: ['account1']});
+            await dsl.accounts.setValue({account: 'account1', date: '2022-06-30', value: 18000});
+            await dsl.accounts.setValue({account: 'account1', date: '2022-07-30', value: 40000});
+            await dsl.accounts.setValue({account: 'account1', date: '2022-09-30', value: 50000});
+            await dsl.accounts.removeValue({account: 'account1', date: '2022-09-30'});
+            await dsl.accounts.verifyValues({
+                account: 'account1', 
+                from: '2022-01-01',
+                to: '2022-12-31',
+                expectValues: [
+                    {date: '2022-07-30', value: 40000},
+                    {date: '2022-06-30', value: 18000},
+                ]
+            });
+            await dsl.accounts.verifyAccounts({accounts: ['account1'], latestValues: {'account1': 40000}});
+        });
+    });
+
     it('should modify an account', async function() {
         await dsl.accounts.createAccount({alias: 'account1', name: 'Account 1', type: 'cc', balance: 0});
         await dsl.accounts.modifyAccount({alias: 'account1', name: 'Modified Account', type: 'bank'});

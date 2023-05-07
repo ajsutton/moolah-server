@@ -19,4 +19,19 @@ module.exports = [
         path: '/api/accounts/{id}/',
         config: require('../handlers/account/getAccount'),
     },
+    {
+        method: 'PUT',
+        path: '/api/accounts/{id}/values/{date}',
+        config: require('../handlers/account/setValue'),
+    },
+    {
+        method: 'DELETE',
+        path: '/api/accounts/{id}/values/{date}',
+        config: require('../handlers/account/removeValue'),
+    },
+    {
+        method: 'GET',
+        path: '/api/accounts/{id}/values/',
+        config: require('../handlers/account/getValues'),
+    },
 ];

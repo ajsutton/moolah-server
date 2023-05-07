@@ -4,6 +4,7 @@ const CategoryDao = require('./categoryDao');
 const AnalysisDao = require('./analysisDao');
 const EarmarkDao = require('./earmarkDao');
 const BudgetDao = require('./budgetDao');
+const InvestmentValueDao = require('./investmentValueDao');
 
 const typeCastRealNumbers = (field, next) => {
     if (field.type === 'NEWDECIMAL') {
@@ -42,6 +43,7 @@ function makeDaos(connection) {
         analysis: new AnalysisDao(query),
         earmarks: new EarmarkDao(query),
         budget: new BudgetDao(query),
+        investmentValue: new InvestmentValueDao(query),
     };
 }
 

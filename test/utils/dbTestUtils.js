@@ -51,9 +51,13 @@ module.exports = {
             transactions: sinon.stub(),
             store: sinon.stub(),
         };
+        const investmentValueDao = {
+            getLatestValue: sinon.stub(),
+        };
         const daos = {
             accounts: accountDao,
             transactions: transactionDao,
+            investmentValue: investmentValueDao,
         };
         sinon.stub(db, 'withTransaction');
         db.withTransaction.callsFake((request, action) => action(daos));

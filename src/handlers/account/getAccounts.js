@@ -9,7 +9,10 @@ module.exports = {
             return await db.withTransaction(request, async daos => {
                 const accounts = await daos.accounts.accounts(userId);
                 await Promise.all(accounts.map(async account => {
-                    account.balance = await daos.transactions.balance(userId, {accountId: account.id});
+                    const balanceFuture = daos.transactions.balance(userId, {accountId: account.id});
+                    const valueFuture = daos.investmentValue.getLatestValue(userId, account.id);
+                    account.balance = await balanceFuture;
+                    account.value = await valueFuture;
                 }));
 
                 return {accounts: accounts};

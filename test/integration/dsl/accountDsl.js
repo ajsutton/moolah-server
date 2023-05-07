@@ -59,11 +59,18 @@ module.exports = class AccountsDsl {
         const options = Object.assign({
             statusCode: 200,
             accounts: undefined,
+            latestValues: {},
         }, args);
         const response = await this.server.get('/api/accounts/', options.statusCode);
         if (options.accounts !== undefined) {
             const actualAccounts = JSON.parse(response.payload).accounts;
-            const expectedAccounts = options.accounts.map(alias => this.getAccount(alias));
+            const expectedAccounts = options.accounts.map(alias => {
+                const account = Object.assign({}, this.getAccount(alias));
+                if (options.latestValues[alias] !== undefined) {
+                    account.value = options.latestValues[alias];
+                }
+                return account;
+            });
             assert.includeDeepMembers(actualAccounts, expectedAccounts, 'Did not find all expected accounts.');
         }
     }
@@ -95,5 +102,57 @@ module.exports = class AccountsDsl {
         } else {
             throw new Error('Unknown account: ' + alias);
         }
+    }
+
+    async setValue(args) {
+        const options = Object.assign({
+            account: null,
+            statusCode: 201,
+            date: undefined,
+            value: undefined,
+        }, args)
+
+        const account = this.accountsByAlias.get(options.account);
+        await this.server.put('/api/accounts/' + encodeURIComponent(account.id) + '/values/' + encodeURIComponent(options.date), options.value, options.statusCode);
+    }
+
+    async removeValue(args) {
+        const options = Object.assign({
+            account: null,
+            date: null,
+            statusCode: 204,
+        }, args)
+
+        const account = this.accountsByAlias.get(options.account);
+        await this.server.delete('/api/accounts/' + encodeURIComponent(account.id) + '/values/' + encodeURIComponent(options.date), options.statusCode);
+    }
+
+    async verifyValues(args) {
+        const options = Object.assign({
+            account: undefined,
+            from: undefined,
+            to: undefined,
+            offset: undefined,
+            pageSize: undefined,
+            expectValues: [],
+            expectHasMore: false,
+            valueCount: undefined,
+            statusCode: 200,
+        }, args);
+        const account = this.accountsByAlias.get(options.account);
+
+
+        const queryArgs = dslUtils.formatQueryArgs({
+            pageSize: options.pageSize,
+            offset: options.offset,
+            from: options.from,
+            to: options.to,
+        });
+        const response = await this.server.get(`/api/accounts/${encodeURIComponent(account.id)}/values/${queryArgs}`, options.statusCode);
+        const result = JSON.parse(response.payload);
+        assert.deepEqual(result, {
+            values: options.expectValues,
+            hasMore: options.expectHasMore,
+        });
     }
 };
