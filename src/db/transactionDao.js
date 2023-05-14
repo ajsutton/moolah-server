@@ -100,6 +100,21 @@ module.exports = class TransactionDao {
         return results[0].balance || 0;
     }
 
+    async dailyBalanceChange(userId, options) {
+        const args = [];
+        const builder = transactionQuery(selectBalance(options, args) + ", t.date as date", userId, options);
+        args.push(...builder.args);
+        let query = builder.query;
+        if (options.accountId === undefined) {
+            query += 'AND t.type != "transfer" ';
+        }
+        query += 'GROUP BY t.date ';
+        const results = await this.query(query, ...args);
+        return results.map(row => {
+            return {profit: row.balance, date: row.date};
+        });
+    }
+
     async balanceByCategory(userId, options, forTransaction) {
         const args = [];
         const builder = transactionQuery('category_id as categoryId, ' + selectBalance(options, args), userId, options);

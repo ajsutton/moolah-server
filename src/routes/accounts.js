@@ -20,6 +20,11 @@ module.exports = [
         config: require('../handlers/account/getAccount'),
     },
     {
+        method: 'GET',
+        path: '/api/accounts/{id}/balances',
+        config: require('../handlers/account/getAccountBalances'),
+    },
+    {
         method: 'PUT',
         path: '/api/accounts/{id}/values/{date}',
         config: require('../handlers/account/setValue'),
