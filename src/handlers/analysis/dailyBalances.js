@@ -18,13 +18,15 @@ module.exports = {
         const userId = session.getUserId(request);
         return await db.withTransaction(request, async daos => {
             const after = request.query.after ? parseISO(request.query.after) : null;
-            let currentBalance = after === null ? 0 : await daos.transactions.balance(userId, {hasAccount: true}, {date: formatDate(addDays(after, 1), 'yyyy-MM-dd'), id: null});
+            let currentBalance = after === null ? 0 : await daos.transactions.balance(userId, {hasCurrentAccount: true}, {date: formatDate(addDays(after, 1), 'yyyy-MM-dd'), id: null});
+            let currentInvestments = after === null ? 0 : await daos.transactions.balance(userId, {hasInvestmentAccount: true}, {date: formatDate(addDays(after, 1), 'yyyy-MM-dd'), id: null});
             let currentEarmarks = after === null ? 0 : await daos.transactions.balance(userId, {hasEarmark: true}, {date: formatDate(addDays(after, 1), 'yyyy-MM-dd'), id: null});
             const results = await daos.analysis.dailyProfitAndLoss(userId, after ? formatDate(after, 'yyyy-MM-dd') : null);
             const balances = results.map(dailyProfit => {
                 currentBalance += dailyProfit.profit;
                 currentEarmarks += dailyProfit.earmarked;
-                return {date: dailyProfit.date, balance: currentBalance, availableFunds: currentBalance - currentEarmarks};
+                currentInvestments += dailyProfit.investments;
+                return {date: dailyProfit.date, balance: currentBalance, earmarked: currentEarmarks, availableFunds: currentBalance - currentEarmarks, investments: currentInvestments};
             });
             let scheduledBalances = undefined;
             if (request.query.forecastUntil !== null) {

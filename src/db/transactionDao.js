@@ -93,9 +93,7 @@ module.exports = class TransactionDao {
             query += ' AND (t.date < ? OR (t.date = ? AND t.id >= ?)) ';
             args.push(forTransaction.date, forTransaction.date, forTransaction.id);
         }
-        if (options.accountId === undefined) {
-            query += ' AND t.type != "transfer" ';
-        }
+
         const results = await this.query(query, ...args);
         return results[0].balance || 0;
     }

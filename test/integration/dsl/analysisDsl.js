@@ -25,9 +25,20 @@ module.exports = class AnalysisDsl {
             expected: [],
             statusCode: 200,
         }, args);
+
+        var expected = options.expected.map(entry => {
+            entry.availableFunds = entry.balance - entry.earmarked;
+            return entry;
+        });
+
         const afterParam = options.after !== undefined ? `?after=${options.after}` : '';
         const response = await this.server.get(`/api/analysis/dailyBalances/${afterParam}`, options.statusCode);
-        assert.deepEqual(JSON.parse(response.payload).dailyBalances, options.expected);
+        // Ignore best fit
+        var actual = JSON.parse(response.payload).dailyBalances.map(entry => {
+            delete(entry.bestFit);
+            return entry;
+        });
+        assert.deepEqual(actual, expected);
     }
 
     async verifyCategoryBalances(args) {

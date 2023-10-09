@@ -44,10 +44,15 @@ module.exports = class TransactionDao {
 
     dailyProfitAndLoss(userId, afterDate) {
         const args = [userId];
-        let query = ` SELECT date, SUM(IF(account_id IS NOT NULL, amount, 0)) - 
-                                        SUM(IF(t.type = 'transfer' AND (at.type = 'investment' OR af.type = 'investment'), amount, 0)) AS profit, 
-                                   SUM(IF(earmark IS NOT NULL OR af.type = 'investment', amount, 0)) - 
-                                        SUM(IF(at.type = 'investment', amount, 0)) AS earmarked 
+        let query = ` SELECT date,
+                            SUM(IF(account_id IS NOT NULL AND af.type = "investment" AND at.type != "investment", amount, 0)) -
+                                SUM(IF(account_id IS NOT NULL AND af.type != "investment" AND at.type = "investment", amount, 0)) AS investments,
+
+
+                            SUM(IF(account_id IS NOT NULL AND af.type != "investment", amount, 0)) -
+                                SUM(IF(t.type = "transfer" AND account_id IS NOT NULL AND at.type != "investment", amount, 0)) AS profit,
+
+                            SUM(IF(earmark IS NOT NULL, amount, 0)) AS earmarked 
                         FROM transaction t
                    LEFT JOIN account af ON t.account_id = af.id
                    LEFT JOIN account at ON t.to_account_id = at.id

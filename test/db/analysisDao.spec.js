@@ -87,18 +87,18 @@ describe('Analysis DAO', function() {
 
         it('should get daily profit and loss', async function() {
             assert.deepEqual(await analysisDao.dailyProfitAndLoss(userId, '2017-06-01'), [
-                {date: '2017-06-03', profit: -10 + 100 + -50, earmarked: 0},
-                {date: '2017-07-01', profit: 500 + 500 + -250, earmarked: 0},
-                {date: '2017-07-31', profit: -700 + 300, earmarked: 0},
+                {date: '2017-06-03', profit: -10 + 100 + -50, earmarked: 0, investments: 0},
+                {date: '2017-07-01', profit: 500 + 500 + -250, earmarked: 0, investments: 0},
+                {date: '2017-07-31', profit: -700 + 300, earmarked: 0, investments: 0},
             ]);
         });
 
         it('should exclude scheduled transactions from daily profit and loss', async function() {
             await transactionDao.create(userId, makeTransaction({date: '2017-07-01', type: 'income', amount: 500, recurEvery: 1, recurPeriod: 'MONTH'}));
             assert.deepEqual(await analysisDao.dailyProfitAndLoss(userId, '2017-06-01'), [
-                {date: '2017-06-03', profit: -10 + 100 + -50, earmarked: 0},
-                {date: '2017-07-01', profit: 500 + 500 + -250, earmarked: 0},
-                {date: '2017-07-31', profit: -700 + 300, earmarked: 0},
+                {date: '2017-06-03', profit: -10 + 100 + -50, earmarked: 0, investments: 0},
+                {date: '2017-07-01', profit: 500 + 500 + -250, earmarked: 0, investments: 0},
+                {date: '2017-07-31', profit: -700 + 300, earmarked: 0, investments: 0},
             ]);
         });
 
@@ -107,9 +107,9 @@ describe('Analysis DAO', function() {
             await transactionDao.create(userId, makeTransaction({date: '2017-07-31', type: 'income', amount: 100, earmark: 'earmark1'}));
             await transactionDao.create(userId, makeTransaction({date: '2017-07-31', type: 'expense', amount: -50, earmark: 'earmark2'}));
             assert.deepEqual(await analysisDao.dailyProfitAndLoss(userId, '2017-06-01'), [
-                {date: '2017-06-03', profit: -10 + 100 + -50, earmarked: 0},
-                {date: '2017-07-01', profit: 500 + 500 + 500 + -250, earmarked: 500},
-                {date: '2017-07-31', profit: -700 + 300 + 100 + -50, earmarked: 50},
+                {date: '2017-06-03', profit: -10 + 100 + -50, earmarked: 0, investments: 0},
+                {date: '2017-07-01', profit: 500 + 500 + 500 + -250, earmarked: 500, investments: 0},
+                {date: '2017-07-31', profit: -700 + 300 + 100 + -50, earmarked: 50, investments: 0},
             ]);
         });
     });
