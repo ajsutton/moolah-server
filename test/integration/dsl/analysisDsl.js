@@ -28,6 +28,7 @@ module.exports = class AnalysisDsl {
 
         var expected = options.expected.map(entry => {
             entry.availableFunds = entry.balance - entry.earmarked;
+            entry.netWorth = entry.balance + entry.investments;
             return entry;
         });
 

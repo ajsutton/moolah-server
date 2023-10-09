@@ -26,7 +26,14 @@ module.exports = {
                 currentBalance += dailyProfit.profit;
                 currentEarmarks += dailyProfit.earmarked;
                 currentInvestments += dailyProfit.investments;
-                return {date: dailyProfit.date, balance: currentBalance, earmarked: currentEarmarks, availableFunds: currentBalance - currentEarmarks, investments: currentInvestments};
+                return {
+                    date: dailyProfit.date,
+                    balance: currentBalance,
+                    earmarked: currentEarmarks,
+                    availableFunds: currentBalance - currentEarmarks,
+                    investments: currentInvestments,
+                    netWorth: currentBalance + currentInvestments,
+                };
             });
             let scheduledBalances = undefined;
             if (request.query.forecastUntil !== null) {
