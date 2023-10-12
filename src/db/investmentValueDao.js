@@ -38,6 +38,30 @@ module.exports = class InvestmentValueDao {
         return await this.query(query, ...args);
     }
 
+    async getCombinedValues(userId, options = {}) {
+        const opts = Object.assign({from: 0, to: undefined}, options);
+        const args = [opts.from, userId, opts.from];
+        let query = `SELECT 
+                v.date, 
+                SUM(v.value - IFNULL((SELECT v2.value
+                                FROM investment_value v2 
+                                WHERE v2.date < v.date 
+                                AND v2.user_id = v.user_id 
+                                AND v2.account_id = v.account_id 
+                                AND v2.date >= ?
+                            ORDER BY v2.date DESC
+                                LIMIT 1), 0)) as delta
+            FROM investment_value v 
+           WHERE v.user_id = ?
+             AND v.date >= ?`;
+        if (opts.to) {
+            query += ' AND v.date <= ?'
+            args.push(opts.to);
+        }
+        query += ' GROUP BY v.date'
+        return await this.query(query, ...args)
+    }
+
     async removeValue(userId, accountId, date) {
         await this.query('DELETE FROM investment_value WHERE user_id = ? AND account_id = ? AND date = ?', userId, accountId, date);
     }
