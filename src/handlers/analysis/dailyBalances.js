@@ -49,7 +49,8 @@ module.exports = {
             });
 
             let scheduledBalances = undefined;
-            if (request.query.forecastUntil !== null) {
+            console.log("ForecastUntil", request.query.forecastUntil)
+            if (request.query.forecastUntil !== undefined) {
                 const scheduledTransactions = await daos.transactions.transactions(userId, {scheduled: true, pageSize: undefined});
                 scheduledBalances = forecastScheduledTransactions.forecastBalances(scheduledTransactions, currentBalance, currentEarmarks, request.query.forecastUntil);
             }
