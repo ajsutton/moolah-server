@@ -1,10 +1,10 @@
 const types = require('../types');
 const db = require('../../db/database');
 const session = require('../../auth/session');
-const addDays = require('date-fns/addDays');
-const differenceInDays = require('date-fns/differenceInDays');
-const formatDate = require('date-fns/format');
-const parseISO = require('date-fns/parseISO');
+const { addDays } = require('date-fns/addDays');
+const { differenceInDays } = require('date-fns/differenceInDays');
+const formatDate = require('date-fns/format').format;
+const { parseISO } = require('date-fns/parseISO');
 const forecastScheduledTransactions = require('../../model/transaction/forecastScheduledTransactions');
 const regression = require('regression');
 

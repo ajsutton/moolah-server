@@ -1,9 +1,9 @@
-const addDays = require('date-fns/addDays');
-const addWeeks = require('date-fns/addWeeks');
-const addMonths = require('date-fns/addMonths');
-const addYears = require('date-fns/addYears');
-const dateFormat = require('date-fns/format');
-const parseISO = require('date-fns/parseISO');
+const {addDays} = require('date-fns/addDays');
+const {addWeeks} = require('date-fns/addWeeks');
+const {addMonths} = require('date-fns/addMonths');
+const {addYears} = require('date-fns/addYears');
+const dateFormat = require('date-fns/format').format;
+const {parseISO} = require('date-fns/parseISO');
 
 exports.dateStepFunction = period => {
     switch (period) {
@@ -25,5 +25,5 @@ function formatDate(date) {
 }
 
 exports.nextDueDate = (transaction) => {
-    return formatDate(dateStepFunction(transaction.recurPeriod)(transaction.date, transaction.recurEvery));
+    return dateFormat(dateStepFunction(transaction.recurPeriod)(transaction.date, transaction.recurEvery));
 };

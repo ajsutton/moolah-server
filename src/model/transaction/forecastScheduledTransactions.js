@@ -1,8 +1,8 @@
-const parseDate = require('date-fns/parse');
-const isAfter = require('date-fns/isAfter');
-const dateFormat = require('date-fns/format');
+const {parseDate} = require('date-fns/parse');
+const {isAfter} = require('date-fns/isAfter');
+const dateFormat = require('date-fns/format').format;
 const dueDateTools = require('./nextDueDate');
-const parseISO = require('date-fns/parseISO');
+const {parseISO} = require('date-fns/parseISO');
 const transactionComparator = require('./transactionComparator');
 
 function extrapolateScheduledTransaction(transaction, forecastUntil) {
