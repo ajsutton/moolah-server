@@ -283,7 +283,7 @@ function RemoveIndex(table_name, index_name) {
 /**
  * Migration object.
  */
-function Migration(opts) {
+export function Migration(opts) {
     var sql;
 
     // Encodes an object and appends it to the migrations SQL representation.
@@ -879,13 +879,9 @@ function execute_migration(file, callback, down) {
     var variable = parts.join('_');
     var filename = config.migration_path.replace(/[\/\s]+$/,"") + "/" + file;
 
-    fs.readFile(filename, 'utf8', function(err, data) {
-        if (err)
-            exit("Error reading migration " + file);
-        else {
-            eval(data);
-            var migration = eval(variable);
-
+    import(filename)
+        .then(module => {
+            var migration = module.default
             console.log("======================================");
 
             if (!down) {
@@ -909,8 +905,8 @@ function execute_migration(file, callback, down) {
                     exit(error.message);
                 }
             );
-        }
-    });
+        })
+        .catch(err => exit("Error reading migration " + file + ": " + err));
 }
 
 /**

@@ -1,4 +1,6 @@
-var moveAccountBalanceToTransactions = new Migration({
+import { Migration } from "../migrate.js";
+
+export default new Migration({
 	up: function() {
 		this.execute(`
 INSERT INTO transaction (user_id, id, type, date, account_id, amount) 

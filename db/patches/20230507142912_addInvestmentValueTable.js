@@ -1,4 +1,6 @@
-var addInvestmentValueTable = new Migration({
+import { Migration } from "../migrate.js";
+
+export default new Migration({
 	up: function() {
 		this.execute('CREATE TABLE investment_value (' +
 			'user_id VARCHAR(255) NOT NULL,' +

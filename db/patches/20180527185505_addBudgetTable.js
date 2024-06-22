@@ -1,4 +1,6 @@
-var addBudgetTable = new Migration({
+import { Migration } from "../migrate.js";
+
+export default new Migration({
 	up: function() {
 		this.execute('CREATE TABLE budget (' +
 			'user_id VARCHAR(255) NOT NULL,' +

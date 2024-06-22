@@ -1,4 +1,6 @@
-var allowTransactionsWithoutAccounts = new Migration({
+import { Migration } from "../migrate.js";
+
+export default new Migration({
 	up: function() {
 		this.execute(`ALTER TABLE transaction MODIFY COLUMN account_id VARCHAR(255)`)
 	},

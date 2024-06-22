@@ -1,4 +1,6 @@
-var addCategoryToTransaction = new Migration({
+import { Migration } from "../migrate.js";
+
+export default new Migration({
     up: function() {
         this.execute(`
 ALTER TABLE transaction ADD COLUMN category_id VARCHAR(255), 

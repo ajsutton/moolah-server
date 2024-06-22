@@ -1,4 +1,6 @@
-var addUserIdToAccount = new Migration({
+import { Migration } from "../migrate.js";
+
+export default new Migration({
     up: function() {
         this.execute('DROP TABLE IF EXISTS account; ' +
             'CREATE TABLE account (' +

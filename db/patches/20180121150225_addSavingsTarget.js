@@ -1,4 +1,6 @@
-var addSavingsTarget = new Migration({
+import { Migration } from "../migrate.js";
+
+export default new Migration({
 	up: function() {
         this.execute('ALTER TABLE account ' +
 			'ADD COLUMN saving_target INT(16) DEFAULT NULL, ' +
