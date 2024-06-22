@@ -16,9 +16,9 @@
     "db-test-watch": "mocha --watch 'test/db/**/*.spec.js'",
     "integration-test": "mocha 'test/integration/**/*.spec.js'",
     "integration-test-watch": "mocha --watch 'test/integration/**/*.spec.js'",
-    "migrate-db": "cd db && node migrate.cjs migrate",
-    "rollback-db": "cd db && node migrate.cjs rollback",
-    "create-migration": "cd db && node migrate.cjs create"
+    "migrate-db": "cd db && node migrate.js migrate",
+    "rollback-db": "cd db && node migrate.js rollback",
+    "create-migration": "cd db && node migrate.js create"
   },
   "author": "Adrian Sutton <adrian@symphonious.net>",
   "license": "Apache-2.0",

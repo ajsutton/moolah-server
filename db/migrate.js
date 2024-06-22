@@ -748,9 +748,9 @@ Encoders['sqlite3'] = function() {
 }();
 
 // The real "beef" is here, this section handles the command-line usage of the module.
-var sys = require('util'),
-    exec = require('child_process').exec,
-    fs = require('fs'),
+var sys = (await import('util')).default,
+    exec = (await import('child_process')).exec,
+    fs = (await import('fs')).default,
     config = null
 
 var encoder, mysql, client;
@@ -985,13 +985,14 @@ function main() {
         exit(usage);
 }
 
+
 /**
  * Handles connecting to the DB for various dbms
  */
 var Connect = {
-    mysql: function() {
+    mysql: async function() {
         // Create the client
-        client = new require('mysql').createConnection(config.mysql);
+        client = new (await import('mysql')).default.createConnection(config.mysql);
 
         client.query("show tables;", function(err, result, fields) {
             if (err)
@@ -1009,8 +1010,8 @@ var Connect = {
             return main();
         });
     },
-    sqlite3: function() {
-        var sqlite3 = require("sqlite3");
+    sqlite3: async function() {
+        var sqlite3 = (await import("sqlite3")).default;
         if(config.sqlite3.verbose) {
             sqlite3.verbose();
         }
@@ -1039,7 +1040,7 @@ var Connect = {
 // Determine if the user has run the script from the command-line and if so
 // attempt to connect to the database and execute the given command.
 if (process.argv[1].split('/').pop() == "migrate.js") {
-    const configue = require('../src/config');
+    const configue = (await import('../src/config.js')).default;
     configue.resolve();
         config = {
             dbms: 'mysql',
@@ -1051,7 +1052,7 @@ if (process.argv[1].split('/').pop() == "migrate.js") {
         encoder = Encoders[config.dbms];
 
         // Attempt to connect to the DB
-        Connect[config.dbms]();
+        await Connect[config.dbms]();
 }
 
 // "BURNING DOWN THE HOUSE!"
