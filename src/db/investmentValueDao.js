@@ -1,6 +1,6 @@
 
 
-module.exports = class InvestmentValueDao {
+export default class InvestmentValueDao {
     constructor(query) {
         this.query = query;
     }

@@ -1,42 +1,42 @@
-module.exports = [
+export default [
     {
         method: 'GET',
         path: '/api/accounts/',
-        config: require('../handlers/account/getAccounts'),
+        config: import('../handlers/account/getAccounts.js'),
     },
     {
         method: 'POST',
         path: '/api/accounts/',
-        config: require('../handlers/account/createAccount'),
+        config: import('../handlers/account/createAccount.js'),
     },
     {
         method: 'PUT',
         path: '/api/accounts/{id}/',
-        config: require('../handlers/account/putAccount'),
+        config: import('../handlers/account/putAccount.js'),
     },
     {
         method: 'GET',
         path: '/api/accounts/{id}/',
-        config: require('../handlers/account/getAccount'),
+        config: import('../handlers/account/getAccount.js'),
     },
     {
         method: 'GET',
         path: '/api/accounts/{id}/balances',
-        config: require('../handlers/account/getAccountBalances'),
+        config: import('../handlers/account/getAccountBalances.js'),
     },
     {
         method: 'PUT',
         path: '/api/accounts/{id}/values/{date}',
-        config: require('../handlers/account/setValue'),
+        config: import('../handlers/account/setValue.js'),
     },
     {
         method: 'DELETE',
         path: '/api/accounts/{id}/values/{date}',
-        config: require('../handlers/account/removeValue'),
+        config: import('../handlers/account/removeValue.js'),
     },
     {
         method: 'GET',
         path: '/api/accounts/{id}/values/',
-        config: require('../handlers/account/getValues'),
+        config: import('../handlers/account/getValues.js'),
     },
 ];

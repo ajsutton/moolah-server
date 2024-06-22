@@ -1,8 +1,13 @@
-const Boom = require('@hapi/boom');
+import Boom from '@hapi/boom';
 
 function makeBoomOutput(boomMethod) {
     return message => JSON.stringify(Boom[boomMethod](message).output.payload);
 }
 
-exports.badRequest = makeBoomOutput('badRequest');
-exports.notFound = makeBoomOutput('notFound');
+export const badRequest = makeBoomOutput('badRequest');
+export const notFound = makeBoomOutput('notFound');
+
+export default {
+    badRequest,
+    notFound,
+};

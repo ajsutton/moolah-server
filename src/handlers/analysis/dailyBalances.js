@@ -1,18 +1,18 @@
-const types = require('../types');
-const db = require('../../db/database');
-const session = require('../../auth/session');
-const { addDays } = require('date-fns/addDays');
-const { differenceInDays } = require('date-fns/differenceInDays');
-const formatDate = require('date-fns/format').format;
-const { parseISO } = require('date-fns/parseISO');
-const forecastScheduledTransactions = require('../../model/transaction/forecastScheduledTransactions');
-const regression = require('regression');
+import types from '../types.js';
+import db from '../../db/database.js';
+import session from '../../auth/session.js';
+import { addDays } from 'date-fns/addDays';
+import { differenceInDays } from 'date-fns/differenceInDays';
+import {format as formatDate} from 'date-fns/format';
+import { parseISO } from 'date-fns/parseISO';
+import forecastScheduledTransactions from '../../model/transaction/forecastScheduledTransactions.js';
+import regression from 'regression';
 
 function dateToNumber(date) {
     return differenceInDays(parseISO('1970-01-01'), parseISO(date));
 }
 
-module.exports = {
+export default {
     auth: 'session',
     handler: async function(request) {
         const userId = session.getUserId(request);
@@ -43,7 +43,7 @@ module.exports = {
             let currentInvestmentValue = undefined;
             const investmentValues = investmentDeltas.forEach(entry => {
                 currentInvestmentValue = currentInvestmentValue == undefined ? entry.delta : currentInvestmentValue + entry.delta;
-                balance = balances[entry.date] || { date: entry.date }
+                const balance = balances[entry.date] || { date: entry.date }
                 balance.investmentValue = currentInvestmentValue;
                 balances[entry.date] = balance;
             });
@@ -59,7 +59,7 @@ module.exports = {
             const balancesList = Object.values(balances);
             if (investmentDeltas.length > 0) {
                 for (let i = 0; i < balancesList.length; i++) {
-                    entry = balancesList[i];
+                    const entry = balancesList[i];
                     if (i != 0 && !entry.investmentValue) {
                         entry.investmentValue = balancesList[i - 1].investmentValue || balancesList[i - 1].investments || 0;
                     } else if (!entry.investmentValue) {

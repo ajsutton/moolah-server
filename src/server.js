@@ -1,26 +1,33 @@
-const Hapi = require('@hapi/hapi');
-const configue = require('./config');
+import Hapi from '@hapi/hapi';
+import configue from './config.js';
+import securityHeaders from './plugins/securityHeaders.js';
+import database from './plugins/database.js';
+import cookie from '@hapi/cookie';
+import bell from '@hapi/bell';
+import pino from 'hapi-pino';
+import joi from 'joi';
+import router from './plugins/router.js'
 
-exports.create = async function() {
+export const create = async function() {
     const server = new Hapi.Server({port: 3000, host: 'localhost'});
     await server.register(configue.plugin17());
-    await require('./plugins/securityHeaders')(server);
+    await securityHeaders(server);
 
     const authConfig = server.configue('authentication');
     await server.register([
         
-        require('./plugins/database')(server),
-        require('@hapi/cookie'),
-        require('@hapi/bell'),
+        database(server),
+        cookie,
+        bell,
         {
-            plugin: require('hapi-pino'),
+            plugin: pino,
             options: {
             // Redact Authorization headers, see https://getpino.io/#/docs/redaction
             redact: ['req.headers.authorization', 'req.headers.cookie']
             }
         }
     ]);
-    server.validator(require('joi'));
+    server.validator(joi);
 
     // Work around for https://github.com/midnightcodr/hapi-mysql2/pull/1 until it gets merged and a new version published
     server.events.on('stop', () => {
@@ -47,7 +54,7 @@ exports.create = async function() {
         scope: ['profile'],
     });
 
-    await server.register([require('./plugins/router')]);
+    await router(server);
 
     return server;
 };

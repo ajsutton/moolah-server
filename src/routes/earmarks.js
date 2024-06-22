@@ -1,38 +1,38 @@
-module.exports = [
+export default [
     {
         method: 'GET',
         path: '/api/earmarks/',
-        config: require('../handlers/earmark/getEarmarks'),
+        config: import('../handlers/earmark/getEarmarks.js'),
     },
     {
         method: 'POST',
         path: '/api/earmarks/',
-        config: require('../handlers/earmark/createEarmark'),
+        config: import('../handlers/earmark/createEarmark.js'),
     },
     {
         method: 'PUT',
         path: '/api/earmarks/{id}/',
-        config: require('../handlers/earmark/putEarmark'),
+        config: import('../handlers/earmark/putEarmark.js'),
     },
     {
         method: 'GET',
         path: '/api/earmarks/{id}/',
-        config: require('../handlers/earmark/getEarmark'),
+        config: import('../handlers/earmark/getEarmark.js'),
     },
 
     {
         method: 'PUT',
         path: '/api/earmarks/{earmarkId}/budget/{categoryId}/',
-        config: require('../handlers/earmark/budget/setBudget'),
+        config: import('../handlers/earmark/budget/setBudget.js'),
     },
     {
         method: 'GET',
         path: '/api/earmarks/{earmarkId}/budget/{categoryId}/',
-        config: require('../handlers/earmark/budget/getBudget'),
+        config: import('../handlers/earmark/budget/getBudget.js'),
     },
     {
         method: 'GET',
         path: '/api/earmarks/{earmarkId}/budget/',
-        config: require('../handlers/earmark/budget/getBudgets'),
+        config: import('../handlers/earmark/budget/getBudgets.js'),
     }
 ];

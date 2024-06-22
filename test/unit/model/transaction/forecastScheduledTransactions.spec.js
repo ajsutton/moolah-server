@@ -1,5 +1,5 @@
-const assert = require('chai').assert;
-const forecastScheduledTransactions = require('../../../../src/model/transaction/forecastScheduledTransactions');
+import { assert } from 'chai';
+import forecastScheduledTransactions from '../../../../src/model/transaction/forecastScheduledTransactions.js';
 
 describe('Forecast Scheduled Transactions', function() {
     describe('extrapolateScheduledTransactions', function() {

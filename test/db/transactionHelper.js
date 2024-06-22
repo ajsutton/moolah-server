@@ -1,6 +1,6 @@
-const idGenerator = require('../../src/utils/idGenerator');
+import idGenerator from '../../src/utils/idGenerator.js';
 
-const minimalTransaction = {
+export const minimalTransaction = {
     id: 'transaction1',
     type: 'expense',
     date: '2017-06-04',
@@ -8,10 +8,11 @@ const minimalTransaction = {
     amount: 5000,
 };
 
-module.exports = {
-    minimalTransaction,
+export function makeTransaction(args, template = minimalTransaction) {
+    return Object.assign({}, template, {id: idGenerator()}, args);
+};
 
-    makeTransaction(args, template = minimalTransaction) {
-        return Object.assign({}, template, {id: idGenerator()}, args);
-    },
+export default {
+    minimalTransaction,
+    makeTransaction
 };

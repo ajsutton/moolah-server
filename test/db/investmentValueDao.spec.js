@@ -1,7 +1,7 @@
-const dbTestUtils = require('../utils/dbTestUtils');
-const ValueDao = require('../../src/db/investmentValueDao');
-const assert = require('chai').assert;
-const idGenerator = require('../../src/utils/idGenerator');
+import dbTestUtils from '../utils/dbTestUtils.js';
+import ValueDao from '../../src/db/investmentValueDao.js';
+import { assert } from 'chai';
+import idGenerator from '../../src/utils/idGenerator.js';
 
 describe('Investment Value DAO', function() {
     let connection;

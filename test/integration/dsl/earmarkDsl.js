@@ -1,7 +1,7 @@
-const assert = require('chai').assert;
-const dslUtils = require('./dslUtils');
+import { assert } from 'chai';
+import dslUtils from './dslUtils.js';
 
-module.exports = class EarmarksDsl {
+export default class EarmarksDsl {
     constructor(server, earmarksByAlias, transactionsByAlias) {
         this.server = server;
         this.earmarksByAlias = earmarksByAlias;

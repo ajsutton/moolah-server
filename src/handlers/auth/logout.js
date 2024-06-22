@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     auth: {
         strategy: 'session',
         mode: 'try',

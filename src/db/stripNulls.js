@@ -1,4 +1,4 @@
-module.exports = function stripNulls(object) {
+export default function stripNulls(object) {
     if (object === undefined) {
         return object;
     }

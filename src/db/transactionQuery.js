@@ -1,4 +1,4 @@
-module.exports = function transactionQuery(fields, userId, opts) {
+export default function transactionQuery(fields, userId, opts) {
     let query = `SELECT ${fields} 
                    FROM transaction t`;
     if (opts.hasCurrentAccount || opts.hasInvestmentAccount) {

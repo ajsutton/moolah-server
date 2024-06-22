@@ -1,11 +1,11 @@
-const Joi = require('joi');
-const types = require('../types');
-const db = require('../../db/database');
-const idGenerator = require('../../utils/idGenerator');
-const session = require('../../auth/session');
-const validateTransaction = require('./validateTransaction');
+import Joi from 'joi';
+import types from '../types.js';
+import db from '../../db/database.js';
+import idGenerator from '../../utils/idGenerator.js';
+import session from '../../auth/session.js';
+import validateTransaction from './validateTransaction.js';
 
-module.exports = {
+export default {
     auth: 'session',
     handler: async function(request, h) {
         const userId = session.getUserId(request);

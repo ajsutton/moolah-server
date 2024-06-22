@@ -1,7 +1,7 @@
-const dbTestUtils = require('../utils/dbTestUtils');
-const AccountDao = require('../../src/db/accountDao');
-const assert = require('chai').assert;
-const idGenerator = require('../../src/utils/idGenerator');
+import dbTestUtils from '../utils/dbTestUtils.js';
+import AccountDao from '../../src/db/accountDao.js';
+import { assert } from 'chai';
+import idGenerator from '../../src/utils/idGenerator.js';
 
 describe('Account DAO', function() {
     let connection;

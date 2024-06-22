@@ -1,4 +1,4 @@
-const Dsl = require('./dsl');
+import Dsl from './dsl/index.js';
 
 describe('Category Management', function() {
     let dsl;

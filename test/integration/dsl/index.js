@@ -1,12 +1,12 @@
-const serverFactory = require('../../../src/server');
-const AccountsDsl = require('./accountDsl');
-const EarmarksDsl = require('./earmarkDsl');
-const BudgetsDsl = require('./budgetsDsl');
-const TransactionsDsl = require('./transactionDsl');
-const AnalysisDsl = require('./analysisDsl');
-const CategoriesDsl = require('./categoryDsl');
-const idGenerator = require('../../../src/utils/idGenerator');
-const dbTestUtils = require('../../utils/dbTestUtils');
+import { create as serverFactory } from '../../../src/server.js';
+import AccountsDsl from './accountDsl.js';
+import EarmarksDsl from './earmarkDsl.js';
+import BudgetsDsl from './budgetsDsl.js';
+import TransactionsDsl from './transactionDsl.js';
+import AnalysisDsl from './analysisDsl.js';
+import CategoriesDsl from './categoryDsl.js';
+import idGenerator from '../../../src/utils/idGenerator.js';
+import dbTestUtils from '../../utils/dbTestUtils.js';
 
 class Server {
     constructor(hapiServer) {
@@ -106,9 +106,9 @@ class Dsl {
     }
 
     static async create() {
-        const hapiServer = await serverFactory.create();
+        const hapiServer = await serverFactory();
         return new Dsl(new Server(hapiServer));
     }
 }
 
-module.exports = Dsl;
+export default Dsl;

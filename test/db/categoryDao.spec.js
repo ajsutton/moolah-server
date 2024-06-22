@@ -1,8 +1,8 @@
-const db = require('../../src/db/database');
-const dbTestUtils = require('../utils/dbTestUtils');
-const CategoryDao = require('../../src/db/categoryDao');
-const assert = require('chai').assert;
-const idGenerator = require('../../src/utils/idGenerator');
+import db from '../../src/db/database.js';
+import dbTestUtils from '../utils/dbTestUtils.js';
+import CategoryDao from '../../src/db/categoryDao.js';
+import { assert } from 'chai';
+import idGenerator from '../../src/utils/idGenerator.js';
 
 describe('Category Dao', function() {
     let connection;

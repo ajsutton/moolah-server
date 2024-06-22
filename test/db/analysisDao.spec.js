@@ -1,10 +1,10 @@
-const dbTestUtils = require('../utils/dbTestUtils');
-const AnalysisDao = require('../../src/db/analysisDao');
-const CategoryDao = require('../../src/db/categoryDao');
-const TransactionDao = require('../../src/db/transactionDao');
-const AccountsDao = require('../../src/db/accountDao');
-const assert = require('chai').assert;
-const idGenerator = require('../../src/utils/idGenerator');
+import dbTestUtils from '../utils/dbTestUtils.js';
+import AnalysisDao from '../../src/db/analysisDao.js';
+import CategoryDao from '../../src/db/categoryDao.js';
+import TransactionDao from '../../src/db/transactionDao.js';
+import AccountsDao from '../../src/db/accountDao.js';
+import { assert } from 'chai';
+import idGenerator from '../../src/utils/idGenerator.js';
 
 describe('Analysis DAO', function() {
     let connection;

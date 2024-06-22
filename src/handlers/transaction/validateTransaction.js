@@ -1,4 +1,4 @@
-const Boom = require('@hapi/boom');
+import Boom from '@hapi/boom';
 
 async function isInvalidToAccountId(transactionData, daos, userId) {
     const toAccount = await daos.accounts.account(userId, transactionData.toAccountId);
@@ -9,7 +9,7 @@ async function isInvalidEarmarkId(daos, userId, earmarkId) {
     return (await daos.earmarks.earmark(userId, earmarkId)) === undefined;
 }
 
-module.exports = async function validateTransaction(transaction, daos, userId) {
+export default async function validateTransaction(transaction, daos, userId) {
     const hasAccount = transaction.accountId !== undefined;
     if (hasAccount && (await daos.accounts.account(userId, transaction.accountId)) === undefined) {
         return Boom.badRequest('Invalid accountId');

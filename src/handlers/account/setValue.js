@@ -1,10 +1,10 @@
-const Joi = require('joi');
-const types = require('../types');
-const db = require('../../db/database');
-const Boom = require('@hapi/boom');
-const session = require('../../auth/session');
+import Joi from 'joi';
+import types from '../types.js';
+import db from '../../db/database.js';
+import Boom from '@hapi/boom';
+import session from '../../auth/session.js';
 
-module.exports = {
+export default {
     auth: 'session',
     handler: async function(request, h) {
         const userId = session.getUserId(request);
@@ -13,7 +13,7 @@ module.exports = {
             if (account === undefined) {
                 throw Boom.notFound('Account not found');
             }
-            value = request.payload;
+            const value = request.payload;
             await daos.investmentValue.setValue(userId, account.id, request.params.date, value)
             return h.response().created(`/accounts/${encodeURIComponent(account.id)}/values/${encodeURIComponent(request.params.date)}`);
         });

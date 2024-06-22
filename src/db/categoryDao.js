@@ -10,7 +10,7 @@ function asCategory(object) {
     });
     return category;
 }
-module.exports = class CategoryDao {
+export default class CategoryDao {
     constructor(query) {
         this.query = query;
     }

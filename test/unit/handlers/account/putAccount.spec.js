@@ -1,8 +1,8 @@
-const sinon = require('sinon');
-const assert = require('chai').assert;
-const serverFactory = require('../../../../src/server');
-const idGenerator = require('../../../../src/utils/idGenerator');
-const dbTestUtils = require('../../../utils/dbTestUtils');
+import sinon from 'sinon';
+import { assert } from 'chai';
+import {create as serverFactory} from '../../../../src/server.js';
+import idGenerator from '../../../../src/utils/idGenerator.js';
+import dbTestUtils from '../../../utils/dbTestUtils.js';
 
 describe('Put Account Handler', function() {
     let server;
@@ -12,7 +12,7 @@ describe('Put Account Handler', function() {
     beforeEach(async function() {
         userId = idGenerator();
         daos = dbTestUtils.stubDaos();
-        server = await serverFactory.create();
+        server = await serverFactory();
     });
 
     afterEach(function() {

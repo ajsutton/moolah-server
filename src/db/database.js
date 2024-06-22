@@ -1,10 +1,10 @@
-const AccountDao = require('./accountDao');
-const TransactionDao = require('./transactionDao');
-const CategoryDao = require('./categoryDao');
-const AnalysisDao = require('./analysisDao');
-const EarmarkDao = require('./earmarkDao');
-const BudgetDao = require('./budgetDao');
-const InvestmentValueDao = require('./investmentValueDao');
+import AccountDao from './accountDao.js';
+import TransactionDao from './transactionDao.js';
+import CategoryDao from './categoryDao.js';
+import AnalysisDao from './analysisDao.js';
+import EarmarkDao from './earmarkDao.js';
+import BudgetDao from './budgetDao.js';
+import InvestmentValueDao from './investmentValueDao.js';
 
 const typeCastRealNumbers = (field, next) => {
     if (field.type === 'NEWDECIMAL') {
@@ -47,7 +47,7 @@ function makeDaos(connection) {
     };
 }
 
-module.exports = {
+export default {
     async withTransaction(request, action) {
         const connection = await request.server.mysql.pool.getConnection();
         try {

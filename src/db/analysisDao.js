@@ -1,4 +1,4 @@
-module.exports = class TransactionDao {
+export default class TransactionDao {
     constructor(query) {
         this.query = query;
     }

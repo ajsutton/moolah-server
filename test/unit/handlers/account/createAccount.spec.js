@@ -1,8 +1,8 @@
-const serverFactory = require('../../../../src/server');
-const assert = require('chai').assert;
-const sinon = require('sinon');
-const idGenerator = require('../../../../src/utils/idGenerator');
-const dbTestUtils = require('../../../utils/dbTestUtils');
+import {create as serverFactory} from '../../../../src/server.js';
+import { assert } from 'chai';
+import sinon from 'sinon';
+import idGenerator from '../../../../src/utils/idGenerator.js';
+import dbTestUtils from '../../../utils/dbTestUtils.js';
 
 describe('Create Account Handler', function() {
     const options = {
@@ -20,7 +20,7 @@ describe('Create Account Handler', function() {
         daos = dbTestUtils.stubDaos();
         accountDao = daos.accounts;
         transactionDao = daos.transactions;
-        server = await serverFactory.create();
+        server = await serverFactory();
     });
 
     afterEach(function() {

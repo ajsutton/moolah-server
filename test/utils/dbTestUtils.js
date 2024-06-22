@@ -1,7 +1,7 @@
-const MySQL = require('mysql');
-const sinon = require('sinon');
-const db = require('../../src/db/database');
-const configue = require('../../src/config');
+import MySQL from 'mysql';
+import sinon from 'sinon';
+import db from '../../src/db/database.js';
+import configue from '../../src/config.js';
 
 const resolveOrReject = (resolve, reject) => (err, value) => {
     if (err) {
@@ -17,7 +17,7 @@ function doQuery(connection, sql, ...args) {
     });
 }
 
-module.exports = {
+export default {
     async deleteData(userId, conn) {
         const connection = conn === undefined ? await this.createConnection() : conn;
         await doQuery(connection, 'DELETE FROM account WHERE user_id = ?', userId);

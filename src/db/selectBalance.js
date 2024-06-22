@@ -1,4 +1,4 @@
-module.exports = function selectBalance(options, args) {
+export default function selectBalance(options, args) {
     let selectBalance;
     if (options.hasCurrentAccount) {
         selectBalance = `SUM(IF(af.type != "investment", amount, 0)) -

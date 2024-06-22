@@ -1,24 +1,26 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
-exports.id = Joi.string().max(100);
-exports.name = Joi.string().max(255);
-exports.accountType = Joi.any().valid('bank', 'cc', 'asset', 'investment');
-exports.money = Joi.number().integer();
-exports.position = Joi.number().integer();
-exports.date = Joi.date().iso().raw();
-exports.transactionType = Joi.string().max(20);
-exports.payee = Joi.string().max(1024).allow('');
-exports.notes = Joi.string().max(10000).allow('');
-exports.pageSize = Joi.number().integer().positive();
-exports.offset = Joi.number().integer().min(0);
-exports.jsonContentType = Joi.any().valid('application/json');
-exports.boolean = Joi.boolean();
-exports.recurEvery = Joi.number().integer().min(1);
-exports.recurPeriod = Joi.any().valid('ONCE', 'DAY', 'WEEK', 'MONTH', 'YEAR');
-exports.monthEnd = Joi.number().integer().min(1).max(31);
+export default {
+    id: Joi.string().max(100),
+    name: Joi.string().max(255),
+    accountType: Joi.any().valid('bank', 'cc', 'asset', 'investment'),
+    money: Joi.number().integer(),
+    position: Joi.number().integer(),
+    date: Joi.date().iso().raw(),
+    transactionType: Joi.string().max(20),
+    payee: Joi.string().max(1024).allow(''),
+    notes: Joi.string().max(10000).allow(''),
+    pageSize: Joi.number().integer().positive(),
+    offset: Joi.number().integer().min(0),
+    jsonContentType: Joi.any().valid('application/json'),
+    boolean: Joi.boolean(),
+    recurEvery: Joi.number().integer().min(1),
+    recurPeriod: Joi.any().valid('ONCE', 'DAY', 'WEEK', 'MONTH', 'YEAR'),
+    monthEnd: Joi.number().integer().min(1).max(31),
 
-exports.arrayOf = (itemType) => Joi.array().items(itemType).single();
+    arrayOf: (itemType) => Joi.array().items(itemType).single(),
 
-exports.failAction = (request, h, err) => {
-    throw err;
-};
+    failAction: (request, h, err) => {
+        throw err;
+    },
+}

@@ -1,12 +1,12 @@
-function override(object, overrides) {
+export function override(object, overrides) {
     return withoutValues(Object.assign({}, object, withoutUndefined(overrides)), null);
 }
 
-function withoutUndefined(object) {
+export function withoutUndefined(object) {
     return withoutValues(object, undefined);
 }
 
-function withoutValues(object, disallowedValue) {
+export function withoutValues(object, disallowedValue) {
     const result = {};
     Object.entries(object)
         .filter(([key, value]) => value !== disallowedValue)
@@ -14,7 +14,7 @@ function withoutValues(object, disallowedValue) {
     return result;
 }
 
-function lookupId(alias, aliasToObjectMap) {
+export function lookupId(alias, aliasToObjectMap) {
     if (alias === undefined || alias === null) {
         return alias;
     } else if (alias.startsWith('<') && alias.endsWith('>')) {
@@ -24,7 +24,7 @@ function lookupId(alias, aliasToObjectMap) {
     }
 }
 
-function formatQueryArgs(args) {
+export function formatQueryArgs(args) {
     const query = Object.entries(args)
         .filter(([key, value]) => value !== undefined)
         .map(formatQueryArg)
@@ -32,14 +32,14 @@ function formatQueryArgs(args) {
     return query !== '' ? '?' + query : '';
 }
 
-function formatQueryArg([key, value]) {
+export function formatQueryArg([key, value]) {
     if (value instanceof Array) {
         return value.map(singleValue => encodeURIComponent(key) + '=' + encodeURIComponent(singleValue)).join('&');
     }
     return encodeURIComponent(key) + '=' + encodeURIComponent(value);
 }
 
-module.exports = {
+export default {
     withoutUndefined,
     override,
     lookupId,

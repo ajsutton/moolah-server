@@ -1,6 +1,6 @@
-const server = require('./src/server');
+import {create} from './src/server.js';
 
-server.create()
+create()
     .then(server => {
         server.start(err => {
             if (err) throw err;

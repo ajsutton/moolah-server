@@ -1,4 +1,4 @@
-const stripNulls = require('./stripNulls');
+import stripNulls from './stripNulls.js';
 
 const makeAccount = data => {
     if (data === undefined) {
@@ -11,7 +11,7 @@ const makeAccount = data => {
 
 const DEFAULT_POSITION = 0;
 
-module.exports = class AccountsDao {
+export default class AccountsDao {
     constructor(query) {
         this.query = query;
     }

@@ -1,5 +1,5 @@
-const Boom = require('@hapi/boom');
-module.exports = {
+import Boom from '@hapi/boom';
+export default {
     auth: {
         strategy: 'google',
         mode: 'try',

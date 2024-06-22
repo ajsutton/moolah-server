@@ -1,7 +1,12 @@
-const Configue = require('configue');
-const { v4: uuidv4 } = require('uuid');
+import Configue from 'configue';
+import { v4 as uuidv4 } from 'uuid';
+import path from 'path';
+import url from 'url';
 
-module.exports = Configue({
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default Configue({
     files: [
         {file: __dirname + '/../config/config.json'},
     ],

@@ -1,11 +1,11 @@
-const {addDays} = require('date-fns/addDays');
-const {addWeeks} = require('date-fns/addWeeks');
-const {addMonths} = require('date-fns/addMonths');
-const {addYears} = require('date-fns/addYears');
-const dateFormat = require('date-fns/format').format;
-const {parseISO} = require('date-fns/parseISO');
+import {addDays} from 'date-fns/addDays';
+import {addWeeks} from 'date-fns/addWeeks';
+import {addMonths} from 'date-fns/addMonths';
+import {addYears} from 'date-fns/addYears';
+import {format as dateFormat} from 'date-fns/format';
+import {parseISO} from 'date-fns/parseISO';
 
-exports.dateStepFunction = period => {
+export const dateStepFunction = period => {
     switch (period) {
         case 'DAY':
             return addDays;
@@ -24,6 +24,6 @@ function formatDate(date) {
     return dateFormat(parseISO(date), 'yyyy-MM-dd');
 }
 
-exports.nextDueDate = (transaction) => {
+export const nextDueDate = (transaction) => {
     return dateFormat(dateStepFunction(transaction.recurPeriod)(transaction.date, transaction.recurEvery));
 };

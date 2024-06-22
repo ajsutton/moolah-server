@@ -1,27 +1,27 @@
-module.exports = [
+export default [
     {
         method: 'POST',
         path: '/api/transactions/',
-        config: require('../handlers/transaction/createTransaction'),
+        config: import('../handlers/transaction/createTransaction.js'),
     },
     {
         method: 'GET',
         path: '/api/transactions/',
-        config: require('../handlers/transaction/getTransactions'),
+        config: import('../handlers/transaction/getTransactions.js'),
     },
     {
         method: 'GET',
         path: '/api/transactions/{id}/',
-        config: require('../handlers/transaction/getTransaction'),
+        config: import('../handlers/transaction/getTransaction.js'),
     },
     {
         method: 'PUT',
         path: '/api/transactions/{id}/',
-        config: require('../handlers/transaction/putTransaction'),
+        config: import('../handlers/transaction/putTransaction.js'),
     },
     {
         method: 'DELETE',
         path: '/api/transactions/{id}/',
-        config: require('../handlers/transaction/deleteTransaction'),
+        config: import('../handlers/transaction/deleteTransaction.js'),
     },
 ];

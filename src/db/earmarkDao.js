@@ -1,7 +1,7 @@
-const stripNulls = require('./stripNulls');
-const DEFAULT_POSITION = 0;
-const transactionQuery = require('./transactionQuery');
+import stripNulls from './stripNulls.js';
+import transactionQuery from './transactionQuery.js';
 
+const DEFAULT_POSITION = 0;
 const makeEarmark = data => {
     if (data === undefined) {
         return undefined;
@@ -11,7 +11,7 @@ const makeEarmark = data => {
     return earmark;
 };
 
-module.exports = class EarmarksDao {
+export default class EarmarksDao {
     constructor(query) {
         this.query = query;
     }

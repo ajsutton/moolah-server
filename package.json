@@ -2,7 +2,8 @@
   "name": "moolah-server",
   "version": "1.0.0",
   "description": "Back-end server for Moolah money tracker.",
-  "main": "index.js",
+  "type": "module",
+  "exports": "./index.js",
   "repository": "git@github.com:ajsutton/moolah-server.git",
   "scripts": {
     "dev": "nodemon index.js --exec node",
@@ -15,9 +16,9 @@
     "db-test-watch": "mocha --watch 'test/db/**/*.spec.js'",
     "integration-test": "mocha 'test/integration/**/*.spec.js'",
     "integration-test-watch": "mocha --watch 'test/integration/**/*.spec.js'",
-    "migrate-db": "cd db && node migrate.js migrate",
-    "rollback-db": "cd db && node migrate.js rollback",
-    "create-migration": "cd db && node migrate.js create"
+    "migrate-db": "cd db && node migrate.cjs migrate",
+    "rollback-db": "cd db && node migrate.cjs rollback",
+    "create-migration": "cd db && node migrate.cjs create"
   },
   "author": "Adrian Sutton <adrian@symphonious.net>",
   "license": "Apache-2.0",
@@ -38,7 +39,6 @@
     "hapi-async-handler": "^1.0.3",
     "hapi-mysql2": "^2.0.0",
     "hapi-pino": "^12.1.0",
-    "hapi-router": "^5.0.0",
     "joi": "^17.6.0",
     "mysql": "^2.17.1",
     "regression": "^2.0.0",

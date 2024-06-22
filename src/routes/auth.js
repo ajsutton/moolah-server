@@ -1,17 +1,17 @@
-module.exports = [
+export default [
     {
         method: 'GET',
         path: '/api/auth/',
-        config: require('../handlers/auth/loginState'),
+        config: import('../handlers/auth/loginState.js'),
     },
     {
         method: 'DELETE',
         path: '/api/auth/',
-        config: require('../handlers/auth/logout'),
+        config: import('../handlers/auth/logout.js'),
     },
     {
         method: '*',
         path: '/api/googleauth',
-        config: require('../handlers/auth/googleLogin'),
+        config: import('../handlers/auth/googleLogin.js'),
     },
 ];

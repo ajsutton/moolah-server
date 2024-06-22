@@ -1,22 +1,22 @@
-module.exports = [
+export default [
     {
         method: 'GET',
         path: '/api/analysis/incomeAndExpense/',
-        config: require('../handlers/analysis/incomeAndExpense'),
+        config: import('../handlers/analysis/incomeAndExpense.js'),
     },
     {
         method: 'GET',
         path: '/api/analysis/dailyBalances/',
-        config: require('../handlers/analysis/dailyBalances'),
+        config: import('../handlers/analysis/dailyBalances.js'),
     },
     {
         method: 'GET',
         path: '/api/analysis/expenseBreakdown/',
-        config: require('../handlers/analysis/expenseBreakdown'),
+        config: import('../handlers/analysis/expenseBreakdown.js'),
     },
     {
         method: 'GET',
         path: '/api/analysis/categoryBalances/',
-        config: require('../handlers/analysis/categoryBalances'),
+        config: import('../handlers/analysis/categoryBalances.js'),
     }
 ];

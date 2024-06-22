@@ -1,9 +1,9 @@
-const types = require('../types');
-const db = require('../../db/database');
-const Boom = require('@hapi/boom');
-const session = require('../../auth/session');
+import types from '../types.js';
+import db from '../../db/database.js';
+import Boom from '@hapi/boom';
+import session from '../../auth/session.js';
 
-module.exports = {
+export default {
     auth: 'session',
     handler: async function(request, h) {
         const userId = session.getUserId(request);

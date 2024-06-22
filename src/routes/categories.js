@@ -1,27 +1,27 @@
-module.exports = [
+export default [
     {
         method: 'GET',
         path: '/api/categories/',
-        config: require('../handlers/category/getCategories'),
+        config: import('../handlers/category/getCategories.js'),
     },
     {
         method: 'POST',
         path: '/api/categories/',
-        config: require('../handlers/category/createCategory'),
+        config: import('../handlers/category/createCategory.js'),
     },
     {
         method: 'GET',
         path: '/api/categories/{id}/',
-        config: require('../handlers/category/getCategory'),
+        config: import('../handlers/category/getCategory.js'),
     },
     {
         method: 'PUT',
         path: '/api/categories/{id}/',
-        config: require('../handlers/category/putCategory'),
+        config: import('../handlers/category/putCategory.js'),
     },
     {
         method: 'DELETE',
         path: '/api/categories/{id}/',
-        config: require('../handlers/category/deleteCategory'),
+        config: import('../handlers/category/deleteCategory.js'),
     }
 ];

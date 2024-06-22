@@ -1,11 +1,11 @@
-const types = require('../types');
-const db = require('../../db/database');
-const session = require('../../auth/session');
-const { addDays } = require('date-fns/addDays');
-const formatDate = require('date-fns/format').format;
-const { parseISO } = require('date-fns/parseISO');
+import types from '../types.js';
+import db from '../../db/database.js';
+import session from '../../auth/session.js';
+import { addDays } from 'date-fns/addDays';
+import {format as formatDate} from 'date-fns/format';
+import { parseISO } from 'date-fns/parseISO';
 
-module.exports = {
+export default {
     auth: 'session',
     handler: async function(request) {
         const userId = session.getUserId(request);

@@ -1,4 +1,4 @@
-module.exports = server => {
+export default server => {
     setHeader(server, 'X-Content-Type-Options', 'nosniff');
 };
 

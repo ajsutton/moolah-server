@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     getUser(req) {
         if (!req.auth || !req.auth.isAuthenticated) {
             return null;

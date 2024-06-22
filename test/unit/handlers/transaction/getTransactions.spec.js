@@ -1,9 +1,9 @@
-const sinon = require('sinon');
-const assert = require('chai').assert;
-const BoomOutput = require('../../../utils/boomOutput');
-const serverFactory = require('../../../../src/server');
-const dbTestUtils = require('../../../utils/dbTestUtils');
-const idGenerator = require('../../../../src/utils/idGenerator');
+import sinon from 'sinon';
+import { assert } from 'chai';
+import BoomOutput from '../../../utils/boomOutput.js';
+import {create as serverFactory} from '../../../../src/server.js';
+import dbTestUtils from '../../../utils/dbTestUtils.js';
+import idGenerator from '../../../../src/utils/idGenerator.js';
 
 describe('Get Transactions Handler', function() {
     let server;
@@ -21,7 +21,7 @@ describe('Get Transactions Handler', function() {
     beforeEach(async function() {
         userId = idGenerator();
         daos = dbTestUtils.stubDaos();
-        server = await serverFactory.create();
+        server = await serverFactory();
     });
 
     afterEach(function() {

@@ -1,10 +1,10 @@
-const dbTestUtils = require('../utils/dbTestUtils');
-const TransactionDao = require('../../src/db/transactionDao');
-const CategoryDao = require('../../src/db/categoryDao');
-const AccountsDao = require('../../src/db/accountDao');
-const assert = require('chai').assert;
-const idGenerator = require('../../src/utils/idGenerator');
-const {minimalTransaction, makeTransaction} = require('./transactionHelper');
+import dbTestUtils from '../utils/dbTestUtils.js';
+import TransactionDao from '../../src/db/transactionDao.js';
+import CategoryDao from '../../src/db/categoryDao.js';
+import AccountsDao from '../../src/db/accountDao.js';
+import { assert } from 'chai';
+import idGenerator from '../../src/utils/idGenerator.js';
+import {minimalTransaction, makeTransaction} from './transactionHelper.js';
 
 describe('Transaction DAO', function() {
     let connection;

@@ -1,8 +1,8 @@
-const session = require('../../auth/session');
-const db = require('../../db/database');
-const loadEarmarkBalance = require('./loadEarmarkBalance');
+import session from '../../auth/session.js';
+import db from '../../db/database.js';
+import loadEarmarkBalance from './loadEarmarkBalance.js';
 
-module.exports = {
+export default {
     auth: 'session',
     handler: async function(request) {
         try {

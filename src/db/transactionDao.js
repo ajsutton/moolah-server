@@ -1,6 +1,6 @@
-const stripNulls = require('./stripNulls');
-const transactionQuery = require('./transactionQuery');
-const selectBalance = require('./selectBalance');
+import stripNulls from './stripNulls.js';
+import transactionQuery from './transactionQuery.js';
+import selectBalance from './selectBalance.js';
 
 function asTransaction(object) {
     if (object === undefined) {
@@ -17,7 +17,7 @@ function asTransaction(object) {
     return transaction;
 }
 
-module.exports = class TransactionDao {
+export default class TransactionDao {
     constructor(query) {
         this.query = query;
     }

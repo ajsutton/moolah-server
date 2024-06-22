@@ -1,7 +1,7 @@
-const types = require('./types');
-const session = require('../auth/session');
+import types from './types.js';
+import session from '../auth/session.js';
 
-module.exports = {
+export default {
     queryValidation: {
         account: types.id.default(() => undefined),
         from: types.date.default(() => undefined),
