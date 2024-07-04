@@ -19,7 +19,7 @@ async function getParentIdRejectionReason(userId, daos, categoryId, parentId) {
 
 export default {
     auth: 'session',
-    handler: async function(request, reply) {
+    handler: async function(request) {
         const userId = session.getUserId(request);
         return await db.withTransaction(request, async daos => {
             const currentCategory = await daos.categories.category(userId, request.params.id);

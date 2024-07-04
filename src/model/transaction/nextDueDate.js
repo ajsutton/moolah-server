@@ -1,4 +1,4 @@
-import {addDays, addWeeks, addMonths, addYears, format as dateFormat, parseISO} from 'date-fns';
+import {addDays, addWeeks, addMonths, addYears, format as dateFormat} from 'date-fns';
 
 export const dateStepFunction = period => {
     switch (period) {
@@ -14,10 +14,6 @@ export const dateStepFunction = period => {
             throw new Error(`Unknown period: ${period}`);
     }
 };
-
-function formatDate(date) {
-    return dateFormat(parseISO(date), 'yyyy-MM-dd');
-}
 
 export const nextDueDate = (transaction) => {
     return dateFormat(dateStepFunction(transaction.recurPeriod)(transaction.date, transaction.recurEvery));

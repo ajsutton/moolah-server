@@ -1,9 +1,10 @@
 import session from '../../auth/session.js';
 import db from '../../db/database.js';
+import {Boom} from '@hapi/boom'
 
 export default {
     auth: 'session',
-    handler: async function(request, h) {
+    handler: async function(request) {
         try {
             const userId = session.getUserId(request);
             return await db.withTransaction(request, async daos => {

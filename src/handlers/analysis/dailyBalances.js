@@ -38,7 +38,7 @@ export default {
             const investmentDeltas = await daos.investmentValue.getCombinedValues(userId, after ? {from: formatDate(addDays(after, 1), 'yyyy-MM-dd')} : {});
             
             let currentInvestmentValue = undefined;
-            const investmentValues = investmentDeltas.forEach(entry => {
+            investmentDeltas.forEach(entry => {
                 currentInvestmentValue = currentInvestmentValue == undefined ? entry.delta : currentInvestmentValue + entry.delta;
                 const balance = balances[entry.date] || { date: entry.date }
                 balance.investmentValue = currentInvestmentValue;

@@ -9,7 +9,7 @@ export function withoutUndefined(object) {
 export function withoutValues(object, disallowedValue) {
     const result = {};
     Object.entries(object)
-        .filter(([key, value]) => value !== disallowedValue)
+        .filter(([, value]) => value !== disallowedValue)
         .forEach(([key, value]) => result[key] = value);
     return result;
 }

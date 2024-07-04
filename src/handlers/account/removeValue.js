@@ -6,7 +6,7 @@ import session from '../../auth/session.js';
 
 export default {
     auth: 'session',
-    handler: async function(request, h) {
+    handler: async function(request) {
         const userId = session.getUserId(request);
         return await db.withTransaction(request, async daos => {
             const account = await daos.accounts.account(userId, request.params.id);

@@ -18,12 +18,16 @@
     "integration-test-watch": "mocha --watch 'test/integration/**/*.spec.js'",
     "migrate-db": "cd db && node migrate.js migrate",
     "rollback-db": "cd db && node migrate.js rollback",
-    "create-migration": "cd db && node migrate.js create"
+    "create-migration": "cd db && node migrate.js create",
+    "lint": "eslint src index.js"
   },
   "author": "Adrian Sutton <adrian@symphonious.net>",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@eslint/js": "^9.6.0",
     "chai": "^5.1.1",
+    "eslint": "9.x",
+    "globals": "^15.8.0",
     "mocha": "^10.0.0",
     "nodemon": "^3.0.1",
     "sinon": "18"

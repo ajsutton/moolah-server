@@ -16,7 +16,7 @@ export default class BudgetsDao {
         return results.length > 0 ? results[0].amount : 0;
     }
 
-    async getBudgets(userId, earmarkId, categoryId) {
+    async getBudgets(userId, earmarkId) {
         const results = await this.query('SELECT category_id as categoryId, amount FROM budget WHERE user_id = ? and earmark_id = ? AND amount != 0', userId, earmarkId);
         const budgets = {};
         results.forEach(result => budgets[result.categoryId] = result.amount);

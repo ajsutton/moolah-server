@@ -1,6 +1,7 @@
 import session from '../../auth/session.js';
 import db from '../../db/database.js';
 import loadEarmarkBalance from './loadEarmarkBalance.js';
+import {Boom} from '@hapi/boom';
 
 export default {
     auth: 'session',
