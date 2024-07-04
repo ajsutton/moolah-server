@@ -1,77 +1,98 @@
-import {create as serverFactory} from '../../../../src/server.js';
+import { create as serverFactory } from '../../../../src/server.js';
 import { assert } from 'chai';
 import sinon from 'sinon';
 import idGenerator from '../../../../src/utils/idGenerator.js';
 import dbTestUtils from '../../../utils/dbTestUtils.js';
 
-describe('Create Account Handler', function() {
-    const options = {
-        url: '/api/accounts/',
-        method: 'POST',
-    };
-    let server;
-    let userId;
-    let daos;
-    let accountDao;
-    let transactionDao;
+describe('Create Account Handler', function () {
+  const options = {
+    url: '/api/accounts/',
+    method: 'POST',
+  };
+  let server;
+  let userId;
+  let daos;
+  let accountDao;
+  let transactionDao;
 
-    beforeEach(async function() {
-        userId = idGenerator();
-        daos = dbTestUtils.stubDaos();
-        accountDao = daos.accounts;
-        transactionDao = daos.transactions;
-        server = await serverFactory();
+  beforeEach(async function () {
+    userId = idGenerator();
+    daos = dbTestUtils.stubDaos();
+    accountDao = daos.accounts;
+    transactionDao = daos.transactions;
+    server = await serverFactory();
+  });
+
+  afterEach(function () {
+    dbTestUtils.restoreDaos();
+    return server.stop();
+  });
+
+  it('should create an account with a unique id', async function () {
+    accountDao.create.resolves(null);
+    const response = await makeRequest({
+      name: 'Account 1',
+      type: 'cc',
+      balance: 40000,
     });
+    assert.equal(response.statusCode, 201);
+    const accountId = JSON.parse(response.payload).id;
 
-    afterEach(function() {
-        dbTestUtils.restoreDaos();
-        return server.stop();
+    sinon.assert.calledWithMatch(accountDao.create, userId, {
+      id: accountId,
+      name: 'Account 1',
+      type: 'cc',
     });
-
-    it('should create an account with a unique id', async function() {
-        accountDao.create.resolves(null);
-        const response = await makeRequest({name: 'Account 1', type: 'cc', balance: 40000});
-        assert.equal(response.statusCode, 201);
-        const accountId = JSON.parse(response.payload).id;
-
-        sinon.assert.calledWithMatch(accountDao.create, userId, {id: accountId, name: 'Account 1', type: 'cc'});
-        assert.isUndefined(accountDao.create.firstCall.args[1].balance);
-        sinon.assert.calledWithMatch(transactionDao.create, userId, {
-            id: accountId,
-            accountId: accountId,
-            amount: 40000,
-            type: 'openingBalance',
-        });
+    assert.isUndefined(accountDao.create.firstCall.args[1].balance);
+    sinon.assert.calledWithMatch(transactionDao.create, userId, {
+      id: accountId,
+      accountId: accountId,
+      amount: 40000,
+      type: 'openingBalance',
     });
+  });
 
-    it('should generate a new id when database reports a conflict', async function() {
-        accountDao.create.onCall(0).rejects({code: 'ER_DUP_ENTRY'});
-        accountDao.create.onCall(1).resolves(null);
-        const response = await makeRequest({name: 'Account 1', type: 'cc', balance: 40000});
-        assert.equal(response.statusCode, 201);
-
-        sinon.assert.calledTwice(accountDao.create);
-        sinon.assert.calledOnce(transactionDao.create);
-        assert.notEqual(accountDao.create.firstCall.args[1].id, accountDao.create.secondCall.args[1].id);
+  it('should generate a new id when database reports a conflict', async function () {
+    accountDao.create.onCall(0).rejects({ code: 'ER_DUP_ENTRY' });
+    accountDao.create.onCall(1).resolves(null);
+    const response = await makeRequest({
+      name: 'Account 1',
+      type: 'cc',
+      balance: 40000,
     });
+    assert.equal(response.statusCode, 201);
 
-    it('should specify user id when creating account', async function() {
-        accountDao.create.resolves(null);
-        const response = await makeRequest({name: 'Account 1', type: 'cc', balance: 40000});
-        assert.equal(response.statusCode, 201);
+    sinon.assert.calledTwice(accountDao.create);
+    sinon.assert.calledOnce(transactionDao.create);
+    assert.notEqual(
+      accountDao.create.firstCall.args[1].id,
+      accountDao.create.secondCall.args[1].id
+    );
+  });
 
-        assert.equal(accountDao.create.firstCall.args[0], userId);
+  it('should specify user id when creating account', async function () {
+    accountDao.create.resolves(null);
+    const response = await makeRequest({
+      name: 'Account 1',
+      type: 'cc',
+      balance: 40000,
     });
+    assert.equal(response.statusCode, 201);
 
-    function makeRequest(payload) {
-        return server.inject(Object.assign({}, options, {
-            payload: payload,
-            auth: {
-                strategy: 'cookie',
-                credentials: {
-                    userId,
-                },
-            },
-        }));
-    }
+    assert.equal(accountDao.create.firstCall.args[0], userId);
+  });
+
+  function makeRequest(payload) {
+    return server.inject(
+      Object.assign({}, options, {
+        payload: payload,
+        auth: {
+          strategy: 'cookie',
+          credentials: {
+            userId,
+          },
+        },
+      })
+    );
+  }
 });

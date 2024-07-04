@@ -1,8 +1,8 @@
-import { Migration } from "../migrate.js";
+import { Migration } from '../migrate.js';
 
 export default new Migration({
-    up: function() {
-        this.execute(`
+  up: function () {
+    this.execute(`
 CREATE TABLE category (
   user_id    VARCHAR(255) NOT NULL,
   id         VARCHAR(255) NOT NULL,
@@ -13,8 +13,8 @@ CREATE TABLE category (
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;`);
-    },
-    down: function() {
-        this.execute('DROP TABLE category;');
-    },
+  },
+  down: function () {
+    this.execute('DROP TABLE category;');
+  },
 });

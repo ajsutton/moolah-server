@@ -1,8 +1,8 @@
-import { Migration } from "../migrate.js";
+import { Migration } from '../migrate.js';
 
 export default new Migration({
-	up: function() {
-		this.execute(`
+  up: function () {
+    this.execute(`
 		UPDATE transaction t
 		  JOIN account a ON t.account_id = a.id 
 		   SET t.earmark = account_id, 
@@ -12,7 +12,6 @@ export default new Migration({
 		 DELETE FROM transaction WHERE type = 'openingBalance' AND account_id IS NULL;
 		 
 		 DELETE FROM account WHERE type = 'earmark'`);
-	},
-	down: function() {
-	}
+  },
+  down: function () {},
 });

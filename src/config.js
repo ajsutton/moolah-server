@@ -7,41 +7,38 @@ const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default Configue({
-    files: [
-        {file: __dirname + '/../config/config.json'},
-    ],
-    defaults: {
-        https: true,
-        authentication: {
-            secureToken: uuidv4(),
-            googleClientId: 'invalid',
-            clientSecret: 'invalid',
-        },
-        database: {
-            user: 'root',
-            password: '',
-            database: 'moolah',
-            charset: 'utf8',
-            timezone: 'Z',
-            host: 'localhost',
-            dateStrings: true,
-            connectionLimit: 50,
-        },
-        logging: {
-            console: {
-                enabled: true,
-                levels: {
-                    response: '*',
-                    log: '*',
-                    error: '*',
-                },
-            },
-            file: {
-                enabled: false,
-                path: 'moolah.log',
-                levels: {
-                },
-            },
-        },
+  files: [{ file: __dirname + '/../config/config.json' }],
+  defaults: {
+    https: true,
+    authentication: {
+      secureToken: uuidv4(),
+      googleClientId: 'invalid',
+      clientSecret: 'invalid',
     },
+    database: {
+      user: 'root',
+      password: '',
+      database: 'moolah',
+      charset: 'utf8',
+      timezone: 'Z',
+      host: 'localhost',
+      dateStrings: true,
+      connectionLimit: 50,
+    },
+    logging: {
+      console: {
+        enabled: true,
+        levels: {
+          response: '*',
+          log: '*',
+          error: '*',
+        },
+      },
+      file: {
+        enabled: false,
+        path: 'moolah.log',
+        levels: {},
+      },
+    },
+  },
 });

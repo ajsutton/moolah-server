@@ -1,8 +1,8 @@
-import { Migration } from "../migrate.js";
+import { Migration } from '../migrate.js';
 
 export default new Migration({
-    up: function() {
-        this.execute(`
+  up: function () {
+    this.execute(`
 		CREATE TABLE earmark (
 		  user_id varchar(255) NOT NULL,
 		  id varchar(100) NOT NULL,
@@ -14,8 +14,8 @@ export default new Migration({
 		  PRIMARY KEY (user_id,id)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		INSERT INTO earmark SELECT user_id, id, name, position, saving_target, saving_start_date, saving_end_date FROM account WHERE type = 'earmark'`);
-    },
-    down: function() {
-        this.execute(`DROP TABLE earmark`);
-    },
+  },
+  down: function () {
+    this.execute(`DROP TABLE earmark`);
+  },
 });

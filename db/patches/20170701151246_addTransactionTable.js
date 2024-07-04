@@ -1,8 +1,8 @@
-import { Migration } from "../migrate.js";
+import { Migration } from '../migrate.js';
 
 export default new Migration({
-    up: function() {
-        this.execute(`
+  up: function () {
+    this.execute(`
 CREATE TABLE transaction (
   user_id    VARCHAR(255) NOT NULL,
   id         VARCHAR(255) NOT NULL,
@@ -18,8 +18,8 @@ CREATE TABLE transaction (
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;`);
-    },
-    down: function() {
-        this.execute('DROP TABLE transaction;');
-    },
+  },
+  down: function () {
+    this.execute('DROP TABLE transaction;');
+  },
 });
