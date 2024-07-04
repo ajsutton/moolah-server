@@ -30,6 +30,7 @@ export default {
             type: types.accountType.required(),
             position: types.position,
             balance: types.money,
+            value: types.money,
             hidden: types.boolean,
         }),
         headers: Joi.object({
