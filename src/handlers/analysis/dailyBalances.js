@@ -1,10 +1,7 @@
 import types from '../types.js';
 import db from '../../db/database.js';
 import session from '../../auth/session.js';
-import { addDays } from 'date-fns/addDays';
-import { differenceInDays } from 'date-fns/differenceInDays';
-import {format as formatDate} from 'date-fns/format';
-import { parseISO } from 'date-fns/parseISO';
+import { addDays, differenceInDays, format as formatDate, parseISO } from 'date-fns';
 import forecastScheduledTransactions from '../../model/transaction/forecastScheduledTransactions.js';
 import regression from 'regression';
 

@@ -1,9 +1,4 @@
-import {addDays} from 'date-fns/addDays';
-import {addWeeks} from 'date-fns/addWeeks';
-import {addMonths} from 'date-fns/addMonths';
-import {addYears} from 'date-fns/addYears';
-import {format as dateFormat} from 'date-fns/format';
-import {parseISO} from 'date-fns/parseISO';
+import {addDays, addWeeks, addMonths, addYears, format as dateFormat, parseISO} from 'date-fns';
 
 export const dateStepFunction = period => {
     switch (period) {

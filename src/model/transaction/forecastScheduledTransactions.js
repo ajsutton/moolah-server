@@ -1,7 +1,5 @@
-import {isAfter} from 'date-fns/isAfter';
-import {format as dateFormat} from 'date-fns/format';
+import {isAfter, format as dateFormat, parseISO} from 'date-fns';
 import {dateStepFunction} from './nextDueDate.js';
-import {parseISO} from 'date-fns/parseISO';
 import transactionComparator from './transactionComparator.js';
 
 function extrapolateScheduledTransaction(transaction, forecastUntil) {

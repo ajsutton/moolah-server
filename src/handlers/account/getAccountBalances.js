@@ -1,9 +1,7 @@
 import types from '../types.js';
 import db from '../../db/database.js';
 import session from '../../auth/session.js';
-import { addDays } from 'date-fns/addDays';
-import {format as formatDate} from 'date-fns/format';
-import { parseISO } from 'date-fns/parseISO';
+import { addDays, format as formatDate, parseISO } from 'date-fns';
 
 export default {
     auth: 'session',
