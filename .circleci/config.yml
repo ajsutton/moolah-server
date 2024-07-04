@@ -2,7 +2,7 @@ version: 2.1
 executors:
     default:
         docker:
-            - image: cimg/node:16.16.0
+            - image: cimg/node:18.20.0
             - image: cimg/mariadb:10.6.4
               environment:
                 MYSQL_ROOT_PASSWORD: rootpw
