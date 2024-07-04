@@ -20,7 +20,8 @@
     "rollback-db": "cd db && node migrate.js rollback",
     "create-migration": "cd db && node migrate.js create",
     "lint": "eslint index.js src test",
-    "pretty": "prettier --write '**/*.js'"
+    "pretty": "prettier --write '**/*.js'",
+    "prepare": "husky"
   },
   "author": "Adrian Sutton <adrian@symphonious.net>",
   "license": "Apache-2.0",
@@ -30,6 +31,7 @@
     "eslint": "9.x",
     "eslint-config-prettier": "^9.1.0",
     "globals": "^15.8.0",
+    "husky": "^9.0.11",
     "mocha": "^10.0.0",
     "nodemon": "^3.0.1",
     "prettier": "^3.3.2",

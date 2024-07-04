@@ -1,0 +1,3 @@
+yarn pretty 
+yarn lint
+yarn test
