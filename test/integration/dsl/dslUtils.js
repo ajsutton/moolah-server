@@ -26,7 +26,7 @@ export function lookupId(alias, aliasToObjectMap) {
 
 export function formatQueryArgs(args) {
     const query = Object.entries(args)
-        .filter(([key, value]) => value !== undefined)
+        .filter(([, value]) => value !== undefined)
         .map(formatQueryArg)
         .join('&');
     return query !== '' ? '?' + query : '';

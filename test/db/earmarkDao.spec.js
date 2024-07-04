@@ -4,7 +4,7 @@ import TransactionDao from '../../src/db/transactionDao.js';
 import AccountsDao from '../../src/db/accountDao.js';
 import { assert } from 'chai';
 import idGenerator from '../../src/utils/idGenerator.js';
-import {minimalTransaction, makeTransaction} from './transactionHelper.js';
+import {makeTransaction} from './transactionHelper.js';
 
 describe('Earmark DAO', function() {
     let connection;

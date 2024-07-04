@@ -1,4 +1,3 @@
-import sinon from 'sinon';
 import { assert } from 'chai';
 import BoomOutput from '../../../utils/boomOutput.js';
 import {create as serverFactory} from '../../../../src/server.js';

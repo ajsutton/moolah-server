@@ -1,4 +1,3 @@
-import db from '../../src/db/database.js';
 import dbTestUtils from '../utils/dbTestUtils.js';
 import CategoryDao from '../../src/db/categoryDao.js';
 import { assert } from 'chai';

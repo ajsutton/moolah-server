@@ -19,7 +19,7 @@
     "migrate-db": "cd db && node migrate.js migrate",
     "rollback-db": "cd db && node migrate.js rollback",
     "create-migration": "cd db && node migrate.js create",
-    "lint": "eslint src index.js"
+    "lint": "eslint index.js src test"
   },
   "author": "Adrian Sutton <adrian@symphonious.net>",
   "license": "Apache-2.0",

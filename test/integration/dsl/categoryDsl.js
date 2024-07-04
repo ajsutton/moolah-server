@@ -65,7 +65,7 @@ export default class CategoryDsl {
             parentId: dslUtils.lookupId(options.parent, this.categoriesByAlias),
         });
 
-        const response = await this.server.put(`/api/categories/${encodeURIComponent(modifiedCategory.id)}/`, modifiedCategory, options.statusCode);
+        await this.server.put(`/api/categories/${encodeURIComponent(modifiedCategory.id)}/`, modifiedCategory, options.statusCode);
         if (options.statusCode === 200) {
             this.categoriesByAlias.set(options.alias, modifiedCategory);
         }
