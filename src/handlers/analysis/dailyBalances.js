@@ -83,7 +83,6 @@ export default {
       });
 
       let scheduledBalances = undefined;
-      console.log('ForecastUntil', request.query.forecastUntil);
       if (request.query.forecastUntil !== undefined) {
         const scheduledTransactions = await daos.transactions.transactions(
           userId,

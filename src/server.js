@@ -14,6 +14,7 @@ export const create = async function () {
   await securityHeaders(server);
 
   const authConfig = server.configue('authentication');
+  const logConfig = server.configue('logging');
   await server.register([
     database(server),
     cookie,
@@ -21,6 +22,7 @@ export const create = async function () {
     {
       plugin: pino,
       options: {
+        level: logConfig.console.enabled ? 'info' : 'fatal',
         // Redact Authorization headers, see https://getpino.io/#/docs/redaction
         redact: ['req.headers.authorization', 'req.headers.cookie'],
       },
