@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "nodemon index.js --exec node",
     "start": "node index.js",
-    "test": "yarn run migrate-db && NODE_ENV=dev mocha 'test/**/*.spec.js'",
+    "test": "yarn run migrate-db && NODE_ENV=test mocha 'test/**/*.spec.js'",
     "test-watch": "mocha --watch 'test/**/*.spec.js'",
     "unit-test": "mocha 'test/unit/**/*.spec.js'",
     "unit-test-watch": "mocha --watch 'test/unit/**/*.spec.js'",

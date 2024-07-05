@@ -22,7 +22,7 @@ export const create = async function () {
     {
       plugin: pino,
       options: {
-        enabled: logConfig.console.enabled,
+        enabled: logConfig.console.enabled && process.env.NODE_ENV !== 'test',
         // Redact Authorization headers, see https://getpino.io/#/docs/redaction
         redact: ['req.headers.authorization', 'req.headers.cookie'],
       },
