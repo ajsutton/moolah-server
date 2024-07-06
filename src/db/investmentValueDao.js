@@ -73,7 +73,7 @@ export default class InvestmentValueDao {
       query += ' AND v.date <= ?';
       args.push(opts.to);
     }
-    query += ' GROUP BY v.date';
+    query += ' GROUP BY v.date ORDER BY v.date';
     return await this.query(query, ...args);
   }
 

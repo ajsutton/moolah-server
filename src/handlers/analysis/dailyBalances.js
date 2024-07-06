@@ -63,7 +63,7 @@ export default {
         };
       });
       const balancesByTimestamp = Object.values(balances).map(
-        ({ date, balance }) => [dateToNumber(date), balance]
+        ({ date, availableFunds }) => [dateToNumber(date), availableFunds]
       );
 
       const investmentDeltas = await daos.investmentValue.getCombinedValues(
