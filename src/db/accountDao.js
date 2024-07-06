@@ -21,7 +21,7 @@ export default class AccountsDao {
       '  SELECT id, name, type, position, hidden ' +
         '    FROM account ' +
         '   WHERE user_id = ? ' +
-        'ORDER BY position, name',
+        'ORDER BY type = "investment", position, name',
       userId
     );
     return accounts.map(makeAccount);
