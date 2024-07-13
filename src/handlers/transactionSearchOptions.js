@@ -10,6 +10,7 @@ export default {
     category: types.arrayOf(types.id).default([]),
     scheduled: types.boolean.default(false),
     transactionType: types.transactionType.default(() => undefined),
+    payee: types.payee.default(() => undefined),
   },
   async parseOptions(request, daos) {
     const userId = session.getUserId(request);
@@ -20,6 +21,7 @@ export default {
     const to = request.query.to;
     const categories = request.query.category;
     const transactionType = request.query.transactionType;
+    const payee = request.query.payee;
 
     if (
       accountId !== undefined &&
@@ -55,6 +57,7 @@ export default {
       categories,
       earmarkId,
       transactionType,
+      payee,
     };
   },
 };

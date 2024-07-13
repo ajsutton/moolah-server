@@ -51,6 +51,7 @@ describe('Get Transactions Handler', function () {
         categories: [],
         earmarkId: undefined,
         transactionType: undefined,
+        payee: undefined,
       })
       .resolves([transaction]);
     const response = await makeRequest(accountId);

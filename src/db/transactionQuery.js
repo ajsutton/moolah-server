@@ -47,5 +47,9 @@ export default function transactionQuery(fields, userId, opts) {
     query += ' AND t.type = ? ';
     args.push(opts.transactionType);
   }
+  if (opts.payee) {
+    query += ' AND t.payee LIKE ?';
+    args.push(`%${opts.payee}%`);
+  }
   return { query, args };
 }
