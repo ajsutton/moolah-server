@@ -1,4 +1,4 @@
-import MySQL from 'mysql';
+import MySQL from 'mysql2';
 import sinon from 'sinon';
 import db from '../../src/db/database.js';
 import configue from '../../src/config.js';

@@ -5,6 +5,7 @@ export default server => {
   const options = {
     settings: config,
     decorate: 'mysql',
+    decimalNumbers: true,
   };
   return {
     plugin: hapiMysql2,

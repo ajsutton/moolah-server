@@ -142,7 +142,11 @@ describe('Earmark DAO', function () {
       );
 
       const result = await earmarkDao.balances(userId, '1');
-      assert.deepEqual(result, { balance: 300, saved: 5300, spent: -5000 });
+      assert.deepEqual(result, {
+        balance: '300',
+        saved: '5300',
+        spent: '-5000',
+      });
     });
   });
 });

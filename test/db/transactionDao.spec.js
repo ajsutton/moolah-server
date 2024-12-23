@@ -489,8 +489,8 @@ describe('Transaction DAO', function () {
 
       const balances = await transactionDao.balanceByCategory(userId, {});
       assert.deepEqual(balances, {
-        test1: 3000,
-        test2: 300,
+        test1: '3000',
+        test2: '300',
       });
     });
 
@@ -532,8 +532,8 @@ describe('Transaction DAO', function () {
         accountId: 'earmark',
       });
       assert.deepEqual(balances, {
-        test1: 3000,
-        test3: 400,
+        test1: '3000',
+        test3: '400',
       });
     });
   });

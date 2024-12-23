@@ -1056,7 +1056,9 @@ function main() {
 var Connect = {
   mysql: async function () {
     // Create the client
-    client = new (await import('mysql')).default.createConnection(config.mysql);
+    client = new (await import('mysql2')).default.createConnection(
+      config.mysql
+    );
 
     client.query('show tables;', function (err, result, fields) {
       if (err) return exit(err);
