@@ -5,6 +5,7 @@ export default {
   name: Joi.string().max(255),
   accountType: Joi.any().valid('bank', 'cc', 'asset', 'investment'),
   money: Joi.number().integer(),
+  currency: Joi.string().max(10),
   position: Joi.number().integer(),
   date: Joi.date().iso().raw(),
   transactionType: Joi.string().max(20),

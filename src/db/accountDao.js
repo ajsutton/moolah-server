@@ -10,6 +10,7 @@ const makeAccount = data => {
 };
 
 const DEFAULT_POSITION = 0;
+const DEFAULT_CURRENCY = 'AUD';
 
 export default class AccountsDao {
   constructor(query) {
@@ -18,7 +19,7 @@ export default class AccountsDao {
 
   async accounts(userId) {
     const accounts = await this.query(
-      '  SELECT id, name, type, position, hidden ' +
+      '  SELECT id, name, type, position, hidden, currency, parent_id AS parentId ' +
         '    FROM account ' +
         '   WHERE user_id = ? ' +
         'ORDER BY type = "investment", position, name',
@@ -29,7 +30,7 @@ export default class AccountsDao {
 
   async account(userId, id) {
     const results = await this.query(
-      'SELECT id, name, type, position, hidden ' +
+      'SELECT id, name, type, position, hidden, currency, parent_id AS parentId ' +
         '  FROM account ' +
         ' WHERE user_id = ? ' +
         '   AND id = ?',
@@ -41,22 +42,26 @@ export default class AccountsDao {
 
   create(userId, account) {
     return this.query(
-      'INSERT INTO account (user_id, id, name, type, position) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO account (user_id, id, name, type, currency, parent_id, position) VALUES (?, ?, ?, ?, ?, ?, ?)',
       userId,
       account.id,
       account.name,
       account.type,
+      account.currency || DEFAULT_CURRENCY,
+      account.parentId,
       account.position || DEFAULT_POSITION
     );
   }
 
   store(userId, account) {
     return this.query(
-      'UPDATE account SET name = ?, type = ?, position = ?, hidden = ? WHERE user_id = ? AND id = ?',
+      'UPDATE account SET name = ?, type = ?, position = ?, hidden = ?, currency = ?, parent_id = ? WHERE user_id = ? AND id = ?',
       account.name,
       account.type,
       account.position || DEFAULT_POSITION,
       account.hidden,
+      account.currency || DEFAULT_CURRENCY,
+      account.parentId,
       userId,
       account.id
     );

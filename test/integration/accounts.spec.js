@@ -18,6 +18,7 @@ describe('Account Management', function () {
       name: 'Account 1',
       type: 'cc',
       balance: 0,
+      currency: 'CHF',
     });
     await dsl.accounts.createAccount({
       alias: 'account2',
@@ -147,6 +148,7 @@ describe('Account Management', function () {
       alias: 'account1',
       name: 'Modified Account',
       type: 'bank',
+      currency: 'USD',
     });
     await dsl.accounts.verifyAccounts({ accounts: ['account1'] });
   });
@@ -157,6 +159,7 @@ describe('Account Management', function () {
       name: 'Account 1',
       type: 'cc',
       balance: 0,
+      currency: 'JPY',
     });
     await dsl.accounts.verifyAccount({ alias: 'account1' });
   });
@@ -199,6 +202,64 @@ describe('Account Management', function () {
       position: undefined,
     });
     await dsl.accounts.verifyAccount({ alias: 'account1', position: 0 });
+  });
+
+  it('should create sub-account', async function () {
+    await dsl.accounts.createAccount({
+      alias: 'parent',
+    });
+    await dsl.accounts.createAccount({
+      alias: 'child',
+      parent: 'parent',
+    });
+    await dsl.accounts.verifyAccount({ alias: 'child' });
+  });
+
+  it('should not create sub-account with invalid parent ID', async function () {
+    await dsl.accounts.createAccount({
+      parent: '<foo>',
+      statusCode: 400,
+    });
+  });
+
+  it('should change account to sub-account', async function () {
+    await dsl.accounts.createAccount({
+      alias: 'parent',
+    });
+    await dsl.accounts.createAccount({
+      alias: 'child',
+    });
+    await dsl.accounts.modifyAccount({
+      alias: 'child',
+      parent: 'parent',
+    });
+    await dsl.accounts.verifyAccount({ alias: 'child' });
+  });
+
+  it('should change sub-account to account', async function () {
+    await dsl.accounts.createAccount({
+      alias: 'parent',
+    });
+    await dsl.accounts.createAccount({
+      alias: 'child',
+      parent: 'parent',
+    });
+    await dsl.accounts.modifyAccount({
+      alias: 'child',
+      parent: null,
+    });
+    await dsl.accounts.verifyAccount({ alias: 'child' });
+  });
+
+  it('should reject non-existant parentId', async function () {
+    await dsl.accounts.createAccount({
+      alias: 'account',
+    });
+    await dsl.accounts.modifyAccount({
+      alias: 'account',
+      parent: '<foo>',
+      statusCode: 400,
+    });
   });
 
   describe('Hidden Accounts', function () {

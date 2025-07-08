@@ -3,6 +3,7 @@ import types from '../types.js';
 import db from '../../db/database.js';
 import idGenerator from '../../utils/idGenerator.js';
 import session from '../../auth/session.js';
+import Boom from '@hapi/boom';
 
 export default {
   auth: 'session',
@@ -11,13 +12,24 @@ export default {
       try {
         const account = Object.assign({ id: idGenerator() }, request.payload, {
           hidden: false,
+          currency: 'AUD',
         });
         const userId = session.getUserId(request);
         await db.withTransaction(request, async daos => {
+          if (account.parentId !== undefined && account.parentId !== null) {
+            const parentAccount = await daos.accounts.account(
+              userId,
+              account.parentId
+            );
+            if (parentAccount === undefined) {
+              throw Boom.badRequest('ParentId not found');
+            }
+          }
           await daos.accounts.create(userId, {
             id: account.id,
             name: account.name,
             type: account.type,
+            parentId: account.parentId,
           });
           await daos.transactions.create(userId, {
             id: account.id,
@@ -47,7 +59,9 @@ export default {
       type: types.accountType.required(),
       balance: types.money.required(),
       position: types.position,
+      currency: types.currency,
       date: types.date.default(null),
+      parentId: types.id,
     }),
     headers: Joi.object({
       'Content-Type': types.jsonContentType,

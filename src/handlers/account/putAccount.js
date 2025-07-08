@@ -13,7 +13,20 @@ export default {
       if (account === undefined) {
         throw Boom.notFound('Account not found');
       } else {
-        const modifiedAccount = Object.assign(account, request.payload);
+        const modifiedAccount = Object.assign({}, account, request.payload);
+        if (
+          modifiedAccount.parentId !== undefined &&
+          modifiedAccount.parentId !== null &&
+          modifiedAccount.parentId !== account.parentId
+        ) {
+          const parentAccount = await daos.accounts.account(
+            userId,
+            modifiedAccount.parentId
+          );
+          if (parentAccount === undefined) {
+            return Boom.badRequest('ParentId not found');
+          }
+        }
         modifiedAccount.balance = await daos.transactions.balance(userId, {
           accountId: account.id,
         });
@@ -34,6 +47,8 @@ export default {
       balance: types.money,
       value: types.money,
       hidden: types.boolean,
+      currency: types.currency,
+      parentId: types.id,
     }),
     headers: Joi.object({
       'Content-Type': types.jsonContentType,

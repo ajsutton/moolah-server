@@ -17,6 +17,8 @@ export default class AccountsDsl {
         balance: 0,
         position: 0,
         date: undefined,
+        currency: 'AUD',
+        parent: undefined,
         statusCode: 201,
       },
       args
@@ -30,6 +32,7 @@ export default class AccountsDsl {
         balance: options.balance,
         position: options.position,
         date: options.date,
+        parentId: this.accountId(options.parent),
       },
       options.statusCode
     );
@@ -56,6 +59,7 @@ export default class AccountsDsl {
         balance: undefined,
         position: undefined,
         hidden: undefined,
+        currency: undefined,
         statusCode: 200,
       },
       args
@@ -64,6 +68,7 @@ export default class AccountsDsl {
       balance: options.balance,
       position: options.position,
       hidden: options.hidden,
+      currency: options.currency,
     });
     const response = await this.server.get(
       `/api/accounts/${encodeURIComponent(account.id)}/`,
@@ -116,6 +121,7 @@ export default class AccountsDsl {
         name: undefined,
         type: undefined,
         hidden: undefined,
+        parent: undefined,
       },
       args
     );
@@ -124,6 +130,7 @@ export default class AccountsDsl {
       name: options.name,
       type: options.type,
       balance: options.balance,
+      parentId: this.accountId(options.parent),
       hidden: options.hidden,
     });
     const response = await this.server.put(
@@ -133,6 +140,20 @@ export default class AccountsDsl {
     );
     if (options.statusCode === 200) {
       this.accountsByAlias.set(options.alias, JSON.parse(response.payload));
+    }
+  }
+
+  accountId(alias) {
+    if (alias === null) {
+      return null;
+    } else if (alias != undefined) {
+      if (alias.startsWith('<') && alias.endsWith('>')) {
+        return alias.slice(1, -1);
+      } else {
+        return this.accountsByAlias.get(alias).id;
+      }
+    } else {
+      return undefined;
     }
   }
 

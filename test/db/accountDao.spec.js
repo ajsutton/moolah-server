@@ -26,6 +26,8 @@ describe('Account DAO', function () {
       type: 'bank',
       position: 7,
       hidden: false,
+      currency: 'USD',
+      parentId: '3',
     };
     await accountDao.create(userId, account);
     const accounts = await accountDao.accounts(userId);
@@ -38,6 +40,7 @@ describe('Account DAO', function () {
       name: 'Account 1',
       type: 'bank',
       position: 3,
+      currency: 'NZD',
       hidden: false,
     };
     const modifiedAccount = {
@@ -45,7 +48,9 @@ describe('Account DAO', function () {
       name: 'New Account Name',
       type: 'cc',
       position: 5,
+      currency: 'CHF',
       hidden: true,
+      parentId: '9',
     };
     await accountDao.create(userId, account);
     await accountDao.store(userId, modifiedAccount);
@@ -58,6 +63,7 @@ describe('Account DAO', function () {
       id: '1',
       name: 'Account 1',
       type: 'bank',
+      currency: 'USD',
       position: 5,
       hidden: false,
     };
@@ -71,6 +77,7 @@ describe('Account DAO', function () {
       id: '1',
       name: 'Account 1',
       type: 'bank',
+      currency: 'USD',
     });
     const result = await accountDao.account(userId, '1');
     assert.deepEqual(result, {
@@ -79,6 +86,7 @@ describe('Account DAO', function () {
       type: 'bank',
       position: 0,
       hidden: false,
+      currency: 'USD',
     });
   });
 
@@ -89,6 +97,7 @@ describe('Account DAO', function () {
       type: 'bank',
       position: 3,
       hidden: false,
+      currency: 'USD',
     };
     const account2 = {
       id: '2',
@@ -96,6 +105,7 @@ describe('Account DAO', function () {
       type: 'bank',
       position: 1,
       hidden: false,
+      currency: 'CHF',
     };
     const account3 = {
       id: '3',
@@ -103,6 +113,7 @@ describe('Account DAO', function () {
       type: 'bank',
       position: 5,
       hidden: false,
+      currency: 'AUD',
     };
     const account4 = {
       id: '4',
@@ -110,6 +121,7 @@ describe('Account DAO', function () {
       type: 'bank',
       position: 5,
       hidden: false,
+      currency: 'NZD',
     };
     await Promise.all([
       accountDao.create(userId, account1),
