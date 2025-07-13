@@ -5,17 +5,25 @@ import AccountsDao from '../../src/db/accountDao.js';
 import { assert } from 'chai';
 import idGenerator from '../../src/utils/idGenerator.js';
 import { minimalTransaction, makeTransaction } from './transactionHelper.js';
+import { DEFAULT_CURRENCY } from '../../src/utils/currency.js';
+import RatesDao from '../../src/db/ratesDao.js';
+
+function withDefaultRates(tx) {
+  return Object.assign({ fromRate: 1000000, toRate: 1000000 }, tx);
+}
 
 describe('Transaction DAO', function () {
   let connection;
   let transactionDao;
   let accountsDao;
+  let ratesDao;
   let userId;
 
   beforeEach(async function () {
     userId = idGenerator();
     connection = await dbTestUtils.createConnection();
     accountsDao = new AccountsDao(dbTestUtils.queryFunction(connection));
+    ratesDao = new RatesDao(dbTestUtils.queryFunction(connection));
     transactionDao = new TransactionDao(dbTestUtils.queryFunction(connection));
     await accountsDao.create(userId, {
       id: 'account-id',
@@ -78,7 +86,7 @@ describe('Transaction DAO', function () {
           accountId: 'account-id',
           scheduled: true,
         }),
-        [transaction]
+        [withDefaultRates(transaction)]
       );
     });
 
@@ -159,9 +167,9 @@ describe('Transaction DAO', function () {
         accountId: minimalTransaction.accountId,
       });
       assert.deepEqual(transactions, [
-        transaction3,
-        transaction1,
-        transaction2,
+        withDefaultRates(transaction3),
+        withDefaultRates(transaction1),
+        withDefaultRates(transaction2),
       ]);
     });
 
@@ -186,16 +194,18 @@ describe('Transaction DAO', function () {
         accountId: minimalTransaction.accountId,
       });
       assert.deepEqual(transactions, [
-        transaction3,
-        transaction1,
-        makeTransaction({
-          id: transaction2.id,
-          accountId: minimalTransaction.accountId,
-          type: 'transfer',
-          toAccountId: 'otherAccount',
-          amount: 2000,
-          date: '2017-05-30',
-        }),
+        withDefaultRates(transaction3),
+        withDefaultRates(transaction1),
+        withDefaultRates(
+          makeTransaction({
+            id: transaction2.id,
+            accountId: minimalTransaction.accountId,
+            type: 'transfer',
+            toAccountId: 'otherAccount',
+            amount: 2000,
+            date: '2017-05-30',
+          })
+        ),
       ]);
     });
 
@@ -218,7 +228,10 @@ describe('Transaction DAO', function () {
       const transactions = await transactionDao.transactions(userId, {
         accountId: minimalTransaction.accountId,
       });
-      assert.deepEqual(transactions, [transaction3, transaction1]);
+      assert.deepEqual(transactions, [
+        withDefaultRates(transaction3),
+        withDefaultRates(transaction1),
+      ]);
     });
 
     it('should query all scheduled transactions in any account', async function () {
@@ -258,9 +271,9 @@ describe('Transaction DAO', function () {
         scheduled: true,
       });
       assert.deepEqual(transactions, [
-        transaction4,
-        transaction1,
-        transaction2,
+        withDefaultRates(transaction4),
+        withDefaultRates(transaction1),
+        withDefaultRates(transaction2),
       ]);
     });
 
@@ -287,11 +300,11 @@ describe('Transaction DAO', function () {
 
       assert.deepEqual(
         await transactionDao.transactions(userId, { from: '2017-06-01' }),
-        [transaction3, transaction1]
+        [withDefaultRates(transaction3), withDefaultRates(transaction1)]
       );
       assert.deepEqual(
         await transactionDao.transactions(userId, { from: '2017-06-02' }),
-        [transaction3]
+        [withDefaultRates(transaction3)]
       );
     });
 
@@ -311,11 +324,11 @@ describe('Transaction DAO', function () {
 
       assert.deepEqual(
         await transactionDao.transactions(userId, { to: '2017-06-01' }),
-        [transaction1, transaction2]
+        [withDefaultRates(transaction1), withDefaultRates(transaction2)]
       );
       assert.deepEqual(
         await transactionDao.transactions(userId, { to: '2017-05-30' }),
-        [transaction2]
+        [withDefaultRates(transaction2)]
       );
     });
 
@@ -338,7 +351,7 @@ describe('Transaction DAO', function () {
           from: '2017-06-01',
           to: '2017-06-02',
         }),
-        [transaction1]
+        [withDefaultRates(transaction1)]
       );
     });
   });
@@ -361,6 +374,61 @@ describe('Transaction DAO', function () {
       scheduled: false,
     });
     assert.equal(count, 2);
+  });
+
+  describe('Exchange Rates', function () {
+    it('should include from and to rates in transactions', async function () {
+      const nativeAccountId = 'native-account';
+      const usdAccountId = 'usd-account';
+      await accountsDao.create(userId, {
+        id: nativeAccountId,
+        name: 'Native',
+        type: 'bank',
+        position: 7,
+        currency: DEFAULT_CURRENCY,
+      });
+      await accountsDao.create(userId, {
+        id: usdAccountId,
+        name: 'USD',
+        type: 'bank',
+        position: 7,
+        currency: 'USD',
+      });
+      await ratesDao.setRate(
+        userId,
+        '2017-05-01',
+        'USD',
+        DEFAULT_CURRENCY,
+        500000
+      );
+      const nativeTx = makeTransaction({
+        amount: 5000,
+        date: '2017-06-01',
+        accountId: nativeAccountId,
+        toAccountId: usdAccountId,
+      });
+      const usdTx = makeTransaction({
+        amount: 5000,
+        date: '2017-06-02',
+        accountId: usdAccountId,
+        toAccountId: nativeAccountId,
+      });
+
+      await transactionDao.create(userId, nativeTx);
+      await transactionDao.create(userId, usdTx);
+      const transactions = await transactionDao.transactions(userId);
+      assert.deepEqual(transactions, [
+        Object.assign({ fromRate: 500000, toRate: 1000000 }, usdTx),
+        Object.assign({ fromRate: 1000000, toRate: 500000 }, nativeTx),
+      ]);
+      const usdTransactions = await transactionDao.transactions(userId, {
+        quoteCurrency: 'USD',
+      });
+      assert.deepEqual(usdTransactions, [
+        Object.assign({ fromRate: 1000000, toRate: 2000000 }, usdTx),
+        Object.assign({ fromRate: 2000000, toRate: 1000000 }, nativeTx),
+      ]);
+    });
   });
 
   describe('Balance Calculations', function () {

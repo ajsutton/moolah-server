@@ -26,6 +26,11 @@ export default {
     await doQuery(connection, 'DELETE FROM category WHERE user_id = ?', userId);
     await doQuery(
       connection,
+      'DELETE FROM exchange_rate WHERE user_id = ?',
+      userId
+    );
+    await doQuery(
+      connection,
       'DELETE FROM transaction WHERE user_id = ?',
       userId
     );

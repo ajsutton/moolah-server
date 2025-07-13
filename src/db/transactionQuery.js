@@ -1,12 +1,38 @@
 export default function transactionQuery(fields, userId, opts) {
-  let query = `SELECT ${fields} 
-                   FROM transaction t`;
-  if (opts.hasCurrentAccount || opts.hasInvestmentAccount) {
+  const args = [];
+  let query = `SELECT ${fields} `;
+  if (opts.quoteCurrency !== undefined) {
+    query += `,
+      IFNULL((SELECT e.rate
+         FROM exchange_rate e
+        WHERE t.user_id = e.user_id
+          AND af.currency = e.base
+          AND e.quote = ?
+          AND e.date <= t.date
+    ORDER BY e.date DESC
+        LIMIT 1), 1000000) AS fromRate `;
+    args.push(opts.quoteCurrency);
+    query += `, IFNULL((SELECT e.rate
+         FROM exchange_rate e
+        WHERE t.user_id = e.user_id
+          AND at.currency = e.base
+          AND e.quote = ?
+          AND e.date <= t.date
+    ORDER BY e.date DESC
+        LIMIT 1), 1000000) AS toRate `;
+    args.push(opts.quoteCurrency);
+  }
+  query += 'FROM transaction t';
+  if (
+    opts.hasCurrentAccount ||
+    opts.hasInvestmentAccount ||
+    opts.quoteCurrency !== undefined
+  ) {
     query += ' LEFT JOIN account af ON t.account_id = af.id';
     query += ' LEFT JOIN account at ON t.to_account_id = at.id';
   }
   query += ` WHERE t.user_id = ?`;
-  const args = [userId];
+  args.push(userId);
   if (opts.accountId !== undefined) {
     query += ` AND (t.account_id = ? OR t.to_account_id = ?) `;
     args.push(opts.accountId, opts.accountId);

@@ -1,6 +1,13 @@
 import { assert } from 'chai';
 import dslUtils from './dslUtils.js';
 
+function withDefaultRates(transaction) {
+  if (transaction.length !== undefined) {
+    return transaction.map(tx => withDefaultRates(tx));
+  }
+  return Object.assign({ fromRate: 1000000, toRate: 1000000 }, transaction);
+}
+
 export default class TransactionsDsl {
   constructor(server, accountsByAlias, transactionsByAlias, categoriesByAlias) {
     this.server = server;
@@ -172,7 +179,7 @@ export default class TransactionsDsl {
     );
     const result = JSON.parse(response.payload);
     assert.deepEqual(result, {
-      transactions: expectedTransactions,
+      transactions: withDefaultRates(expectedTransactions),
       priorBalance: options.expectPriorBalance,
       hasMore: options.expectHasMore,
       totalNumberOfTransactions: transactionCount,

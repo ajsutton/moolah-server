@@ -4,6 +4,7 @@ import db from '../../db/database.js';
 import idGenerator from '../../utils/idGenerator.js';
 import session from '../../auth/session.js';
 import Boom from '@hapi/boom';
+import { DEFAULT_CURRENCY } from '../../utils/currency.js';
 
 export default {
   auth: 'session',
@@ -12,7 +13,7 @@ export default {
       try {
         const account = Object.assign({ id: idGenerator() }, request.payload, {
           hidden: false,
-          currency: 'AUD',
+          currency: DEFAULT_CURRENCY,
         });
         const userId = session.getUserId(request);
         await db.withTransaction(request, async daos => {

@@ -1,6 +1,7 @@
 import stripNulls from './stripNulls.js';
 import transactionQuery from './transactionQuery.js';
 import selectBalance from './selectBalance.js';
+import { DEFAULT_CURRENCY } from '../utils/currency.js';
 
 function asTransaction(object) {
   if (object === undefined) {
@@ -93,6 +94,7 @@ export default class TransactionDao {
         scheduled: false,
         from: undefined,
         to: undefined,
+        quoteCurrency: DEFAULT_CURRENCY,
       },
       options
     );
