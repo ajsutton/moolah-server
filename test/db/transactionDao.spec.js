@@ -432,6 +432,23 @@ describe('Transaction DAO', function () {
   });
 
   describe('Balance Calculations', function () {
+    beforeEach(async function () {
+      await accountsDao.create(userId, {
+        id: 'usd',
+        name: 'USD Account',
+        type: 'bank',
+        position: 7,
+        currency: 'USD',
+      });
+      await ratesDao.setRate(
+        userId,
+        '2000-06-01',
+        'USD',
+        DEFAULT_CURRENCY,
+        2000000
+      );
+    });
+
     it('should calculate account balance', async function () {
       await transactionDao.create(userId, makeTransaction({ amount: 5000 }));
       await transactionDao.create(userId, makeTransaction({ amount: -2000 }));
@@ -441,6 +458,31 @@ describe('Transaction DAO', function () {
         accountId: minimalTransaction.accountId,
       });
       assert.equal(balance, 3300);
+    });
+
+    it('should calculate account balance in foreign currency', async function () {
+      await transactionDao.create(
+        userId,
+        makeTransaction({ accountId: 'usd', amount: 5000 })
+      );
+      await transactionDao.create(
+        userId,
+        makeTransaction({ accountId: 'usd', amount: -2000 })
+      );
+      await transactionDao.create(
+        userId,
+        makeTransaction({ accountId: 'usd', amount: 300 })
+      );
+
+      const balance = await transactionDao.balance(userId, {
+        accountId: 'usd',
+      });
+      assert.equal(balance, 6600);
+      const usdBalance = await transactionDao.balance(userId, {
+        accountId: 'usd',
+        quoteCurrency: 'USD',
+      });
+      assert.equal(usdBalance, 3300);
     });
 
     it('should calculate account balance prior to transaction', async function () {
@@ -482,6 +524,35 @@ describe('Transaction DAO', function () {
         accountId: minimalTransaction.accountId,
       });
       assert.equal(balance, 7300);
+    });
+
+    it('should add negative amount of transfers to account when calculating balance in foreign currency', async function () {
+      await transactionDao.create(
+        userId,
+        makeTransaction({ accountId: 'usd', amount: 5000 })
+      );
+      await transactionDao.create(
+        userId,
+        makeTransaction({
+          amount: -2000,
+          accountId: 'otherAccount',
+          toAccountId: 'usd',
+        })
+      );
+      await transactionDao.create(
+        userId,
+        makeTransaction({ accountId: 'usd', amount: 300 })
+      );
+
+      const balance = await transactionDao.balance(userId, {
+        accountId: 'usd',
+      });
+      assert.equal(balance, 14600);
+      const usdBalance = await transactionDao.balance(userId, {
+        accountId: 'usd',
+        quoteCurrency: 'USD',
+      });
+      assert.equal(usdBalance, 7300);
     });
 
     it('should exclude scheduled transactions when calculating balance', async function () {

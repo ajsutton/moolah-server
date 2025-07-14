@@ -100,7 +100,7 @@ export default class TransactionDao {
     );
     const args = [opts.accountId];
     const builder = transactionQuery(
-      't.id, t.type, t.date, t.account_id as accountId, t.payee, t.amount, t.notes, t.category_id as categoryId, t.to_account_id as toAccountId, earmark, t.to_account_id = ? as transferIn, t.recur_every as recurEvery, t.recur_period as recurPeriod',
+      't.id, t.type, t.date, t.account_id as accountId, t.payee, t.amount, t.notes, t.category_id as categoryId, t.to_account_id as toAccountId, earmark, t.to_account_id = ? as transferIn, t.recur_every as recurEvery, t.recur_period as recurPeriod, %fromRate% AS fromRate, %toRate% AS toRate',
       userId,
       opts
     );
@@ -135,11 +135,12 @@ export default class TransactionDao {
   }
 
   async balance(userId, options, forTransaction) {
+    const opts = Object.assign({ quoteCurrency: DEFAULT_CURRENCY }, options);
     const args = [];
     const builder = transactionQuery(
       selectBalance(options, args),
       userId,
-      options
+      opts
     );
     args.push(...builder.args);
     let query = builder.query;
@@ -153,11 +154,12 @@ export default class TransactionDao {
   }
 
   async dailyBalanceChange(userId, options) {
+    const opts = Object.assign({ quoteCurrency: DEFAULT_CURRENCY }, options);
     const args = [];
     const builder = transactionQuery(
       selectBalance(options, args) + ', t.date as date',
       userId,
-      options
+      opts
     );
     args.push(...builder.args);
     let query = builder.query;
@@ -172,11 +174,12 @@ export default class TransactionDao {
   }
 
   async balanceByCategory(userId, options, forTransaction) {
+    const opts = Object.assign({ quoteCurrency: DEFAULT_CURRENCY }, options);
     const args = [];
     const builder = transactionQuery(
       'category_id as categoryId, ' + selectBalance(options, args),
       userId,
-      options
+      opts
     );
     args.push(...builder.args);
     let query = builder.query + ' AND t.category_id IS NOT NULL ';
