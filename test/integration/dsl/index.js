@@ -7,6 +7,7 @@ import AnalysisDsl from './analysisDsl.js';
 import CategoriesDsl from './categoryDsl.js';
 import idGenerator from '../../../src/utils/idGenerator.js';
 import dbTestUtils from '../../utils/dbTestUtils.js';
+import RatesDsl from './ratesDsl.js';
 
 class Server {
   constructor(hapiServer) {
@@ -87,6 +88,7 @@ class Dsl {
       accountsByAlias,
       transactionsByAlias
     );
+    this.rates = new RatesDsl(server);
     this.earmarks = new EarmarksDsl(
       server,
       accountsByAlias,

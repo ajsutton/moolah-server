@@ -1,4 +1,5 @@
 import accounts from '../routes/accounts.js';
+import rates from '../routes/rates.js';
 import analysis from '../routes/analysis.js';
 import auth from '../routes/auth.js';
 import categories from '../routes/categories.js';
@@ -7,6 +8,7 @@ import transactions from '../routes/transactions.js';
 
 const routeLists = [
   accounts,
+  rates,
   analysis,
   auth,
   categories,

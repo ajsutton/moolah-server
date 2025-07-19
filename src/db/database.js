@@ -5,6 +5,7 @@ import AnalysisDao from './analysisDao.js';
 import EarmarkDao from './earmarkDao.js';
 import BudgetDao from './budgetDao.js';
 import InvestmentValueDao from './investmentValueDao.js';
+import RatesDao from './ratesDao.js';
 
 const typeCastRealNumbers = (field, next) => {
   if (field.type === 'NEWDECIMAL') {
@@ -44,6 +45,7 @@ function makeDaos(connection) {
     earmarks: new EarmarkDao(query),
     budget: new BudgetDao(query),
     investmentValue: new InvestmentValueDao(query),
+    rates: new RatesDao(query),
   };
 }
 

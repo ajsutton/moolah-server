@@ -6,6 +6,8 @@ export default {
   accountType: Joi.any().valid('bank', 'cc', 'asset', 'investment'),
   money: Joi.number().integer(),
   currency: Joi.string().max(10),
+  currencyPair: Joi.string().regex(/[^/]{1,10}\/[^/]{1,10}/),
+  rate: Joi.number().integer(),
   position: Joi.number().integer(),
   date: Joi.date().iso().raw(),
   transactionType: Joi.string().max(20),
