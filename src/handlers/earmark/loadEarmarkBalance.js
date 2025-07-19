@@ -1,7 +1,13 @@
-export default async function loadEarmarkBalance(userId, earmark, daos) {
+export default async function loadEarmarkBalance(
+  userId,
+  earmark,
+  daos,
+  targetCurrency = 'AUD'
+) {
   const { balance, saved, spent } = await daos.earmarks.balances(
     userId,
-    earmark.id
+    earmark.id,
+    targetCurrency
   );
   earmark.balance = balance || 0;
   earmark.saved = saved || 0;

@@ -1,3 +1,4 @@
+import selectBalance from './selectBalance.js';
 import stripNulls from './stripNulls.js';
 import transactionQuery from './transactionQuery.js';
 
@@ -67,12 +68,17 @@ export default class EarmarksDao {
     );
   }
 
-  async balances(userId, earmarkId) {
-    const { query, args } = transactionQuery(
-      "SUM(t.amount) as balance, SUM(IF(t.type = 'income', t.amount, 0)) as saved, SUM(IF(t.type = 'expense', t.amount, 0)) as spent",
+  async balances(userId, earmarkId, quoteCurrency = 'AUD') {
+    const opts = { earmarkId, quoteCurrency };
+    const args = [];
+    const builder = transactionQuery(
+      `${selectBalance(opts, args)},
+       SUM(IF(t.type = 'income', ROUND(t.amount * %fromRate% / 1000000), 0)) as saved,
+       SUM(IF(t.type = 'expense', ROUND(t.amount * %fromRate% / 1000000), 0)) as spent`,
       userId,
-      { earmarkId }
+      opts
     );
-    return (await this.query(query, ...args))[0];
+    args.push(...builder.args);
+    return (await this.query(builder.query, ...args))[0];
   }
 }
