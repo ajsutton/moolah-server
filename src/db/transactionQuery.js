@@ -3,8 +3,7 @@ import mysql from 'mysql2';
 export default function transactionQuery(fields, userId, opts) {
   const args = [];
   let query = `SELECT `;
-  if (opts.quoteCurrency !== undefined) {
-    const fromQuery = `
+  const fromQuery = `
       IFNULL((SELECT e.rate
          FROM exchange_rate e
         WHERE t.user_id = e.user_id
@@ -13,7 +12,7 @@ export default function transactionQuery(fields, userId, opts) {
           AND e.date <= t.date
     ORDER BY e.date DESC
         LIMIT 1), 1000000)`;
-    const toQuery = `IFNULL((SELECT e.rate
+  const toQuery = `IFNULL((SELECT e.rate
          FROM exchange_rate e
         WHERE t.user_id = e.user_id
           AND at.currency = e.base
@@ -21,12 +20,9 @@ export default function transactionQuery(fields, userId, opts) {
           AND e.date <= t.date
     ORDER BY e.date DESC
         LIMIT 1), 1000000)`;
-    query += fields
-      .replaceAll('%fromRate%', fromQuery)
-      .replaceAll('%toRate%', toQuery);
-  } else {
-    query += fields;
-  }
+  query += fields
+    .replaceAll('%fromRate%', fromQuery)
+    .replaceAll('%toRate%', toQuery);
   query += ' FROM transaction t';
   if (
     opts.hasCurrentAccount ||

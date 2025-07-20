@@ -3,6 +3,7 @@ import transactionSearchOptions from '../transactionSearchOptions.js';
 import db from '../../db/database.js';
 import session from '../../auth/session.js';
 import Boom from '@hapi/boom';
+import { DEFAULT_CURRENCY } from '../../utils/currency.js';
 
 export default {
   auth: 'session',
@@ -55,6 +56,7 @@ export default {
     query: Object.assign(transactionSearchOptions.queryValidation, {
       pageSize: types.pageSize,
       offset: types.offset,
+      currency: types.currency.default(DEFAULT_CURRENCY),
     }),
     failAction: types.failAction,
   },

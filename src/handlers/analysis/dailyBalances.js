@@ -9,6 +9,7 @@ import {
 } from 'date-fns';
 import forecastScheduledTransactions from '../../model/transaction/forecastScheduledTransactions.js';
 import regression from 'regression';
+import { DEFAULT_CURRENCY } from '../../utils/currency.js';
 
 function dateToNumber(date) {
   return differenceInDays(parseISO('1970-01-01'), parseISO(date));
@@ -25,7 +26,10 @@ export default {
           ? 0
           : await daos.transactions.balance(
               userId,
-              { hasCurrentAccount: true },
+              {
+                hasCurrentAccount: true,
+                quoteCurrency: request.query.currency,
+              },
               { date: formatDate(addDays(after, 1), 'yyyy-MM-dd'), id: null }
             );
       let currentInvestments =
@@ -33,7 +37,10 @@ export default {
           ? 0
           : await daos.transactions.balance(
               userId,
-              { hasInvestmentAccount: true },
+              {
+                hasInvestmentAccount: true,
+                quoteCurrency: request.query.currency,
+              },
               { date: formatDate(addDays(after, 1), 'yyyy-MM-dd'), id: null }
             );
       let currentEarmarks =
@@ -41,12 +48,13 @@ export default {
           ? 0
           : await daos.transactions.balance(
               userId,
-              { hasEarmark: true },
+              { hasEarmark: true, quoteCurrency: request.query.currency },
               { date: formatDate(addDays(after, 1), 'yyyy-MM-dd'), id: null }
             );
       const results = await daos.analysis.dailyProfitAndLoss(
         userId,
-        after ? formatDate(after, 'yyyy-MM-dd') : null
+        after ? formatDate(after, 'yyyy-MM-dd') : null,
+        request.query.currency
       );
       const balances = {};
       results.forEach(dailyProfit => {
@@ -86,7 +94,11 @@ export default {
       if (request.query.forecastUntil !== undefined) {
         const scheduledTransactions = await daos.transactions.transactions(
           userId,
-          { scheduled: true, pageSize: undefined }
+          {
+            scheduled: true,
+            pageSize: undefined,
+            quoteCurrency: request.query.currency,
+          }
         );
         scheduledBalances = forecastScheduledTransactions.forecastBalances(
           scheduledTransactions,
@@ -145,6 +157,7 @@ export default {
     query: {
       after: types.date.default(null),
       forecastUntil: types.date.default(null),
+      currency: types.currency.default(DEFAULT_CURRENCY),
     },
     failAction: types.failAction,
   },

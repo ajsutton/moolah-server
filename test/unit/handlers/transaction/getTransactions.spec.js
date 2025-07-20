@@ -3,6 +3,7 @@ import BoomOutput from '../../../utils/boomOutput.js';
 import { create as serverFactory } from '../../../../src/server.js';
 import dbTestUtils from '../../../utils/dbTestUtils.js';
 import idGenerator from '../../../../src/utils/idGenerator.js';
+import { DEFAULT_CURRENCY } from '../../../../src/utils/currency.js';
 
 describe('Get Transactions Handler', function () {
   let server;
@@ -52,6 +53,7 @@ describe('Get Transactions Handler', function () {
         earmarkId: undefined,
         transactionType: undefined,
         payee: undefined,
+        quoteCurrency: DEFAULT_CURRENCY,
       })
       .resolves([transaction]);
     const response = await makeRequest(accountId);

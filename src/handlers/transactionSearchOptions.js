@@ -1,5 +1,6 @@
 import types from './types.js';
 import session from '../auth/session.js';
+import { DEFAULT_CURRENCY } from '../utils/currency.js';
 
 export default {
   queryValidation: {
@@ -11,6 +12,7 @@ export default {
     scheduled: types.boolean.default(false),
     transactionType: types.transactionType.default(() => undefined),
     payee: types.payee.default(() => undefined),
+    quoteCurrency: types.currency.default(() => DEFAULT_CURRENCY),
   },
   async parseOptions(request, daos) {
     const userId = session.getUserId(request);
@@ -22,6 +24,7 @@ export default {
     const categories = request.query.category;
     const transactionType = request.query.transactionType;
     const payee = request.query.payee;
+    const quoteCurrency = request.query.currency;
 
     if (
       accountId !== undefined &&
@@ -58,6 +61,7 @@ export default {
       earmarkId,
       transactionType,
       payee,
+      quoteCurrency,
     };
   },
 };
