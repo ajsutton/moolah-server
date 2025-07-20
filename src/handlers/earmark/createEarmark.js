@@ -4,6 +4,7 @@ import db from '../../db/database.js';
 import idGenerator from '../../utils/idGenerator.js';
 import session from '../../auth/session.js';
 import loadEarmarkBalance from './loadEarmarkBalance.js';
+import { DEFAULT_CURRENCY } from '../../utils/currency.js';
 
 export default {
   auth: 'session',
@@ -22,7 +23,7 @@ export default {
             savingsStartDate: earmark.savingsStartDate,
             savingsEndDate: earmark.savingsEndDate,
           });
-          await loadEarmarkBalance(userId, earmark, daos);
+          await loadEarmarkBalance(userId, earmark, daos, DEFAULT_CURRENCY);
         });
         delete earmark.date;
         return h

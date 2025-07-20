@@ -68,7 +68,7 @@ export default class EarmarksDao {
     );
   }
 
-  async balances(userId, earmarkId, quoteCurrency = 'AUD') {
+  async balances(userId, earmarkId, quoteCurrency) {
     const opts = { earmarkId, quoteCurrency };
     const args = [];
     const builder = transactionQuery(

@@ -4,6 +4,7 @@ import db from '../../db/database.js';
 import Boom from '@hapi/boom';
 import session from '../../auth/session.js';
 import loadEarmarkBalance from './loadEarmarkBalance.js';
+import { DEFAULT_CURRENCY } from '../../utils/currency.js';
 
 export default {
   auth: 'session',
@@ -16,7 +17,12 @@ export default {
       } else {
         const modifiedEarmark = Object.assign(earmark, request.payload);
         await daos.earmarks.store(userId, modifiedEarmark);
-        await loadEarmarkBalance(userId, modifiedEarmark, daos);
+        await loadEarmarkBalance(
+          userId,
+          modifiedEarmark,
+          daos,
+          DEFAULT_CURRENCY
+        );
         return modifiedEarmark;
       }
     });

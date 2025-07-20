@@ -2,7 +2,7 @@ export default async function loadEarmarkBalance(
   userId,
   earmark,
   daos,
-  targetCurrency = 'AUD'
+  targetCurrency
 ) {
   const { balance, saved, spent } = await daos.earmarks.balances(
     userId,

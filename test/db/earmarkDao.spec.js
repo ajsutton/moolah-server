@@ -141,7 +141,7 @@ describe('Earmark DAO', function () {
         })
       );
 
-      const result = await earmarkDao.balances(userId, '1');
+      const result = await earmarkDao.balances(userId, '1', 'AUD');
       assert.deepEqual(result, {
         balance: '300',
         saved: '5300',
