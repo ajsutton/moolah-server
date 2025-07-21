@@ -74,9 +74,13 @@ export default {
         ({ date, availableFunds }) => [dateToNumber(date), availableFunds]
       );
 
+      const investmentArgs = { quoteCurrency: request.query.currency };
+      if (after) {
+        investmentArgs.from = formatDate(addDays(after, 1), 'yyyy-MM-dd');
+      }
       const investmentDeltas = await daos.investmentValue.getCombinedValues(
         userId,
-        after ? { from: formatDate(addDays(after, 1), 'yyyy-MM-dd') } : {}
+        investmentArgs
       );
 
       let currentInvestmentValue = undefined;

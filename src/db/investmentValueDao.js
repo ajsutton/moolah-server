@@ -1,3 +1,6 @@
+import mysql from 'mysql2/promise';
+import { DEFAULT_CURRENCY } from '../utils/currency.js';
+
 export default class InvestmentValueDao {
   constructor(query) {
     this.query = query;
@@ -54,19 +57,39 @@ export default class InvestmentValueDao {
   }
 
   async getCombinedValues(userId, options = {}) {
-    const opts = Object.assign({ from: 0, to: undefined }, options);
+    const opts = Object.assign(
+      { from: 0, to: undefined, quoteCurrency: DEFAULT_CURRENCY },
+      options
+    );
     const args = [opts.from, userId, opts.from];
     let query = `SELECT 
                 v.date, 
-                SUM(v.value - IFNULL((SELECT v2.value
-                                FROM investment_value v2 
-                                WHERE v2.date < v.date 
-                                AND v2.user_id = v.user_id 
-                                AND v2.account_id = v.account_id 
-                                AND v2.date >= ?
-                            ORDER BY v2.date DESC
-                                LIMIT 1), 0)) as delta
+                SUM(ROUND(v.value * IFNULL((SELECT e.rate 
+                                             FROM exchange_rate e 
+                                            WHERE a.user_id = e.user_id
+                                              AND a.currency = e.base
+                                              AND e.quote = ${mysql.escape(opts.quoteCurrency)}
+                                              AND e.date <= v.date
+                                         ORDER BY e.date DESC
+                                            LIMIT 1), 1000000)) - 
+                    IFNULL(
+                      (SELECT ROUND(v2.value * IFNULL((SELECT e.rate
+                                                         FROM exchange_rate e
+                                            WHERE a.user_id = e.user_id
+                                              AND a.currency = e.base
+                                              AND e.quote = ${mysql.escape(opts.quoteCurrency)}
+                                              AND e.date <= v2.date
+                                         ORDER BY e.date DESC
+                                            LIMIT 1), 1000000))
+                         FROM investment_value v2 
+                        WHERE v2.date < v.date 
+                          AND v2.user_id = v.user_id 
+                          AND v2.account_id = v.account_id 
+                          AND v2.date >= ?
+                     ORDER BY v2.date DESC
+                        LIMIT 1), 0)) as delta
             FROM investment_value v 
+            JOIN account a ON v.account_id = a.id
            WHERE v.user_id = ?
              AND v.date >= ?`;
     if (opts.to) {
