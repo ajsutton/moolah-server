@@ -27,7 +27,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@eslint/js": "^9.6.0",
-    "chai": "^5.1.1",
+    "chai": "^6.2.1",
     "eslint": "9.x",
     "eslint-config-prettier": "^10.1.1",
     "globals": "^16.0.0",
@@ -35,7 +35,7 @@
     "mocha": "^11.0.0",
     "nodemon": "^3.0.1",
     "prettier": "^3.3.2",
-    "sinon": "20"
+    "sinon": "21.0.0"
   },
   "dependencies": {
     "@hapi/bell": "^13.0.1",
@@ -47,11 +47,11 @@
     "get-env": "^0.5.10",
     "hapi-async-handler": "^1.0.3",
     "hapi-mysql2": "^2.0.0",
-    "hapi-pino": "^12.1.0",
-    "joi": "^17.6.0",
+    "hapi-pino": "^13.0.0",
+    "joi": "^18.0.2",
     "mysql2": "^3.11.5",
     "regression": "^2.0.0",
-    "uuid": "^11.0.0"
+    "uuid": "^13.0.0"
   },
   "mocha": {
     "reporter": "progress"
