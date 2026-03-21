@@ -26,16 +26,16 @@
   "author": "Adrian Sutton <adrian@symphonious.net>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@eslint/js": "^9.6.0",
+    "@eslint/js": "^10.0.1",
     "chai": "^6.2.1",
-    "eslint": "9.x",
+    "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.1",
-    "globals": "^16.0.0",
+    "globals": "^17.4.0",
     "husky": "^9.0.11",
     "mocha": "^11.0.0",
     "nodemon": "^3.0.1",
     "prettier": "^3.3.2",
-    "sinon": "21.0.0"
+    "sinon": "^21.0.3"
   },
   "dependencies": {
     "@hapi/bell": "^13.0.1",
