@@ -53,6 +53,7 @@ export const create = async function () {
     provider: 'google',
     password: authConfig.secureToken,
     isSecure: server.configue('https'),
+    isSameSite: 'Lax',
     clientId: authConfig.googleClientId,
     clientSecret: authConfig.clientSecret,
     location: authConfig.baseUrl,
