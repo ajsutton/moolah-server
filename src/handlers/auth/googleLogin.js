@@ -19,6 +19,11 @@ export default {
       picture: profile.raw.picture,
     };
     request.cookieAuth.set(session);
+
+    const query = request.auth.credentials.query ?? {};
+    if (query._native) {
+      return h.redirect('moolah://auth/callback');
+    }
     return h.redirect('/');
   },
 };
