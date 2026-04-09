@@ -71,7 +71,13 @@ export default {
         after ? { from: formatDate(addDays(after, 1), 'yyyy-MM-dd') } : {}
       );
 
-      let currentInvestmentValue = undefined;
+      let currentInvestmentValue =
+        after === null
+          ? undefined
+          : await daos.investmentValue.getCombinedValueAsOf(
+              userId,
+              formatDate(after, 'yyyy-MM-dd')
+            );
       investmentDeltas.forEach(entry => {
         currentInvestmentValue =
           currentInvestmentValue == undefined
@@ -98,19 +104,21 @@ export default {
 
       const bestFit = regression.linear(balancesByTimestamp);
       const balancesList = Object.values(balances);
+      balancesList.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
       if (investmentDeltas.length > 0) {
         for (let i = 0; i < balancesList.length; i++) {
           const entry = balancesList[i];
-          if (i != 0 && !entry.investmentValue) {
+          if (i != 0 && entry.investmentValue === undefined) {
             entry.investmentValue =
-              balancesList[i - 1].investmentValue ||
-              balancesList[i - 1].investments ||
+              balancesList[i - 1].investmentValue ??
+              balancesList[i - 1].investments ??
               0;
-          } else if (!entry.investmentValue) {
-            entry.investmentValue = entry.investments;
+          } else if (entry.investmentValue === undefined) {
+            entry.investmentValue = entry.investments ?? 0;
           }
           if (i != 0 && !entry.balance) {
             Object.assign(entry, balancesList[i - 1], {
+              date: entry.date,
               investmentValue: entry.investmentValue,
             });
           } else if (!entry.balance) {

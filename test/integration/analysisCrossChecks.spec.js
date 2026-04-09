@@ -227,8 +227,7 @@ describe('Analysis Cross-Checks and Bug Reproduction', function () {
   });
 
   describe('6. Known Bug Reproduction Tests', function () {
-    // https://github.com/ajsutton/moolah-server/issues/19
-    it.skip('should handle falsy-zero investmentValue in gap-fill (BUG-6.1)', async function () {
+    it('should handle falsy-zero investmentValue in gap-fill (BUG-6.1)', async function () {
       await dsl.accounts.createAccount({
         alias: 'bank1',
         date: '2024-01-05',
@@ -266,8 +265,7 @@ describe('Analysis Cross-Checks and Bug Reproduction', function () {
       });
     });
 
-    // https://github.com/ajsutton/moolah-server/issues/18
-    it.skip('should maintain chronological order with mixed-source dates (BUG-6.2)', async function () {
+    it('should maintain chronological order with mixed-source dates (BUG-6.2)', async function () {
       await dsl.accounts.createAccount({
         alias: 'bank1',
         date: '2024-01-05',
@@ -326,8 +324,7 @@ describe('Analysis Cross-Checks and Bug Reproduction', function () {
       });
     });
 
-    // https://github.com/ajsutton/moolah-server/issues/20
-    it.skip('should handle investment value delta with after date (BUG-6.3)', async function () {
+    it('should handle investment value delta with after date (BUG-6.3)', async function () {
       await dsl.accounts.createAccount({
         alias: 'bank1',
         date: '2024-01-10',

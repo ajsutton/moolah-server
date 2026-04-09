@@ -55,18 +55,17 @@ export default class InvestmentValueDao {
 
   async getCombinedValues(userId, options = {}) {
     const opts = Object.assign({ from: 0, to: undefined }, options);
-    const args = [opts.from, userId, opts.from];
-    let query = `SELECT 
-                v.date, 
+    const args = [userId, opts.from];
+    let query = `SELECT
+                v.date,
                 SUM(v.value - IFNULL((SELECT v2.value
-                                FROM investment_value v2 
-                                WHERE v2.date < v.date 
-                                AND v2.user_id = v.user_id 
-                                AND v2.account_id = v.account_id 
-                                AND v2.date >= ?
+                                FROM investment_value v2
+                                WHERE v2.date < v.date
+                                AND v2.user_id = v.user_id
+                                AND v2.account_id = v.account_id
                             ORDER BY v2.date DESC
                                 LIMIT 1), 0)) as delta
-            FROM investment_value v 
+            FROM investment_value v
            WHERE v.user_id = ?
              AND v.date >= ?`;
     if (opts.to) {
@@ -75,6 +74,24 @@ export default class InvestmentValueDao {
     }
     query += ' GROUP BY v.date ORDER BY v.date';
     return await this.query(query, ...args);
+  }
+
+  async getCombinedValueAsOf(userId, date) {
+    const results = await this.query(
+      `SELECT IFNULL(SUM(v.value), 0) as total
+         FROM investment_value v
+        WHERE v.user_id = ?
+          AND v.date <= ?
+          AND v.date = (SELECT MAX(v2.date)
+                          FROM investment_value v2
+                         WHERE v2.user_id = v.user_id
+                           AND v2.account_id = v.account_id
+                           AND v2.date <= ?)`,
+      userId,
+      date,
+      date
+    );
+    return results[0].total;
   }
 
   async removeValue(userId, accountId, date) {

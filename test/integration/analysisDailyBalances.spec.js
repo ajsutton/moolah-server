@@ -720,8 +720,7 @@ describe('Daily Balances', function () {
       });
     });
 
-    // https://github.com/ajsutton/moolah-server/issues/18
-    it.skip('should gap-fill on dates without transactions (DB-1.6.3)', async function () {
+    it('should gap-fill on dates without transactions (DB-1.6.3)', async function () {
       await createBank('bank1', '2024-01-10');
       await createInvestment('invest1', '2024-01-10');
       await dsl.transactions.createTransaction({
@@ -789,8 +788,7 @@ describe('Daily Balances', function () {
       });
     });
 
-    // https://github.com/ajsutton/moolah-server/issues/18
-    it.skip('should maintain chronological order with interleaved investment_value (DB-1.6.5)', async function () {
+    it('should maintain chronological order with interleaved investment_value (DB-1.6.5)', async function () {
       await createBank('bank1', '2024-01-10');
       await createInvestment('invest1', '2024-01-10');
       await dsl.transactions.createTransaction({
@@ -837,8 +835,7 @@ describe('Daily Balances', function () {
       });
     });
 
-    // https://github.com/ajsutton/moolah-server/issues/18
-    it.skip('should aggregate multiple investment accounts on same date (DB-1.6.6)', async function () {
+    it('should aggregate multiple investment accounts on same date (DB-1.6.6)', async function () {
       await createBank('bank1', '2024-01-10');
       await createInvestment('invest1', '2024-01-10');
       await createInvestment('invest2', '2024-01-10');
@@ -878,8 +875,7 @@ describe('Daily Balances', function () {
       });
     });
 
-    // https://github.com/ajsutton/moolah-server/issues/20
-    it.skip('should handle investment_value with after date (DB-1.6.9)', async function () {
+    it('should handle investment_value with after date (DB-1.6.9)', async function () {
       await createBank('bank1', '2024-01-10');
       await createInvestment('invest1', '2024-01-10');
       await dsl.accounts.setValue({
@@ -906,8 +902,7 @@ describe('Daily Balances', function () {
       });
     });
 
-    // https://github.com/ajsutton/moolah-server/issues/18
-    it.skip('should handle many interleaved investment_value dates (DB-1.7.5)', async function () {
+    it('should handle many interleaved investment_value dates (DB-1.7.5)', async function () {
       await createBank('bank1', '2024-01-05');
       await createInvestment('invest1', '2024-01-05');
       await dsl.transactions.createTransaction({
@@ -1047,8 +1042,7 @@ describe('Daily Balances', function () {
       });
     });
 
-    // https://github.com/ajsutton/moolah-server/issues/18
-    it.skip('should maintain chronological ordering (DB-1.7.4)', async function () {
+    it('should maintain chronological ordering (DB-1.7.4)', async function () {
       await createBank('bank1', '2024-01-05');
       await createInvestment('invest1', '2024-01-05');
       await dsl.transactions.createTransaction({

@@ -156,12 +156,18 @@ export default class AccountsDsl {
     );
 
     const account = this.accountsByAlias.get(options.account);
-    await this.server.put(
-      '/api/accounts/' +
-        encodeURIComponent(account.id) +
-        '/values/' +
-        encodeURIComponent(options.date),
-      options.value,
+    await this.server.request(
+      {
+        url:
+          '/api/accounts/' +
+          encodeURIComponent(account.id) +
+          '/values/' +
+          encodeURIComponent(options.date),
+        method: 'PUT',
+        payload: JSON.stringify(options.value),
+        headers: { 'content-type': 'application/json' },
+        auth: this.server.profile,
+      },
       options.statusCode
     );
   }
