@@ -26,6 +26,8 @@ db/              # Database migrations
 
 ## Key Commands
 
+Use `yarn` (not npm) for all package management and script execution.
+
 ```sh
 yarn test                    # Run all tests (migrates DB first)
 yarn integration-test        # Integration tests only
